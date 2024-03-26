@@ -10,16 +10,6 @@ public class Authentication {
     private static final ArrayList<User> users = new ArrayList<>();
 
     private static AuthenticationService authService = new AuthenticationService(); // Proper initialization
-    //     private static IAuthenticationService authService = new IAuthenticationService() {
-//        @Override
-//        public User signUp(String username, String password) {
-//            return null;
-//        }
-//        @Override
-//        public User logIn(String username, String password) {
-//            return users.get(0);
-//        }
-//    };
     private static boolean isRunning = true;
 
 
