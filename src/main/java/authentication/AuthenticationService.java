@@ -14,7 +14,7 @@ public class AuthenticationService implements IAuthenticationService {
 
     // TODO Now: Implement the signUp method
     @Override
-    public User signUp(String username, String password) {
+    public User signUp(String username, String password, String userType) {
         // Check if the username is already taken
         if (isUsernameTaken(username)) {
             System.out.println("Username is already taken. Please choose another one.");
@@ -22,7 +22,7 @@ public class AuthenticationService implements IAuthenticationService {
         }
 
         // Create a new user and add it to the users list
-        User newUser = new User(username, password);
+        User newUser = new User(username, password, userType);
         users.add(newUser);
 
         System.out.println("Sign-up successful!");

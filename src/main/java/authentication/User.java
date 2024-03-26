@@ -2,19 +2,27 @@ package authentication;
 import java.lang.*;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import calendar.CalendarItem;
 
 public class User {
+    private UUID userUUID;
     private String username;
     private String password;
     private ArrayList<CalendarItem> calendarItems;
-    public User(String username, String password) {
+    private String userType;
+    public User(String username, String password, String userType) {
+        this.userUUID = UUID.randomUUID();
         this.username = username;
         this.password = password;
         this.calendarItems = new ArrayList<>();
+        this.userType = userType;
     }
 
+    public UUID getUUID() {
+        return userUUID;
+    }
     public String getUsername() {
         return username;
     }

@@ -64,10 +64,12 @@ public class Authentication {
         boolean validUsername = false;
         String username = "";
         String password = "";
+        String userType = "";
+        Scanner scanner = null;
         // could make an option to escape this signup loop
         while (!validUsername) {
             System.out.print("Enter your username: ");
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
             username = scanner.nextLine();
             if (authService.usernameCheck(username) == true) {
                 validUsername = true;
@@ -78,8 +80,10 @@ public class Authentication {
                 // - If the user is null, show "The username is already taken!"
             }
         }
+        System.out.print("Select your userType: ");
+        userType = scanner.nextLine();
 
-        User user = authService.signUp(username, password); //could change to only check password now as username is superflous
+        User user = authService.signUp(username, password, userType); //could change to only check password now as username is superflous
 
         // TODO Now: Show a message based on the result of the signUp method:
         if (user != null) {

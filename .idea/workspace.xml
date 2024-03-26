@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="8461b64b-0823-49c5-a2c2-b16655903f24" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/authentication/AuthenticationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/IAuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/authentication/IAuthenticationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/authentication/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/calendar/CalendarItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/calendar/CalendarItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/calendar/CalendarList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/calendar/CalendarList.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/Authentication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/Authentication.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

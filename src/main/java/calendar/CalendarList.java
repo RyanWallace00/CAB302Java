@@ -2,13 +2,17 @@ package calendar;
 
 import authentication.User;
 
+import java.time.LocalDateTime;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class CalendarList {
+    private UUID userUUID;
     private final User user;  // Ensure that you declare the 'user' variable at the class level
     private boolean isRunning;
 
     public CalendarList(User user) {
+        this.userUUID = user.getUUID();
         this.user = user;
         this.isRunning = true;
     }
@@ -87,11 +91,16 @@ public class CalendarList {
      * Requests the user for a new item description and adds it to the list.
      */
     public void onAddItem() {
-        System.out.print("Enter the description of the item: ");
+        System.out.print("Enter the title of the calendar item: ");
         Scanner scanner = new Scanner(System.in);
+        String title = scanner.nextLine();
+        System.out.print("Enter the description of the calendar item: ");
+        scanner = new Scanner(System.in);
         String description = scanner.nextLine();
         // TODO Now: Call the add(CalendarItemitem) method of the user's to-do items list to add a new item
-        user.getCalendarItems().add(new CalendarItem(description));
+        user.getCalendarItems().add(new CalendarItem(title, description, LocalDateTime.now(), LocalDateTime.now(), userUUID));
+        //add interface to set what userUUID's are being added (employees also if business account)
+        // update to interface of ios scroll wheel looking thing for time and a calendar selecting like airlines for date/time
     }
 
     /**
@@ -99,7 +108,7 @@ public class CalendarList {
      */
     public void onMarkAsDone() {
         onShowAllItems();
-        System.out.print("Enter the number of the item to mark as done: ");
+        System.out.print("Enter the number of the calendar item to mark as done: ");
         Scanner scanner = new Scanner(System.in);
         int itemNumber = scanner.nextInt();
         // TODO Now: Set the isDone field of the item at the specified index to true
