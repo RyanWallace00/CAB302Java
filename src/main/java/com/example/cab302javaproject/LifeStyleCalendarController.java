@@ -9,6 +9,6 @@ public class LifeStyleCalendarController {
 
     @FXML
     protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to the Life Style Calendar JavaFX Application!");
+        welcomeText.setText("Welcome to the Life Style Calendar JavaFX Application!!!");
     }
 }
