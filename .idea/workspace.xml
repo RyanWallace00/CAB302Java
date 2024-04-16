@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8461b64b-0823-49c5-a2c2-b16655903f24" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/UserDetails.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/AuthenticationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/IAuthenticationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/authentication/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/calendar/CalendarItem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/calendar/CalendarList.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/Authentication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifeStyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifeStyleCalendar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifeStyleCalendarController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/authentication/AuthenticationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/authentication/IAuthenticationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/authentication/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/calendar/CalendarItem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/calendar/CalendarList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/com/example/cab302javaproject/Authentication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/com/example/cab302javaproject/LifeStyleCalendar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/com/example/cab302javaproject/LifeStyleCalendarController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Old Stuff java/module-info.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,22 +55,25 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2dt3qd4un59vxWUSAaPkqpy5y1z" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.LifeStyleCalendar.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.All in CAB302JavaProject.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Ryan&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Application.LifeStyleCalendar.executor": "Run",
+    "JUnit.All in CAB302JavaProject.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Ryan",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.LifeStyleCalendar">
     <configuration name="LifeStyleCalendar" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.cab302javaproject.LifeStyleCalendar" />
@@ -117,5 +120,8 @@
       <updated>1710813739271</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>
