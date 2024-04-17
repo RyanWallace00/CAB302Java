@@ -14,15 +14,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class LifeStyleCalendar extends Application {
+public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
     private HashMap<UUID, UserDetails> userDetailsMap;
     private UserDetails loggedInUser;
+    private Image image;
 
     @Override
     public void start(Stage stage) {
@@ -30,9 +32,11 @@ public class LifeStyleCalendar extends Application {
         rootPane = new StackPane();
         userDetailsMap = new HashMap<>();
         Scene scene = new Scene(rootPane, 600, 400);
-        stage.setTitle("LifeStyle Calendar!");
+        stage.setTitle("Lifestyle Calendar!");
         stage.setScene(scene);
         stage.show();
+
+        image = new Image(".../LifestyleCalendarLogo.png");
 
         showHomePage();
     }
@@ -48,9 +52,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/../../image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+         // image = new Image(".../LifestyleCalendarLogo.png");
+         imageView.setImage(image);
 
         homePane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -81,9 +85,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/../../image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        // image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         VBox loginBox = new VBox(10);
         loginBox.setPadding(new Insets(10));
@@ -122,9 +126,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/to/your/image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        // image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         signUpPane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -179,9 +183,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/to/your/image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        //image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         updatePane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
