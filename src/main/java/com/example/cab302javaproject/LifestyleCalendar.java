@@ -139,6 +139,7 @@ public class LifestyleCalendar extends Application {
 
         Label questionLabel = new Label("Please answer the following questions:");
         HBox accountTypeBox = new HBox(10);
+        accountTypeBox.setAlignment(Pos.CENTER); // Center the HBox
         Button personalButton = new Button("Personal");
         Button managerButton = new Button("Manager");
         Button employeeButton = new Button("Employee");
