@@ -54,17 +54,37 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "Application.LifeStyleCalendar.executor": "Run",
+    "Application.LifestyleCalendar.executor": "Run",
     "JUnit.All in CAB302JavaProject.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "Ryan",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.LifeStyleCalendar">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.LifestyleCalendar">
     <configuration name="LifeStyleCalendar" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.cab302javaproject.LifeStyleCalendar" />
+      <module name="CAB302JavaProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.cab302javaproject.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LifestyleCalendar" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.cab302javaproject.LifestyleCalendar" />
       <module name="CAB302JavaProject" />
       <extension name="coverage">
         <pattern>
@@ -86,6 +106,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.LifestyleCalendar" />
         <item itemvalue="Application.LifeStyleCalendar" />
         <item itemvalue="JUnit.All in CAB302JavaProject" />
       </list>

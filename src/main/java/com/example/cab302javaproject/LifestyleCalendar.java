@@ -14,26 +14,29 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-
-public class LifeStyleCalendar extends Application {
+public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
     private HashMap<UUID, UserDetails> userDetailsMap;
     private UserDetails loggedInUser;
+    private Image image;
 
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
         rootPane = new StackPane();
-
+        userDetailsMap = new HashMap<>();
         Scene scene = new Scene(rootPane, 600, 400);
-        stage.setTitle("LifeStyle Calendar!");
+        stage.setTitle("Lifestyle Calendar!");
         stage.setScene(scene);
         stage.show();
+
+        image = new Image(".../LifestyleCalendarLogo.png");
 
         showHomePage();
     }
@@ -49,9 +52,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/../../image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+         // image = new Image(".../LifestyleCalendarLogo.png");
+         imageView.setImage(image);
 
         homePane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -82,9 +85,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/../../image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        // image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         VBox loginBox = new VBox(10);
         loginBox.setPadding(new Insets(10));
@@ -123,9 +126,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/to/your/image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        // image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         signUpPane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -180,9 +183,9 @@ public class LifeStyleCalendar extends Application {
         imageView.setSmooth(true);
         imageView.setCache(true);
 
-        // Add the image here
-        // Image image = new Image("path/to/your/image.jpg");
-        // imageView.setImage(image);
+        // Image Setting
+        //image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image);
 
         updatePane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
@@ -205,9 +208,10 @@ public class LifeStyleCalendar extends Application {
         cancelButton.setOnAction(event -> showHomePage());
         buttonsBox.getChildren().addAll(signUpButton, cancelButton);
 
-        updatePane.setCenter(updateBox); // -- old
-        rootPane.getChildren().setAll(updatePane);// -- old
-        //updateBox.getChildren ??? - incomplete
+        updateBox.getChildren().addAll(companyCodeLabel, updateDetailsLabel, nameField, emailField, passwordField, buttonsBox);
+        updatePane.setCenter(updateBox);
+
+        rootPane.getChildren().setAll(updatePane);
     }
 
     private boolean authenticateUser(String email, String password) {
@@ -226,6 +230,36 @@ public class LifeStyleCalendar extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private static class UserDetails {
+        private final UUID uuid;
+        private final String name;
+        private final String email;
+        private final String password;
+
+        public UserDetails(UUID uuid, String name, String email, String password) {
+            this.uuid = uuid;
+            this.name = name;
+            this.email = email;
+            this.password = password;
+        }
+
+        public UUID getUuid() {
+            return uuid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
     }
 
     public static void main(String[] args) {
