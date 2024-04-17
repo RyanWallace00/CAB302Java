@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.UUID;
 
-
 public class LifeStyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
@@ -29,7 +28,7 @@ public class LifeStyleCalendar extends Application {
     public void start(Stage stage) {
         primaryStage = stage;
         rootPane = new StackPane();
-
+        userDetailsMap = new HashMap<>();
         Scene scene = new Scene(rootPane, 600, 400);
         stage.setTitle("LifeStyle Calendar!");
         stage.setScene(scene);
@@ -205,9 +204,10 @@ public class LifeStyleCalendar extends Application {
         cancelButton.setOnAction(event -> showHomePage());
         buttonsBox.getChildren().addAll(signUpButton, cancelButton);
 
-        updatePane.setCenter(updateBox); // -- old
-        rootPane.getChildren().setAll(updatePane);// -- old
-        //updateBox.getChildren ??? - incomplete
+        updateBox.getChildren().addAll(companyCodeLabel, updateDetailsLabel, nameField, emailField, passwordField, buttonsBox);
+        updatePane.setCenter(updateBox);
+
+        rootPane.getChildren().setAll(updatePane);
     }
 
     private boolean authenticateUser(String email, String password) {
@@ -226,6 +226,36 @@ public class LifeStyleCalendar extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private static class UserDetails {
+        private final UUID uuid;
+        private final String name;
+        private final String email;
+        private final String password;
+
+        public UserDetails(UUID uuid, String name, String email, String password) {
+            this.uuid = uuid;
+            this.name = name;
+            this.email = email;
+            this.password = password;
+        }
+
+        public UUID getUuid() {
+            return uuid;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
     }
 
     public static void main(String[] args) {
