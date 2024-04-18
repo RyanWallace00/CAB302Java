@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -17,7 +14,9 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LifestyleCalendar extends Application {
     private Stage primaryStage;
@@ -138,11 +137,15 @@ public class LifestyleCalendar extends Application {
         signUpBox.setAlignment(Pos.CENTER);
 
         Label questionLabel = new Label("Please answer the following questions:");
+        ToggleGroup accountTypeGroup = new ToggleGroup(); // Create a ToggleGroup
         HBox accountTypeBox = new HBox(10);
         accountTypeBox.setAlignment(Pos.CENTER); // Center the HBox
-        Button personalButton = new Button("Personal");
-        Button managerButton = new Button("Manager");
-        Button employeeButton = new Button("Employee");
+        ToggleButton personalButton = new ToggleButton("Personal");
+        personalButton.setToggleGroup(accountTypeGroup); // Associate the button with the ToggleGroup
+        ToggleButton managerButton = new ToggleButton("Manager");
+        managerButton.setToggleGroup(accountTypeGroup);
+        ToggleButton employeeButton = new ToggleButton("Employee");
+        employeeButton.setToggleGroup(accountTypeGroup);
         accountTypeBox.getChildren().addAll(personalButton, managerButton, employeeButton);
         TextField nameField = new TextField();
         nameField.setPromptText("Name");
@@ -156,11 +159,21 @@ public class LifestyleCalendar extends Application {
             String email = emailField.getText();
             String password = passwordField.getText();
 
+            AtomicReference<String> atomicSelectedAccountType = new AtomicReference<>();
+            accountTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    atomicSelectedAccountType.set(((ToggleButton) newValue).getText());
+                }
+            });
+            String selectedAccountType = atomicSelectedAccountType.get();
+
             if (userDetailsMap.containsKey(email)) {
                 showAlert("Email already exists.");
+            } else if (selectedAccountType == null) {
+                showAlert("Please select an account type.");
             } else {
                 UUID uuid = UUID.randomUUID();
-                UserDetails userDetails = new UserDetails(uuid, name, email, password);
+                UserDetails userDetails = new UserDetails(uuid, name, email, password, selectedAccountType,Optional.empty());
                 userDetailsMap.put(uuid, userDetails);
                 showAlert("Sign up successful.");
                 showLoginScreen();
@@ -238,12 +251,16 @@ public class LifestyleCalendar extends Application {
         private final String name;
         private final String email;
         private final String password;
+        private final String accountType;
+        private final Optional<UUID> linkingCode;
 
-        public UserDetails(UUID uuid, String name, String email, String password) {
+        public UserDetails(UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
             this.uuid = uuid;
             this.name = name;
             this.email = email;
             this.password = password;
+            this.accountType = accountType;
+            this.linkingCode = linkingCode;
         }
 
         public UUID getUuid() {
