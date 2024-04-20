@@ -14,6 +14,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class LifestyleCalendar extends Application {
         stage.setScene(scene);
         stage.show();
 
-        image = new Image(".../LifestyleCalendarLogo.png");
+        image = new Image("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
 
         showHomePage();
     }
@@ -89,6 +90,9 @@ public class LifestyleCalendar extends Application {
         // image = new Image(".../LifestyleCalendarLogo.png");
         imageView.setImage(image);
 
+        loginPane.setTop(imageView);
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+
         VBox loginBox = new VBox(10);
         loginBox.setPadding(new Insets(10));
         loginBox.setAlignment(Pos.CENTER);
@@ -101,6 +105,7 @@ public class LifestyleCalendar extends Application {
        // Button loginButton = new Button("LOGIN");
 
         HBox buttonsBox = new HBox(10);
+        buttonsBox.setAlignment(Pos.CENTER);
         Button loginButton = new Button("LOGIN");
         Button cancelButton = new Button("CANCEL");
         cancelButton.setOnAction(event -> showHomePage());
@@ -134,7 +139,6 @@ public class LifestyleCalendar extends Application {
         imageView.setCache(true);
 
         // Image Setting
-        // image = new Image(".../LifestyleCalendarLogo.png");
         imageView.setImage(image);
 
         signUpPane.setTop(imageView);
@@ -162,38 +166,39 @@ public class LifestyleCalendar extends Application {
         TextField passwordField = new TextField();
         passwordField.setPromptText("Password");
 
-
         HBox buttonsBox = new HBox(10);
+        buttonsBox.setAlignment(Pos.CENTER);
         Button signUpButton = new Button("SIGN UP");
         Button cancelButton = new Button("CANCEL");
         cancelButton.setOnAction(event -> showHomePage());
         buttonsBox.getChildren().addAll(signUpButton, cancelButton);
 
-
-        //Button signUpButton = new Button("SIGN UP");
         signUpButton.setOnAction(event -> {
-            String name = nameField.getText();
-            String email = emailField.getText();
-            String password = passwordField.getText();
+            final String name = nameField.getText();
+            final String email = emailField.getText();
+            final String password = passwordField.getText();
 
             AtomicReference<String> atomicSelectedAccountType = new AtomicReference<>();
+            Toggle selectedToggle = accountTypeGroup.getSelectedToggle();
+            if (selectedToggle != null) {
+                atomicSelectedAccountType.set(((ToggleButton) selectedToggle).getText());
+            }
+
             accountTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     atomicSelectedAccountType.set(((ToggleButton) newValue).getText());
                 }
             });
-            String selectedAccountType = atomicSelectedAccountType.get();
+
+            final String selectedAccountType = atomicSelectedAccountType.get();
 
             if (userDetailsMap.containsKey(email)) {
                 showAlert("Email already exists.");
             } else if (selectedAccountType == null) {
                 showAlert("Please select an account type.");
             } else {
-//                UUID uuid = UUID.randomUUID();
-//                UserDetails userDetails = new UserDetails(uuid, name, email, password, selectedAccountType,Optional.empty());
-
-                UUID uuid = UUID.randomUUID();
-                UserDetails userDetails;
+                final UUID userId = UUID.randomUUID();
+                Optional<UUID> linkingCode = Optional.empty();
 
                 if (selectedAccountType.equals("Manager")) {
                     // Create a popup for Manager account type
@@ -206,20 +211,24 @@ public class LifestyleCalendar extends Application {
                     popupLabel.setTextAlignment(TextAlignment.CENTER);
                     popupLabel.setWrapText(true);
 
-                    UUID linkingCode = UUID.randomUUID();
-                    Label linkingCodeLabel = new Label(linkingCode.toString());
+                    final UUID managerLinkingCode = UUID.randomUUID();
+                    Label linkingCodeLabel = new Label(managerLinkingCode.toString());
 
                     Button okButton = new Button("OK");
-                    okButton.setOnAction(e -> popupStage.close());
+                    okButton.setOnAction(e -> {
+                        popupStage.close();
+                        //linkingCode = Optional.ofNullable(managerLinkingCode);
+                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode)); //linkingCode);
+                        userDetailsMap.put(userId, userDetails);
+                        showAlert("Sign up successful.");
+                        showLoginScreen();
+                    });
 
                     popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton);
 
                     Scene popupScene = new Scene(popupVBox);
                     popupStage.setScene(popupScene);
                     popupStage.showAndWait();
-
-                    //userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, linkingCode);
-                    userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.ofNullable(linkingCode));
                 } else if (selectedAccountType.equals("Employee")) {
                     // Create a popup for Employee account type
                     Stage popupStage = new Stage();
@@ -232,13 +241,7 @@ public class LifestyleCalendar extends Application {
                     Button yesButton = new Button("Yes");
                     Button noButton = new Button("No");
 
-                    popupVBox.getChildren().addAll(popupLabel, yesButton, noButton);
-
-                    Scene popupScene = new Scene(popupVBox);
-                    popupStage.setScene(popupScene);
-                    popupStage.showAndWait();
-
-                    if (yesButton.isArmed()) {
+                    yesButton.setOnAction(event2 -> {
                         // Create a new popup for entering the linking code
                         Stage linkingCodeStage = new Stage();
                         VBox linkingCodeVBox = new VBox();
@@ -251,38 +254,56 @@ public class LifestyleCalendar extends Application {
                         Button submitButton = new Button("Submit");
                         Button cancelPopUpButton = new Button("Cancel");
 
+                        submitButton.setOnAction(event3 -> {
+                            String linkingCodeString = linkingCodeField.getText();
+                            UUID managerLinkingCode = null;
+                            try {
+                                managerLinkingCode = UUID.fromString(linkingCodeString);
+                            } catch (IllegalArgumentException e) {
+                                showAlert("Invalid linking code format.");
+                                return;
+                            }
+                            linkingCodeStage.close();
+                            UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
+                            userDetailsMap.put(userId, userDetails);
+                            showAlert("Sign up successful.");
+                            showLoginScreen();
+                        });
+
+                        cancelPopUpButton.setOnAction(event3 -> {
+                            linkingCodeStage.close();
+                            showSignUpScreen();
+                        });
+
                         linkingCodeVBox.getChildren().addAll(linkingCodeLabel, linkingCodeField, submitButton, cancelPopUpButton);
 
                         Scene linkingCodeScene = new Scene(linkingCodeVBox);
                         linkingCodeStage.setScene(linkingCodeScene);
                         linkingCodeStage.showAndWait();
+                    });
 
-                        if (submitButton.isArmed()) {
-                            String linkingCodeString = linkingCodeField.getText();
-                            UUID linkingCode = UUID.fromString(linkingCodeString);
-                            userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.ofNullable(linkingCode));
-//                            if (linkingCode != null) {
-//                                userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, linkingCode);
-//                            }else{
-//                                userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.empty());
-//                            }
-                        } else {
-                            userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.empty());
-                        }
-                    } else {
-                        userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.empty());
-                    }
+                    noButton.setOnAction(event2 -> {
+                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                        userDetailsMap.put(userId, userDetails);
+                        showAlert("Sign up successful.");
+                        showLoginScreen();
+                    });
+
+                    popupVBox.getChildren().addAll(popupLabel, yesButton, noButton);
+
+                    Scene popupScene = new Scene(popupVBox);
+                    popupStage.setScene(popupScene);
+                    popupStage.showAndWait();
                 } else {
-                    userDetails = new UserDetails(uuid, name, email, password, selectedAccountType, Optional.empty());
+                    UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                    userDetailsMap.put(userId, userDetails);
+                    showAlert("Sign up successful.");
+                    showLoginScreen();
                 }
-
-                userDetailsMap.put(uuid, userDetails);
-                showAlert("Sign up successful.");
-                showLoginScreen();
             }
         });
 
-        signUpBox.getChildren().addAll(questionLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox); //signUpButton);
+        signUpBox.getChildren().addAll(questionLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
         signUpPane.setCenter(signUpBox);
 
         rootPane.getChildren().setAll(signUpPane);
@@ -300,7 +321,6 @@ public class LifestyleCalendar extends Application {
         imageView.setCache(true);
 
         // Image Setting
-        //image = new Image(".../LifestyleCalendarLogo.png");
         imageView.setImage(image);
 
         updatePane.setTop(imageView);
@@ -319,11 +339,22 @@ public class LifestyleCalendar extends Application {
         TextField passwordField = new TextField();
         passwordField.setText(loggedInUser.getPassword());
         HBox buttonsBox = new HBox(10);
-        Button signUpButton = new Button("UPDATE");
+        buttonsBox.setAlignment(Pos.CENTER);
+        Button updateButton = new Button("UPDATE");
         Button cancelButton = new Button("CANCEL");
         cancelButton.setOnAction(event -> showHomePage());
-        //signup button doing nothing??
-        buttonsBox.getChildren().addAll(signUpButton, cancelButton);
+        buttonsBox.getChildren().addAll(updateButton, cancelButton);
+
+        updateButton.setOnAction(event -> {
+            String name = nameField.getText();
+            String email = emailField.getText();
+            String password = passwordField.getText();
+
+            UserDetails updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
+            loggedInUser = updatedUserDetails;
+            showAlert("Details updated successfully.");
+        });
 
         updateBox.getChildren().addAll(companyCodeLabel, updateDetailsLabel, nameField, emailField, passwordField, buttonsBox);
         updatePane.setCenter(updateBox);
@@ -381,7 +412,16 @@ public class LifestyleCalendar extends Application {
         public String getPassword() {
             return password;
         }
+
+        public String getAccountType() {
+            return accountType;
+        }
+
+        public Optional<UUID> getLinkingCode() {
+            return linkingCode;
+        }
     }
+
 
     public static void main(String[] args) {
         launch();
