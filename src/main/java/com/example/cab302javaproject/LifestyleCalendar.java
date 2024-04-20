@@ -6,10 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -88,31 +85,35 @@ public class LifestyleCalendar extends Application {
         imageView.setCache(true);
 
         // Image Setting
-        // image = new Image(".../LifestyleCalendarLogo.png");
         imageView.setImage(image);
 
         loginPane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
 
-        VBox loginBox = new VBox(10);
-        loginBox.setPadding(new Insets(10));
-        loginBox.setAlignment(Pos.CENTER);
+        VBox centerBox = new VBox(10);
+        centerBox.setAlignment(Pos.CENTER);
+        centerBox.setPadding(new Insets(10));
 
         Label informationLabel = new Label("Please enter your account details below:");
         informationLabel.setFont(new Font(15));
-        TextField emailField = new TextField();
-        emailField.setPromptText("Email");
-        TextField passwordField = new TextField();
-        passwordField.setPromptText("Password");
+        informationLabel.setAlignment(Pos.CENTER);
 
-       // Button loginButton = new Button("LOGIN");
+        VBox formBox = new VBox(5);
+        Label emailLabel = new Label("Email");
+        TextField emailField = new TextField();
+        Label passwordLabel = new Label("Password");
+        TextField passwordField = new TextField();
+        formBox.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField);
+        formBox.setAlignment(Pos.CENTER_LEFT);
 
         HBox buttonsBox = new HBox(10);
-        buttonsBox.setAlignment(Pos.CENTER);
         Button loginButton = new Button("LOGIN");
         Button cancelButton = new Button("CANCEL");
-        cancelButton.setOnAction(event -> showHomePage());
         buttonsBox.getChildren().addAll(loginButton, cancelButton);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+        cancelButton.setOnAction(event -> showHomePage()); // Set action for cancel button
+
         loginButton.setOnAction(event -> {
             String email = emailField.getText();
             String password = passwordField.getText();
@@ -124,8 +125,8 @@ public class LifestyleCalendar extends Application {
             }
         });
 
-        loginBox.getChildren().addAll(informationLabel, emailField, passwordField, buttonsBox);//loginButton);
-        loginPane.setCenter(loginBox);
+        centerBox.getChildren().addAll(informationLabel, formBox, buttonsBox);
+        loginPane.setCenter(centerBox);
 
         rootPane.getChildren().setAll(loginPane);
     }
@@ -164,12 +165,21 @@ public class LifestyleCalendar extends Application {
         ToggleButton employeeButton = new ToggleButton("Employee");
         employeeButton.setToggleGroup(accountTypeGroup);
         accountTypeBox.getChildren().addAll(personalButton, managerButton, employeeButton);
+
+        VBox formBox = new VBox(5);
+
+        Label nameLabel = new Label("Name");
         TextField nameField = new TextField();
-        nameField.setPromptText("Name");
+        //nameField.setPromptText("Name");
+        Label emailLabel = new Label("Email");
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
+        //emailField.setPromptText("Email");
+        Label passwordLabel = new Label("Password");
         TextField passwordField = new TextField();
-        passwordField.setPromptText("Password");
+       // passwordField.setPromptText("Password");
+
+        formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
+        formBox.setAlignment(Pos.CENTER_LEFT);
 
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
@@ -309,7 +319,10 @@ public class LifestyleCalendar extends Application {
             }
         });
 
-        signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
+        signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, formBox, buttonsBox);
+
+        //signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
+
         signUpPane.setCenter(signUpBox);
 
         rootPane.getChildren().setAll(signUpPane);
@@ -336,14 +349,40 @@ public class LifestyleCalendar extends Application {
         updateBox.setPadding(new Insets(10));
         updateBox.setAlignment(Pos.CENTER);
 
-        Label companyCodeLabel = new Label("Company Code: Lorem ipsum dolor sit");
+        Label accountSettingsLabel = new Label("Account Settings");
+        accountSettingsLabel.setFont(new Font(30));//15));
+        //Label companyCodeLabel = new Label("Company Code: Lorem ipsum dolor sit");
+        Label companyCodeLabel = new Label("Company Code:");
+        TextField companyCodeField = new TextField();
+
+        HBox companyBox = new HBox(10);
+        companyBox.getChildren().addAll(companyCodeLabel, companyCodeField);
+        companyBox.setAlignment(Pos.CENTER);
+
+        // Add a gap between the labels
+        // Region gap = new Region();
+        // gap.setPrefHeight(60); // Height of gap
+        new Label();
+
         Label updateDetailsLabel = new Label("Update your details below:");
+        updateDetailsLabel.setFont(new Font(15));
+
+
+        VBox formBox = new VBox(5);
+        Label nameLabel = new Label("Name");
+
         TextField nameField = new TextField();
         nameField.setText(loggedInUser.getName());
+        Label emailLabel = new Label("Email");
         TextField emailField = new TextField();
         emailField.setText(loggedInUser.getEmail());
+        Label passwordLabel = new Label("Password");
         TextField passwordField = new TextField();
         passwordField.setText(loggedInUser.getPassword());
+
+        formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
+        formBox.setAlignment(Pos.CENTER_LEFT);
+
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
         Button updateButton = new Button("UPDATE");
@@ -362,7 +401,7 @@ public class LifestyleCalendar extends Application {
             showAlert("Details updated successfully.");
         });
 
-        updateBox.getChildren().addAll(companyCodeLabel, updateDetailsLabel, nameField, emailField, passwordField, buttonsBox);
+        updateBox.getChildren().addAll(accountSettingsLabel, companyBox, updateDetailsLabel, formBox, buttonsBox); //nameField, emailField, passwordField, buttonsBox);
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
