@@ -351,7 +351,13 @@ public class LifestyleCalendar extends Application {
 
         Label accountSettingsLabel = new Label("Account Settings");
         accountSettingsLabel.setFont(new Font(30));//15));
-        //Label companyCodeLabel = new Label("Company Code: Lorem ipsum dolor sit");
+        Label companyCodeDescriptionLabel = new Label();
+        if (companyCodeDescriptionLabel == null) {
+            companyCodeDescriptionLabel.setText("Add company code below:");
+        } else {
+            companyCodeDescriptionLabel.setText("Modify company code below:");
+        }
+        accountSettingsLabel.setFont(new Font(15));
         Label companyCodeLabel = new Label("Company Code:");
         TextField companyCodeField = new TextField();
 
@@ -401,7 +407,7 @@ public class LifestyleCalendar extends Application {
             showAlert("Details updated successfully.");
         });
 
-        updateBox.getChildren().addAll(accountSettingsLabel, companyBox, updateDetailsLabel, formBox, buttonsBox); //nameField, emailField, passwordField, buttonsBox);
+        updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox); //nameField, emailField, passwordField, buttonsBox);
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
