@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -97,6 +98,8 @@ public class LifestyleCalendar extends Application {
         loginBox.setPadding(new Insets(10));
         loginBox.setAlignment(Pos.CENTER);
 
+        Label informationLabel = new Label("Please enter your account details below:");
+        informationLabel.setFont(new Font(15));
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
         TextField passwordField = new TextField();
@@ -121,7 +124,7 @@ public class LifestyleCalendar extends Application {
             }
         });
 
-        loginBox.getChildren().addAll(emailField, passwordField, buttonsBox);//loginButton);
+        loginBox.getChildren().addAll(informationLabel, emailField, passwordField, buttonsBox);//loginButton);
         loginPane.setCenter(loginBox);
 
         rootPane.getChildren().setAll(loginPane);
@@ -149,6 +152,8 @@ public class LifestyleCalendar extends Application {
         signUpBox.setAlignment(Pos.CENTER);
 
         Label questionLabel = new Label("Please answer the following questions:");
+        questionLabel.setFont(new Font(15));
+        Label accountTypeLabel = new Label("Select your account type below:");
         ToggleGroup accountTypeGroup = new ToggleGroup(); // Create a ToggleGroup
         HBox accountTypeBox = new HBox(10);
         accountTypeBox.setAlignment(Pos.CENTER); // Center the HBox
@@ -267,12 +272,12 @@ public class LifestyleCalendar extends Application {
                             UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
                             userDetailsMap.put(userId, userDetails);
                             showAlert("Sign up successful.");
+                            popupStage.close();
                             showLoginScreen();
                         });
 
                         cancelPopUpButton.setOnAction(event3 -> {
                             linkingCodeStage.close();
-                            showSignUpScreen();
                         });
 
                         linkingCodeVBox.getChildren().addAll(linkingCodeLabel, linkingCodeField, submitButton, cancelPopUpButton);
@@ -286,6 +291,7 @@ public class LifestyleCalendar extends Application {
                         UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
                         userDetailsMap.put(userId, userDetails);
                         showAlert("Sign up successful.");
+                        popupStage.close();
                         showLoginScreen();
                     });
 
@@ -303,7 +309,7 @@ public class LifestyleCalendar extends Application {
             }
         });
 
-        signUpBox.getChildren().addAll(questionLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
+        signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
         signUpPane.setCenter(signUpBox);
 
         rootPane.getChildren().setAll(signUpPane);
