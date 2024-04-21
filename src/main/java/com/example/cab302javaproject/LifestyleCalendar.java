@@ -12,8 +12,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,7 +55,7 @@ public class LifestyleCalendar extends Application {
          // image = new Image(".../LifestyleCalendarLogo.png");
          imageView.setImage(image);
 
-        homePane.setTop(imageView);
+        //homePane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
 
         VBox buttonBox = new VBox(10);
@@ -67,7 +67,7 @@ public class LifestyleCalendar extends Application {
         Button signUpButton = new Button("SIGN UP");
         signUpButton.setOnAction(event -> showSignUpScreen());
 
-        buttonBox.getChildren().addAll(loginButton, signUpButton);
+        buttonBox.getChildren().addAll(imageView,loginButton, signUpButton);
         homePane.setCenter(buttonBox);
 
         rootPane.getChildren().setAll(homePane);
@@ -87,7 +87,7 @@ public class LifestyleCalendar extends Application {
         // Image Setting
         imageView.setImage(image);
 
-        loginPane.setTop(imageView);
+        //loginPane.setTop(imageView);
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
 
         VBox centerBox = new VBox(10);
@@ -125,7 +125,7 @@ public class LifestyleCalendar extends Application {
             }
         });
 
-        centerBox.getChildren().addAll(informationLabel, formBox, buttonsBox);
+        centerBox.getChildren().addAll(imageView, informationLabel, formBox, buttonsBox);
         loginPane.setCenter(centerBox);
 
         rootPane.getChildren().setAll(loginPane);
@@ -149,7 +149,7 @@ public class LifestyleCalendar extends Application {
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
 
         VBox signUpBox = new VBox(10);
-        signUpBox.setPadding(new Insets(10));
+        signUpBox.setPadding(new Insets(0,10,30,10));
         signUpBox.setAlignment(Pos.CENTER);
 
         Label questionLabel = new Label("Please answer the following questions:");
@@ -170,13 +170,10 @@ public class LifestyleCalendar extends Application {
 
         Label nameLabel = new Label("Name");
         TextField nameField = new TextField();
-        //nameField.setPromptText("Name");
         Label emailLabel = new Label("Email");
         TextField emailField = new TextField();
-        //emailField.setPromptText("Email");
         Label passwordLabel = new Label("Password");
         TextField passwordField = new TextField();
-       // passwordField.setPromptText("Password");
 
         formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
         formBox.setAlignment(Pos.CENTER_LEFT);
@@ -321,8 +318,6 @@ public class LifestyleCalendar extends Application {
 
         signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, formBox, buttonsBox);
 
-        //signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, nameField, emailField, passwordField, buttonsBox);
-
         signUpPane.setCenter(signUpBox);
 
         rootPane.getChildren().setAll(signUpPane);
@@ -346,33 +341,40 @@ public class LifestyleCalendar extends Application {
         BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
 
         VBox updateBox = new VBox(10);
-        updateBox.setPadding(new Insets(10));
+        updateBox.setPadding(new Insets(0, 10, 50, 10));
         updateBox.setAlignment(Pos.CENTER);
 
         Label accountSettingsLabel = new Label("Account Settings");
         accountSettingsLabel.setFont(new Font(30));//15));
         Label companyCodeDescriptionLabel = new Label();
-        if (companyCodeDescriptionLabel == null) {
+        if (loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
             companyCodeDescriptionLabel.setText("Add company code below:");
-        } else {
+        } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
+            companyCodeDescriptionLabel.setText("Company code below:");
+        }
+        else {
             companyCodeDescriptionLabel.setText("Modify company code below:");
         }
         accountSettingsLabel.setFont(new Font(15));
         Label companyCodeLabel = new Label("Company Code:");
         TextField companyCodeField = new TextField();
+        Optional<UUID> linkingCode = loggedInUser.getLinkingCode();
+        companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
+        if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
+            companyCodeField.setEditable(true);
+        }
+        else {
+            companyCodeField.setEditable(false);
+        }
 
         HBox companyBox = new HBox(10);
         companyBox.getChildren().addAll(companyCodeLabel, companyCodeField);
         companyBox.setAlignment(Pos.CENTER);
 
-        // Add a gap between the labels
-        // Region gap = new Region();
-        // gap.setPrefHeight(60); // Height of gap
         new Label();
 
         Label updateDetailsLabel = new Label("Update your details below:");
         updateDetailsLabel.setFont(new Font(15));
-
 
         VBox formBox = new VBox(5);
         Label nameLabel = new Label("Name");
@@ -400,17 +402,54 @@ public class LifestyleCalendar extends Application {
             String name = nameField.getText();
             String email = emailField.getText();
             String password = passwordField.getText();
+            boolean isValidUUID = isValidUUID(companyCodeField.getText());
+            if (!companyCodeField.getText().isEmpty() && !isValidUUID){
+                showAlert("Not valid linking code");
+                return;
+            }
 
-            UserDetails updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+            UserDetails updatedUserDetails;
+            if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
+                Optional<UUID> linkingCodeOptional;
+                if (companyCodeField.getText().isEmpty()) {
+                    linkingCodeOptional = Optional.empty();
+                } else {
+                    try {
+                        UUID linkingCodeUUID = UUID.fromString(companyCodeField.getText());
+                        linkingCodeOptional = Optional.of(linkingCodeUUID);
+                    } catch (IllegalArgumentException e) {
+                        // Invalid UUID format
+                        linkingCodeOptional = loggedInUser.getLinkingCode();
+                    }
+                }
+
+                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
+            }else{
+                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+            }
+
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
             loggedInUser = updatedUserDetails;
             showAlert("Details updated successfully.");
         });
 
-        updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox); //nameField, emailField, passwordField, buttonsBox);
+        if (Objects.equals(loggedInUser.getAccountType(), "Personal")){
+            updateBox.getChildren().addAll(accountSettingsLabel, updateDetailsLabel, formBox, buttonsBox);
+        }else{
+            updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox);
+        }
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
+    }
+
+    private static boolean isValidUUID(String str) {
+        try {
+            UUID uuid = UUID.fromString(str);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private boolean authenticateUser(String email, String password) {
