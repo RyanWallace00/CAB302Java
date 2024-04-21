@@ -18,6 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
@@ -512,6 +518,47 @@ public class LifestyleCalendar extends Application {
         }
     }
 
+    private static class CalendarDetails {
+        private final UUID uuid;
+        private final String eventName;
+        private final String eventDescription;
+        private final ZonedDateTime eventFrom;
+        private final ZonedDateTime eventTo;
+        private final List<UUID> linkingUsers;
+
+        public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) {
+            this.uuid = uuid;
+            this.eventName = eventName;
+            this.eventDescription = eventDescription;
+            this.eventFrom = eventFrom;
+            this.eventTo = eventTo;
+            this.linkingUsers = linkingUsers;
+        }
+
+        public UUID getUuid() {
+            return uuid;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+        public String getEventDescrption() {
+            return eventDescription;
+        }
+
+        public ZonedDateTime getEventFrom() {
+            return eventFrom;
+        }
+
+        public ZonedDateTime getEventTo() {
+            return eventTo;
+        }
+
+        public List<UUID> getLinkingUsers() {
+            return linkingUsers;
+        }
+    }
 
     public static void main(String[] args) {
         launch();
