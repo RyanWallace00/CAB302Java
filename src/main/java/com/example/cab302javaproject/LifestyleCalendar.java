@@ -319,10 +319,10 @@ public class LifestyleCalendar extends Application {
                             linkingCodeStage.close();
                             UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
                             userDetailsMap.put(userId, userDetails);
-                            showAlert("Sign up successful.");
-                            popupStage.close();
-                            showLoginScreen();
                             saveUserData(); // Save user data after sign up
+                            popupStage.close();
+                            showAlert("Sign up successful.");
+                            showLoginScreen();
                         });
 
                         cancelPopUpButton.setOnAction(event3 -> {

@@ -7,10 +7,7 @@
     <list default="true" id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendarLogo.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/LifestyleCalendarLogo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/calendarData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/calendarData.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/userData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/userData.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/cab302javaproject/hello-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/userData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/userData.dat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
