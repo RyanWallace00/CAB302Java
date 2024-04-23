@@ -55,15 +55,15 @@ public class LifestyleCalendar extends Application {
         calendarDetailsMap = new HashMap<>();
 
         Scene scene = new Scene(rootPane, 600, 400);
-        //stage.getIcons().add(new Image("https://genuinecoder.com/wp-content/uploads/2022/06/genuine_coder-3.png"));
 
         stage.setTitle("Lifestyle Calendar!");
         stage.setScene(scene);
         stage.show();
 
         // Load application logo
-        image = new Image("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
+        image = new Image("LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
 
+        stage.getIcons().add(image);
         // Load user data when the application starts
         loadUserData();
 
@@ -391,7 +391,7 @@ public class LifestyleCalendar extends Application {
         Label accountSettingsLabel = new Label("Account Settings");
         accountSettingsLabel.setFont(new Font(30));//15));
         Label companyCodeDescriptionLabel = new Label();
-        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
+        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
             companyCodeDescriptionLabel.setText("Add company code below:");
         } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
             companyCodeDescriptionLabel.setText("Company code below:");
@@ -527,7 +527,7 @@ public class LifestyleCalendar extends Application {
 
     // Method to load user data from file
     private void loadUserData() {
-        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+        File file = new File("src/main/resources/userData.dat");
 
         if (file.exists() && file.length() > 0) {
             try {
@@ -541,14 +541,14 @@ public class LifestyleCalendar extends Application {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("userData.dat file is empty or does not exist.");
+            //System.out.println("userData.dat file is empty or does not exist.");
             userDetailsMap = new HashMap<>();
         }
     }
 
     private void saveUserData() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat");
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 
             objectOut.writeObject(userDetailsMap);
@@ -655,7 +655,7 @@ public class LifestyleCalendar extends Application {
 
     // Method to load user data from file
     private void loadCalendarData() {
-        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+        File file = new File("calendarData.dat");
 
         if (file.exists() && file.length() > 0) {
             try {
@@ -669,14 +669,14 @@ public class LifestyleCalendar extends Application {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("calendarData.dat file is empty or does not exist.");
+            //System.out.println("calendarData.dat file is empty or does not exist.");
             calendarDetailsMap = new HashMap<>();
         }
     }
 
     private void saveCalendarData() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+            FileOutputStream fileOut = new FileOutputStream("calendarData.dat");
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 
             objectOut.writeObject(calendarDetailsMap);
