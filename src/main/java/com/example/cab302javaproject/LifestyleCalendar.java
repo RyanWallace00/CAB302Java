@@ -2,369 +2,369 @@
  * LifestyleCalendar, a JavaFX application for promoting and maanging a better work/life balance whilst taking into consideration health aspects such as eye-strain
  * It includes features like user authentication, profile management, and event scheduling.
  */
-package com.example.cab302javaproject;
+package com.example.cab302javaproject; // Declares the package name for the Java class
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
-import javafx.scene.image.Image;
+import javafx.application.Application; // Imports the Application class from the JavaFX library
+import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
+import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
+import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
+import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
+import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
+import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
+import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
+import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
+import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
+import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
+import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
+import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
+import java.util.UUID; // Imports the UUID class from the Java utility package for generating unique identifiers
+import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
 
-import java.io.*;
-import java.io.Serializable;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*; // Imports all classes related to input/output from the Java I/O package
+import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
+import java.io.FileInputStream; // Imports the FileInputStream class from the Java I/O package for reading from files
+import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
+import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
+import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
+import java.util.List; // Imports the List interface from the Java Collections Framework
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
  */
-public class LifestyleCalendar extends Application {
-    private Stage primaryStage;
-    private StackPane rootPane;
-    private HashMap<UUID, UserDetails> userDetailsMap;
-    private HashMap<UUID, CalendarDetails> calendarDetailsMap;
-    private UserDetails loggedInUser;
-    private Image image;
+public class LifestyleCalendar extends Application { // Defines the LifestyleCalendar class which extends the Application class from JavaFX
+    private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
+    private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
+    private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
+    private HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
+    private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
+    private Image image; // Declares a private instance variable to hold the application logo image
 
     /**
      * The start method initializes the primary stage and displays the home page.
      * @param stage The primary stage for the JavaFX application.
      */
-    @Override
-    public void start(Stage stage) {
-        primaryStage = stage;
-        rootPane = new StackPane();
-        userDetailsMap = new HashMap<>();
-        calendarDetailsMap = new HashMap<>();
+    @Override // Overrides the start method from the Application class
+    public void start(Stage stage) { // Defines the start method which takes a Stage object as a parameter
+        primaryStage = stage; // Assigns the passed Stage object to the primaryStage instance variable
+        rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
+        userDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
+        calendarDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
 
-        Scene scene = new Scene(rootPane, 600, 400);
+        Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
 
-        stage.setTitle("Lifestyle Calendar!");
-        stage.setScene(scene);
-        stage.show();
+        stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
+        stage.setScene(scene); // Sets the scene of the primary stage
+        stage.show(); // Displays the primary stage
 
         // Load application logo
-        image = new Image("LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
+        image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
 
-        stage.getIcons().add(image);
+        stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
         // Load user data when the application starts
-        loadUserData();
+        loadUserData(); // Calls the loadUserData method to load user data from a file
 
         // Display home page
-        showHomePage();
+        showHomePage(); // Calls the showHomePage method to display the home page
     }
 
     /**
      * Displays the home page with login and signup options.
      */
-    private void showHomePage() {
-        BorderPane homePane = new BorderPane();
+    private void showHomePage() { // Defines a private method to display the home page
+        BorderPane homePane = new BorderPane(); // Creates a new instance of BorderPane and assigns it to the homePane variable
 
         // Image Properties
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
+        ImageView imageView = new ImageView(); // Creates a new instance of ImageView and assigns it to the imageView variable
+        imageView.setFitWidth(200); // Sets the fitted width of the ImageView to 200
+        imageView.setFitHeight(150); // Sets the fitted height of the ImageView to 150
+        imageView.setPreserveRatio(true); // Sets the ImageView to preserve the aspect ratio of the image
+        imageView.setSmooth(true); // Enables smooth scaling for the ImageView
+        imageView.setCache(true); // Enables caching for the ImageView
 
         // Image Setting
-         // image = new Image(".../LifestyleCalendarLogo.png");
-         imageView.setImage(image);
+        // image = new Image(".../LifestyleCalendarLogo.png");
+        imageView.setImage(image); // Sets the image of the ImageView to the loaded application logo
 
         //homePane.setTop(imageView);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Aligns the ImageView to the top center of the BorderPane
 
-        VBox buttonBox = new VBox(10);
-        buttonBox.setPadding(new Insets(10));
-        buttonBox.setAlignment(Pos.CENTER);
+        VBox buttonBox = new VBox(10); // Creates a new instance of VBox with a spacing of 10 and assigns it to the buttonBox variable
+        buttonBox.setPadding(new Insets(10)); // Sets the padding of the VBox to 10
+        buttonBox.setAlignment(Pos.CENTER); // Aligns the contents of the VBox to the center
 
-        Button loginButton = new Button("LOGIN");
-        loginButton.setOnAction(event -> showLoginScreen());
-        Button signUpButton = new Button("SIGN UP");
-        signUpButton.setOnAction(event -> showSignUpScreen());
+        Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
+        loginButton.setOnAction(event -> showLoginScreen()); // Sets an event handler for the loginButton to call the showLoginScreen method
+        Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
+        signUpButton.setOnAction(event -> showSignUpScreen()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
 
-        buttonBox.getChildren().addAll(imageView,loginButton, signUpButton);
-        homePane.setCenter(buttonBox);
+        buttonBox.getChildren().addAll(imageView,loginButton, signUpButton); // Adds the ImageView, loginButton, and signUpButton to the buttonBox
+        homePane.setCenter(buttonBox); // Sets the center of the homePane to the buttonBox
 
-        rootPane.getChildren().setAll(homePane);
+        rootPane.getChildren().setAll(homePane); // Sets the contents of the rootPane to the homePane
     }
 
-    private void showLoginScreen() {
-        BorderPane loginPane = new BorderPane();
+    private void showLoginScreen() { // Defines a private method to display the login screen
+        BorderPane loginPane = new BorderPane(); // Creates a new instance of BorderPane and assigns it to the loginPane variable
 
         // Image Properties
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
+        ImageView imageView = new ImageView(); // Creates a new instance of ImageView and assigns it to the imageView variable
+        imageView.setFitWidth(200); // Sets the fitted width of the ImageView to 200
+        imageView.setFitHeight(150); // Sets the fitted height of the ImageView to 150
+        imageView.setPreserveRatio(true); // Sets the ImageView to preserve the aspect ratio of the image
+        imageView.setSmooth(true); // Enables smooth scaling for the ImageView
+        imageView.setCache(true); // Enables caching for the ImageView
 
         // Image Setting
-        imageView.setImage(image);
+        imageView.setImage(image); // Sets the image of the ImageView to the loaded application logo
 
         //loginPane.setTop(imageView);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Aligns the ImageView to the top center of the BorderPane
 
-        VBox centerBox = new VBox(10);
-        centerBox.setAlignment(Pos.CENTER);
-        centerBox.setPadding(new Insets(10));
+        VBox centerBox = new VBox(10); // Creates a new instance of VBox with a spacing of 10 and assigns it to the centerBox variable
+        centerBox.setAlignment(Pos.CENTER); // Aligns the contents of the VBox to the center
+        centerBox.setPadding(new Insets(10)); // Sets the padding of the VBox to 10
 
-        Label informationLabel = new Label("Please enter your account details below:");
-        informationLabel.setFont(new Font(15));
-        informationLabel.setAlignment(Pos.CENTER);
+        Label informationLabel = new Label("Please enter your account details below:"); // Creates a new instance of Label with the text "Please enter your account details below:" and assigns it to the informationLabel variable
+        informationLabel.setFont(new Font(15)); // Sets the font size of the Label to 15
+        informationLabel.setAlignment(Pos.CENTER); // Aligns the text of the Label to the center
 
-        VBox formBox = new VBox(5);
-        Label emailLabel = new Label("Email");
-        TextField emailField = new TextField();
-        Label passwordLabel = new Label("Password");
-        TextField passwordField = new TextField();
-        formBox.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField);
-        formBox.setAlignment(Pos.CENTER_LEFT);
+        VBox formBox = new VBox(5); // Creates a new instance of VBox with a spacing of 5 and assigns it to the formBox variable
+        Label emailLabel = new Label("Email"); // Creates a new instance of Label with the text "Email" and assigns it to the emailLabel variable
+        TextField emailField = new TextField(); // Creates a new instance of TextField and assigns it to the emailField variable
+        Label passwordLabel = new Label("Password"); // Creates a new instance of Label with the text "Password" and assigns it to the passwordLabel variable
+        TextField passwordField = new TextField(); // Creates a new instance of TextField and assigns it to the passwordField variable
+        formBox.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField); // Adds the emailLabel, emailField, passwordLabel, and passwordField to the formBox
+        formBox.setAlignment(Pos.CENTER_LEFT); // Aligns the contents of the formBox to the center-left
 
-        HBox buttonsBox = new HBox(10);
-        Button loginButton = new Button("LOGIN");
-        Button cancelButton = new Button("CANCEL");
-        buttonsBox.getChildren().addAll(loginButton, cancelButton);
-        buttonsBox.setAlignment(Pos.CENTER);
+        HBox buttonsBox = new HBox(10); // Creates a new instance of HBox with a spacing of 10 and assigns it to the buttonsBox variable
+        Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
+        Button cancelButton = new Button("CANCEL"); // Creates a new instance of Button with the text "CANCEL" and assigns it to the cancelButton variable
+        buttonsBox.getChildren().addAll(loginButton, cancelButton); // Adds the loginButton and cancelButton to the buttonsBox
+        buttonsBox.setAlignment(Pos.CENTER); // Aligns the contents of the buttonsBox to the center
 
-        cancelButton.setOnAction(event -> showHomePage()); // Set action for cancel button
+        cancelButton.setOnAction(event -> showHomePage()); // Sets an event handler for the cancelButton to call the showHomePage method
 
-        loginButton.setOnAction(event -> {
-            String email = emailField.getText();
-            String password = passwordField.getText();
+        loginButton.setOnAction(event -> { // Sets an event handler for the loginButton
+            String email = emailField.getText(); // Gets the text from the emailField and assigns it to the email variable
+            String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
 
-            if (authenticateUser(email, password)) {
-                loadCalendarData();
-                showProfileEditScreen();
+            if (authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
+                loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
+                showProfileEditScreen(); // Calls the showProfileEditScreen method to display the profile edit screen
             } else {
-                showAlert("Invalid email or password.");
+                showAlert("Invalid email or password."); // Displays an alert with the message "Invalid email or password."
             }
         });
 
-        centerBox.getChildren().addAll(imageView, informationLabel, formBox, buttonsBox);
-        loginPane.setCenter(centerBox);
+        centerBox.getChildren().addAll(imageView, informationLabel, formBox, buttonsBox); // Adds the imageView, informationLabel, formBox, and buttonsBox to the centerBox
+        loginPane.setCenter(centerBox); // Sets the center of the loginPane to the centerBox
 
-        rootPane.getChildren().setAll(loginPane);
+        rootPane.getChildren().setAll(loginPane); // Sets the contents of the rootPane to the loginPane
     }
 
-    private void showSignUpScreen() {
-        BorderPane signUpPane = new BorderPane();
+    private void showSignUpScreen() { // Defines a private method to display the sign-up screen
+        BorderPane signUpPane = new BorderPane(); // Creates a new instance of BorderPane and assigns it to the signUpPane variable
 
         // Image Properties
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
+        ImageView imageView = new ImageView(); // Creates a new instance of ImageView and assigns it to the imageView variable
+        imageView.setFitWidth(200); // Sets the fitted width of the ImageView to 200
+        imageView.setFitHeight(150); // Sets the fitted height of the ImageView to 150
+        imageView.setPreserveRatio(true); // Sets the ImageView to preserve the aspect ratio of the image
+        imageView.setSmooth(true); // Enables smooth scaling for the ImageView
+        imageView.setCache(true); // Enables caching for the ImageView
 
         // Image Setting
-        imageView.setImage(image);
+        imageView.setImage(image); // Sets the image of the ImageView to the loaded application logo
 
-        signUpPane.setTop(imageView);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        signUpPane.setTop(imageView); // Sets the ImageView as the top node of the signUpPane
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Aligns the ImageView to the top center of the BorderPane
 
-        VBox signUpBox = new VBox(10);
-        signUpBox.setPadding(new Insets(0,10,30,10));
-        signUpBox.setAlignment(Pos.CENTER);
+        VBox signUpBox = new VBox(10); // Creates a new instance of VBox with a spacing of 10 and assigns it to the signUpBox variable
+        signUpBox.setPadding(new Insets(0,10,30,10)); // Sets the padding of the VBox to 0 (top), 10 (right), 30 (bottom), 10 (left)
+        signUpBox.setAlignment(Pos.CENTER); // Aligns the contents of the VBox to the center
 
-        Label questionLabel = new Label("Please answer the following questions:");
-        questionLabel.setFont(new Font(15));
-        Label accountTypeLabel = new Label("Select your account type below:");
-        ToggleGroup accountTypeGroup = new ToggleGroup(); // Create a ToggleGroup
-        HBox accountTypeBox = new HBox(10);
-        accountTypeBox.setAlignment(Pos.CENTER); // Center the HBox
-        ToggleButton personalButton = new ToggleButton("Personal");
-        personalButton.setToggleGroup(accountTypeGroup); // Associate the button with the ToggleGroup
-        ToggleButton managerButton = new ToggleButton("Manager");
-        managerButton.setToggleGroup(accountTypeGroup);
-        ToggleButton employeeButton = new ToggleButton("Employee");
-        employeeButton.setToggleGroup(accountTypeGroup);
-        accountTypeBox.getChildren().addAll(personalButton, managerButton, employeeButton);
+        Label questionLabel = new Label("Please answer the following questions:"); // Creates a new instance of Label with the text "Please answer the following questions:" and assigns it to the questionLabel variable
+        questionLabel.setFont(new Font(15)); // Sets the font size of the Label to 15
+        Label accountTypeLabel = new Label("Select your account type below:"); // Creates a new instance of Label with the text "Select your account type below:" and assigns it to the accountTypeLabel variable
+        ToggleGroup accountTypeGroup = new ToggleGroup(); // Creates a new instance of ToggleGroup and assigns it to the accountTypeGroup variable
+        HBox accountTypeBox = new HBox(10); // Creates a new instance of HBox with a spacing of 10 and assigns it to the accountTypeBox variable
+        accountTypeBox.setAlignment(Pos.CENTER); // Aligns the contents of the HBox to the center
+        ToggleButton personalButton = new ToggleButton("Personal"); // Creates a new instance of ToggleButton with the text "Personal" and assigns it to the personalButton variable
+        personalButton.setToggleGroup(accountTypeGroup); // Associates the personalButton with the accountTypeGroup
+        ToggleButton managerButton = new ToggleButton("Manager"); // Creates a new instance of ToggleButton with the text "Manager" and assigns it to the managerButton variable
+        managerButton.setToggleGroup(accountTypeGroup); // Associates the managerButton with the accountTypeGroup
+        ToggleButton employeeButton = new ToggleButton("Employee"); // Creates a new instance of ToggleButton with the text "Employee" and assigns it to the employeeButton variable
+        employeeButton.setToggleGroup(accountTypeGroup); // Associates the employeeButton with the accountTypeGroup
+        accountTypeBox.getChildren().addAll(personalButton, managerButton, employeeButton); // Adds the personalButton, managerButton, and employeeButton to the accountTypeBox
 
-        VBox formBox = new VBox(5);
+        VBox formBox = new VBox(5); // Creates a new instance of VBox with a spacing of 5 and assigns it to the formBox variable
 
-        Label nameLabel = new Label("Name");
-        TextField nameField = new TextField();
-        Label emailLabel = new Label("Email");
-        TextField emailField = new TextField();
-        Label passwordLabel = new Label("Password");
-        TextField passwordField = new TextField();
+        Label nameLabel = new Label("Name"); // Creates a new instance of Label with the text "Name" and assigns it to the nameLabel variable
+        TextField nameField = new TextField(); // Creates a new instance of TextField and assigns it to the nameField variable
+        Label emailLabel = new Label("Email"); // Creates a new instance of Label with the text "Email" and assigns it to the emailLabel variable
+        TextField emailField = new TextField(); // Creates a new instance of TextField and assigns it to the emailField variable
+        Label passwordLabel = new Label("Password"); // Creates a new instance of Label with the text "Password" and assigns it to the passwordLabel variable
+        TextField passwordField = new TextField(); // Creates a new instance of TextField and assigns it to the passwordField variable
 
-        formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
-        formBox.setAlignment(Pos.CENTER_LEFT);
+        formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField); // Adds the nameLabel, nameField, emailLabel, emailField, passwordLabel, and passwordField to the formBox
+        formBox.setAlignment(Pos.CENTER_LEFT); // Aligns the contents of the formBox to the center-left
 
-        HBox buttonsBox = new HBox(10);
-        buttonsBox.setAlignment(Pos.CENTER);
-        Button signUpButton = new Button("SIGN UP");
-        Button cancelButton = new Button("CANCEL");
-        cancelButton.setOnAction(event -> showHomePage());
-        buttonsBox.getChildren().addAll(signUpButton, cancelButton);
+        HBox buttonsBox = new HBox(10); // Creates a new instance of HBox with a spacing of 10 and assigns it to the buttonsBox variable
+        buttonsBox.setAlignment(Pos.CENTER); // Aligns the contents of the HBox to the center
+        Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
+        Button cancelButton = new Button("CANCEL"); // Creates a new instance of Button with the text "CANCEL" and assigns it to the cancelButton variable
+        cancelButton.setOnAction(event -> showHomePage()); // Sets an event handler for the cancelButton to call the showHomePage method
+        buttonsBox.getChildren().addAll(signUpButton, cancelButton); // Adds the signUpButton and cancelButton to the buttonsBox
 
-        signUpButton.setOnAction(event -> {
-            final String name = nameField.getText();
-            final String email = emailField.getText();
-            final String password = passwordField.getText();
+        signUpButton.setOnAction(event -> { // Sets an event handler for the signUpButton
+            final String name = nameField.getText(); // Gets the text from the nameField and assigns it to the name variable
+            final String email = emailField.getText(); // Gets the text from the emailField and assigns it to the email variable
+            final String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
 
-            AtomicReference<String> atomicSelectedAccountType = new AtomicReference<>();
-            Toggle selectedToggle = accountTypeGroup.getSelectedToggle();
-            if (selectedToggle != null) {
-                atomicSelectedAccountType.set(((ToggleButton) selectedToggle).getText());
+            AtomicReference<String> atomicSelectedAccountType = new AtomicReference<>(); // Creates a new instance of AtomicReference<String> and assigns it to the atomicSelectedAccountType variable
+            Toggle selectedToggle = accountTypeGroup.getSelectedToggle(); // Gets the currently selected Toggle from the accountTypeGroup and assigns it to the selectedToggle variable
+            if (selectedToggle != null) { // Checks if a Toggle is selected
+                atomicSelectedAccountType.set(((ToggleButton) selectedToggle).getText()); // Gets the text of the selected ToggleButton and sets it to the atomicSelectedAccountType
             }
 
-            accountTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    atomicSelectedAccountType.set(((ToggleButton) newValue).getText());
+            accountTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> { // Adds a listener to the selectedToggleProperty of the accountTypeGroup
+                if (newValue != null) { // Checks if a new Toggle is selected
+                    atomicSelectedAccountType.set(((ToggleButton) newValue).getText()); // Gets the text of the newly selected ToggleButton and sets it to the atomicSelectedAccountType
                 }
             });
 
-            final String selectedAccountType = atomicSelectedAccountType.get();
+            final String selectedAccountType = atomicSelectedAccountType.get(); // Gets the value of the atomicSelectedAccountType and assigns it to the selectedAccountType variable
 
-            if (isEmailRegistered(email)) {
-                showAlert("Email already exists.");
-            } else if (selectedAccountType == null) {
-                showAlert("Please select an account type.");
+            if (isEmailRegistered(email)) { // Calls the isEmailRegistered method with the email, and checks if the email is already registered
+                showAlert("Email already exists."); // Displays an alert with the message "Email already exists."
+            } else if (selectedAccountType == null) { // Checks if no account type is selected
+                showAlert("Please select an account type."); // Displays an alert with the message "Please select an account type."
             } else {
-                final UUID userId = UUID.randomUUID();
-                Optional<UUID> linkingCode = Optional.empty();
+                final UUID userId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the userId variable
+                Optional<UUID> linkingCode = Optional.empty(); // Creates an empty Optional<UUID> and assigns it to the linkingCode variable
 
-                if (selectedAccountType.equals("Manager")) {
+                if (selectedAccountType.equals("Manager")) { // Checks if the selected account type is "Manager"
                     // Create a popup for Manager account type
-                    Stage popupStage = new Stage();
-                    VBox popupVBox = new VBox();
-                    popupVBox.setAlignment(Pos.CENTER);
-                    popupVBox.setSpacing(10);
+                    Stage popupStage = new Stage(); // Creates a new instance of Stage and assigns it to the popupStage variable
+                    VBox popupVBox = new VBox(); // Creates a new instance of VBox and assigns it to the popupVBox variable
+                    popupVBox.setAlignment(Pos.CENTER); // Aligns the contents of the popupVBox to the center
+                    popupVBox.setSpacing(10); // Sets the spacing between children of the popupVBox to 10
 
-                    Label popupLabel = new Label("Below is your linking code for your employees to connect to you,\nand allow you to add to or view their calendars");
-                    popupLabel.setTextAlignment(TextAlignment.CENTER);
-                    popupLabel.setWrapText(true);
+                    Label popupLabel = new Label("Below is your linking code for your employees to connect to you,\nand allow you to add to or view their calendars"); // Creates a new instance of Label with the given text and assigns it to the popupLabel variable
+                    popupLabel.setTextAlignment(TextAlignment.CENTER); // Sets the text alignment of the popupLabel to center
+                    popupLabel.setWrapText(true); // Enables text wrapping for the popupLabel
 
-                    final UUID managerLinkingCode = UUID.randomUUID();
-                    Label linkingCodeLabel = new Label(managerLinkingCode.toString());
+                    final UUID managerLinkingCode = UUID.randomUUID(); // Generates a new random UUID and assigns it to the managerLinkingCode variable
+                    Label linkingCodeLabel = new Label(managerLinkingCode.toString()); // Creates a new instance of Label with the string representation of managerLinkingCode and assigns it to the linkingCodeLabel variable
 
-                    Button okButton = new Button("OK");
-                    okButton.setOnAction(e -> {
-                        popupStage.close();
+                    Button okButton = new Button("OK"); // Creates a new instance of Button with the text "OK" and assigns it to the okButton variable
+                    okButton.setOnAction(e -> { // Sets an event handler for the okButton
+                        popupStage.close(); // Closes the popupStage
                         //linkingCode = Optional.ofNullable(managerLinkingCode);
                         UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode)); //linkingCode);
-                        userDetailsMap.put(userId, userDetails);
-                        showAlert("Sign up successful.");
-                        showLoginScreen();
-                        saveUserData(); // Save user data after sign up
+                        userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
+                        showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
+                        showLoginScreen(); // Calls the showLoginScreen method to display the login screen
+                        saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
 
-                    popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton);
+                    popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton); // Adds the popupLabel, linkingCodeLabel, and okButton to the popupVBox
 
-                    Scene popupScene = new Scene(popupVBox);
-                    popupStage.setScene(popupScene);
-                    popupStage.showAndWait();
-                } else if (selectedAccountType.equals("Employee")) {
+                    Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
+                    popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
+                    popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
+                } else if (selectedAccountType.equals("Employee")) { // Checks if the selected account type is "Employee"
                     // Create a popup for Employee account type
-                    Stage popupStage = new Stage();
-                    VBox popupVBox = new VBox();
-                    popupVBox.setAlignment(Pos.CENTER);
-                    popupVBox.setSpacing(10);
+                    Stage popupStage = new Stage(); // Creates a new instance of Stage and assigns it to the popupStage variable
+                    VBox popupVBox = new VBox(); // Creates a new instance of VBox and assigns it to the popupVBox variable
+                    popupVBox.setAlignment(Pos.CENTER); // Aligns the contents of the popupVBox to the center
+                    popupVBox.setSpacing(10); // Sets the spacing between children of the popupVBox to 10
 
-                    Label popupLabel = new Label("Do you have a linking code to a manager?");
+                    Label popupLabel = new Label("Do you have a linking code to a manager?"); // Creates a new instance of Label with the text "Do you have a linking code to a manager?" and assigns it to the popupLabel variable
 
-                    Button yesButton = new Button("Yes");
-                    Button noButton = new Button("No");
+                    Button yesButton = new Button("Yes"); // Creates a new instance of Button with the text "Yes" and assigns it to the yesButton variable
+                    Button noButton = new Button("No"); // Creates a new instance of Button with the text "No" and assigns it to the noButton variable
 
-                    yesButton.setOnAction(event2 -> {
+                    yesButton.setOnAction(event2 -> { // Sets an event handler for the yesButton
                         // Create a new popup for entering the linking code
-                        Stage linkingCodeStage = new Stage();
-                        VBox linkingCodeVBox = new VBox();
-                        linkingCodeVBox.setAlignment(Pos.CENTER);
-                        linkingCodeVBox.setSpacing(10);
+                        Stage linkingCodeStage = new Stage(); // Creates a new instance of Stage and assigns it to the linkingCodeStage variable
+                        VBox linkingCodeVBox = new VBox(); // Creates a new instance of VBox and assigns it to the linkingCodeVBox variable
+                        linkingCodeVBox.setAlignment(Pos.CENTER); // Aligns the contents of the linkingCodeVBox to the center
+                        linkingCodeVBox.setSpacing(10); // Sets the spacing between children of the linkingCodeVBox to 10
 
-                        Label linkingCodeLabel = new Label("Enter the manager's linking code:");
-                        TextField linkingCodeField = new TextField();
+                        Label linkingCodeLabel = new Label("Enter the manager's linking code:"); // Creates a new instance of Label with the text "Enter the manager's linking code:" and assigns it to the linkingCodeLabel variable
+                        TextField linkingCodeField = new TextField(); // Creates a new instance of TextField and assigns it to the linkingCodeField variable
 
-                        Button submitButton = new Button("Submit");
-                        Button cancelPopUpButton = new Button("Cancel");
+                        Button submitButton = new Button("Submit"); // Creates a new instance of Button with the text "Submit" and assigns it to the submitButton variable
+                        Button cancelPopUpButton = new Button("Cancel"); // Creates a new instance of Button with the text "Cancel" and assigns it to the cancelPopUpButton variable
 
-                        submitButton.setOnAction(event3 -> {
-                            String linkingCodeString = linkingCodeField.getText();
-                            UUID managerLinkingCode = null;
+                        submitButton.setOnAction(event3 -> { // Sets an event handler for the submitButton
+                            String linkingCodeString = linkingCodeField.getText(); // Gets the text from the linkingCodeField and assigns it to the linkingCodeString variable
+                            UUID managerLinkingCode = null; // Declares a variable managerLinkingCode and initializes it with null
                             try {
-                                managerLinkingCode = UUID.fromString(linkingCodeString);
-                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString);
-                                if (!isValidLinkingCode) {
-                                    showAlert("Invalid linking code.");
+                                managerLinkingCode = UUID.fromString(linkingCodeString); // Attempts to create a UUID from the linkingCodeString and assigns it to the managerLinkingCode variable
+                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
+                                if (!isValidLinkingCode) { // Checks if the linking code is invalid
+                                    showAlert("Invalid linking code."); // Displays an alert with the message "Invalid linking code."
                                     return; // Exit the method if the code is invalid
                                 }
                             } catch (IllegalArgumentException e) {
-                                showAlert("Invalid linking code.");
+                                showAlert("Invalid linking code."); // Displays an alert with the message "Invalid linking code."
                                 return;
                             }
-                            linkingCodeStage.close();
+                            linkingCodeStage.close(); // Closes the linkingCodeStage
                             UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
-                            userDetailsMap.put(userId, userDetails);
-                            saveUserData(); // Save user data after sign up
-                            popupStage.close();
-                            showAlert("Sign up successful.");
-                            showLoginScreen();
+                            userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
+                            saveUserData(); // Calls the saveUserData method to save user data to a file
+                            popupStage.close(); // Closes the popupStage
+                            showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
+                            showLoginScreen(); // Calls the showLoginScreen method to display the login screen
                         });
 
-                        cancelPopUpButton.setOnAction(event3 -> {
-                            linkingCodeStage.close();
+                        cancelPopUpButton.setOnAction(event3 -> { // Sets an event handler for the cancelPopUpButton
+                            linkingCodeStage.close(); // Closes the linkingCodeStage
                         });
 
-                        linkingCodeVBox.getChildren().addAll(linkingCodeLabel, linkingCodeField, submitButton, cancelPopUpButton);
+                        linkingCodeVBox.getChildren().addAll(linkingCodeLabel, linkingCodeField, submitButton, cancelPopUpButton); // Adds the linkingCodeLabel, linkingCodeField, submitButton, and cancelPopUpButton to the linkingCodeVBox
 
-                        Scene linkingCodeScene = new Scene(linkingCodeVBox);
-                        linkingCodeStage.setScene(linkingCodeScene);
-                        linkingCodeStage.showAndWait();
+                        Scene linkingCodeScene = new Scene(linkingCodeVBox); // Creates a new instance of Scene with the linkingCodeVBox as the root node and assigns it to the linkingCodeScene variable
+                        linkingCodeStage.setScene(linkingCodeScene); // Sets the scene of the linkingCodeStage to the linkingCodeScene
+                        linkingCodeStage.showAndWait(); // Displays the linkingCodeStage and waits for it to be closed
                     });
 
-                    noButton.setOnAction(event2 -> {
+                    noButton.setOnAction(event2 -> { // Sets an event handler for the noButton
                         UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
-                        userDetailsMap.put(userId, userDetails);
-                        showAlert("Sign up successful.");
-                        popupStage.close();
-                        showLoginScreen();
-                        saveUserData(); // Save user data after sign up
+                        userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
+                        showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
+                        popupStage.close(); // Closes the popupStage
+                        showLoginScreen(); // Calls the showLoginScreen method to display the login screen
+                        saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
 
-                    popupVBox.getChildren().addAll(popupLabel, yesButton, noButton);
+                    popupVBox.getChildren().addAll(popupLabel, yesButton, noButton); // Adds the popupLabel, yesButton, and noButton to the popupVBox
 
-                    Scene popupScene = new Scene(popupVBox);
-                    popupStage.setScene(popupScene);
-                    popupStage.showAndWait();
-                } else { // xexplicitly say personal or owuldn't matter??
+                    Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
+                    popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
+                    popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
+                } else { // If the selected account type is neither "Manager" nor "Employee" (implicitly "Personal")
                     UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
-                    userDetailsMap.put(userId, userDetails);
-                    showAlert("Sign up successful.");
-                    showLoginScreen();
-                    saveUserData(); // Save user data after sign up
+                    userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
+                    showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
+                    showLoginScreen(); // Calls the showLoginScreen method to display the login screen
+                    saveUserData(); // Calls the saveUserData method to save user data to a file
                 }
             }
         });
 
-        signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, formBox, buttonsBox);
+        signUpBox.getChildren().addAll(questionLabel, accountTypeLabel, accountTypeBox, formBox, buttonsBox); // Adds the questionLabel, accountTypeLabel, accountTypeBox, formBox, and buttonsBox to the signUpBox
 
-        signUpPane.setCenter(signUpBox);
+        signUpPane.setCenter(signUpBox); // Sets the center of the signUpPane to the signUpBox
 
-        rootPane.getChildren().setAll(signUpPane);
+        rootPane.getChildren().setAll(signUpPane); // Sets the contents of the rootPane to the signUpPane
     }
 
     private void showProfileEditScreen() {
@@ -578,160 +578,160 @@ public class LifestyleCalendar extends Application {
         return false;
     }
 
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void showAlert(String message) { // Defines a private method to display an alert
+        Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates a new instance of Alert with the type INFORMATION
+        alert.setTitle("Information"); // Sets the title of the alert to "Information"
+        alert.setHeaderText(null); // Sets the header text of the alert to null (no header text)
+        alert.setContentText(message); // Sets the content text of the alert to the provided message
+        alert.showAndWait(); // Displays the alert and waits for it to be closed
     }
 
-    private static class UserDetails implements Serializable {
-        private final UUID uuid;
-        private final String name;
-        private final String email;
-        private final String password;
-        private final String accountType;
-        private transient Optional<UUID> linkingCode;
+    private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
+        private final UUID uuid; // Declares a final instance variable uuid of type UUID
+        private final String name; // Declares a final instance variable name of type String
+        private final String email; // Declares a final instance variable email of type String
+        private final String password; // Declares a final instance variable password of type String
+        private final String accountType; // Declares a final instance variable accountType of type String
+        private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
 
-        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
-            this.uuid = uuid;
-            this.name = name;
-            this.email = email;
-            this.password = password;
-            this.accountType = accountType;
-            this.linkingCode = linkingCode;
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+            this.uuid = uuid; // Initializes the uuid instance variable
+            this.name = name; // Initializes the name instance variable
+            this.email = email; // Initializes the email instance variable
+            this.password = password; // Initializes the password instance variable
+            this.accountType = accountType; // Initializes the accountType instance variable
+            this.linkingCode = linkingCode; // Initializes the linkingCode instance variable
         }
 
-        private void writeObject(ObjectOutputStream out) throws IOException {
-            out.defaultWriteObject();
-            out.writeBoolean(linkingCode.isPresent()); // Write a boolean indicating if linkingCode is present
-            linkingCode.ifPresent(uuid -> {
+        private void writeObject(ObjectOutputStream out) throws IOException { // Defines a private method for custom serialization of the linkingCode field
+            out.defaultWriteObject(); // Performs the default serialization for non-transient instance variables
+            out.writeBoolean(linkingCode.isPresent()); // Writes a boolean indicating if linkingCode is present
+            linkingCode.ifPresent(uuid -> { // Executes the lambda expression if linkingCode is present
                 try {
-                    out.writeObject(uuid); // Write the UUID if present
+                    out.writeObject(uuid); // Writes the UUID object if present
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); // Prints the stack trace in case of an IOException
                 }
             });
         }
 
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-            in.defaultReadObject();
-            boolean isPresent = in.readBoolean(); // Read the boolean indicating if linkingCode is present
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException { // Defines a private method for custom deserialization of the linkingCode field
+            in.defaultReadObject(); // Performs the default deserialization for non-transient instance variables
+            boolean isPresent = in.readBoolean(); // Reads a boolean indicating if linkingCode is present
             if (isPresent) {
-                linkingCode = Optional.of((UUID) in.readObject()); // Read the UUID if present
+                linkingCode = Optional.of((UUID) in.readObject()); // Sets linkingCode to the deserialized UUID object if present
             } else {
-                linkingCode = Optional.empty(); // Set linkingCode to empty if not present
+                linkingCode = Optional.empty(); // Sets linkingCode to an empty Optional if not present
             }
         }
 
-        public UUID getUuid() {
-            return uuid;
+        public UUID getUuid() { // Defines a public method to get the uuid
+            return uuid; // Returns the uuid instance variable
         }
 
-        public String getName() {
-            return name;
+        public String getName() { // Defines a public method to get the name
+            return name; // Returns the name instance variable
         }
 
-        public String getEmail() {
-            return email;
+        public String getEmail() { // Defines a public method to get the email
+            return email; // Returns the email instance variable
         }
 
-        public String getPassword() {
-            return password;
+        public String getPassword() { // Defines a public method to get the password
+            return password; // Returns the password instance variable
         }
 
-        public String getAccountType() {
-            return accountType;
+        public String getAccountType() { // Defines a public method to get the accountType
+            return accountType; // Returns the accountType instance variable
         }
 
-        public Optional<UUID> getLinkingCode() {
-            return linkingCode;
+        public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
+            return linkingCode; // Returns the linkingCode instance variable
         }
     }
 
     // Method to load user data from file
-    private void loadCalendarData() {
-        File file = new File("calendarData.dat");
+    private void loadCalendarData() { // Defines a private method to load calendar data from a file
+        File file = new File("calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
 
-        if (file.exists() && file.length() > 0) {
+        if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
             try {
-                FileInputStream fileIn = new FileInputStream(file);
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject();
-                objectIn.close();
-                fileIn.close();
+                FileInputStream fileIn = new FileInputStream(file); // Creates a new instance of FileInputStream with the file
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Creates a new instance of ObjectInputStream with the FileInputStream
+                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject(); // Reads the calendarDetailsMap object from the ObjectInputStream
+                objectIn.close(); // Closes the ObjectInputStream
+                fileIn.close(); // Closes the FileInputStream
 
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException | ClassNotFoundException e) { // Catches IOException and ClassNotFoundException
+                e.printStackTrace(); // Prints the stack trace in case of an exception
             }
         } else {
             //System.out.println("calendarData.dat file is empty or does not exist.");
-            calendarDetailsMap = new HashMap<>();
+            calendarDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
         }
     }
 
-    private void saveCalendarData() {
+    private void saveCalendarData() { // Defines a private method to save calendar data to a file
         try {
-            FileOutputStream fileOut = new FileOutputStream("calendarData.dat");
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            FileOutputStream fileOut = new FileOutputStream("calendarData.dat"); // Creates a new instance of FileOutputStream with the filename "calendarData.dat"
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Creates a new instance of ObjectOutputStream with the FileOutputStream
 
-            objectOut.writeObject(calendarDetailsMap);
-            objectOut.close();
-            fileOut.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            objectOut.writeObject(calendarDetailsMap); // Writes the calendarDetailsMap object to the ObjectOutputStream
+            objectOut.close(); // Closes the ObjectOutputStream
+            fileOut.close(); // Closes the FileOutputStream
+        } catch (Exception e) { // Catches any Exception
+            e.printStackTrace(); // Prints the stack trace in case of an exception
         }
     }
 
-    private static class CalendarDetails implements Serializable {
-        private final UUID uuid;
-        private final String eventName;
-        private final String eventDescription;
-        private final ZonedDateTime eventFrom;
-        private final ZonedDateTime eventTo;
-        private final List<UUID> linkingUsers;
+    private static class CalendarDetails implements Serializable { // Defines a private static nested class CalendarDetails that implements the Serializable interface
+        private final UUID uuid; // Declares a final instance variable uuid of type UUID
+        private final String eventName; // Declares a final instance variable eventName of type String
+        private final String eventDescription; // Declares a final instance variable eventDescription of type String
+        private final ZonedDateTime eventFrom; // Declares a final instance variable eventFrom of type ZonedDateTime
+        private final ZonedDateTime eventTo; // Declares a final instance variable eventTo of type ZonedDateTime
+        private final List<UUID> linkingUsers; // Declares a final instance variable linkingUsers of type List<UUID>
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) {
-            this.uuid = uuid;
-            this.eventName = eventName;
-            this.eventDescription = eventDescription;
-            this.eventFrom = eventFrom;
-            this.eventTo = eventTo;
-            this.linkingUsers = linkingUsers;
+        public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) { // Defines a constructor that takes parameters for all instance variables
+            this.uuid = uuid; // Initializes the uuid instance variable
+            this.eventName = eventName; // Initializes the eventName instance variable
+            this.eventDescription = eventDescription; // Initializes the eventDescription instance variable
+            this.eventFrom = eventFrom; // Initializes the eventFrom instance variable
+            this.eventTo = eventTo; // Initializes the eventTo instance variable
+            this.linkingUsers = linkingUsers; // Initializes the linkingUsers instance variable
         }
 
-        public UUID getUuid() {
-            return uuid;
+        public UUID getUuid() { // Defines a public method to get the uuid
+            return uuid; // Returns the uuid instance variable
         }
 
-        public String getEventName() {
-            return eventName;
+        public String getEventName() { // Defines a public method to get the eventName
+            return eventName; // Returns the eventName instance variable
         }
 
-        public String getEventDescrption() {
-            return eventDescription;
+        public String getEventDescrption() { // Defines a public method to get the eventDescription
+            return eventDescription; // Returns the eventDescription instance variable
         }
 
-        public ZonedDateTime getEventFrom() {
-            return eventFrom;
+        public ZonedDateTime getEventFrom() { // Defines a public method to get the eventFrom
+            return eventFrom; // Returns the eventFrom instance variable
         }
 
-        public ZonedDateTime getEventTo() {
-            return eventTo;
+        public ZonedDateTime getEventTo() { // Defines a public method to get the eventTo
+            return eventTo; // Returns the eventTo instance variable
         }
 
-        public List<UUID> getLinkingUsers() {
-            return linkingUsers;
+        public List<UUID> getLinkingUsers() { // Defines a public method to get the linkingUsers list
+            return linkingUsers; // Returns the linkingUsers instance variable list
         }
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(); // Launches application
     }
 }
