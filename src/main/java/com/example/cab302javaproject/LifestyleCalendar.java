@@ -1,3 +1,7 @@
+/**
+ * LifestyleCalendar, a JavaFX application for promoting and maanging a better work/life balance whilst taking into consideration health aspects such as eye-strain
+ * It includes features like user authentication, profile management, and event scheduling.
+ */
 package com.example.cab302javaproject;
 
 import javafx.application.Application;
@@ -18,12 +22,20 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import java.time.ZonedDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.io.*;
+import java.util.HashMap;
+import java.io.Serializable;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
+/**
+ * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
+ */
 public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
@@ -31,21 +43,36 @@ public class LifestyleCalendar extends Application {
     private UserDetails loggedInUser;
     private Image image;
 
+    /**
+     * The start method initializes the primary stage and displays the home page.
+     * @param stage The primary stage for the JavaFX application.
+     */
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
         rootPane = new StackPane();
         userDetailsMap = new HashMap<>();
+
         Scene scene = new Scene(rootPane, 600, 400);
+        //stage.getIcons().add(new Image("https://genuinecoder.com/wp-content/uploads/2022/06/genuine_coder-3.png"));
+
         stage.setTitle("Lifestyle Calendar!");
         stage.setScene(scene);
         stage.show();
 
+        // Load application logo
         image = new Image("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
 
+        // Load user data when the application starts
+        loadUserData();
+
+        // Display home page
         showHomePage();
     }
 
+    /**
+     * Displays the home page with login and signup options.
+     */
     private void showHomePage() {
         BorderPane homePane = new BorderPane();
 
@@ -240,6 +267,7 @@ public class LifestyleCalendar extends Application {
                         userDetailsMap.put(userId, userDetails);
                         showAlert("Sign up successful.");
                         showLoginScreen();
+                        saveUserData(); // Save user data after sign up
                     });
 
                     popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton);
@@ -287,6 +315,7 @@ public class LifestyleCalendar extends Application {
                             showAlert("Sign up successful.");
                             popupStage.close();
                             showLoginScreen();
+                            saveUserData(); // Save user data after sign up
                         });
 
                         cancelPopUpButton.setOnAction(event3 -> {
@@ -306,6 +335,7 @@ public class LifestyleCalendar extends Application {
                         showAlert("Sign up successful.");
                         popupStage.close();
                         showLoginScreen();
+                        saveUserData(); // Save user data after sign up
                     });
 
                     popupVBox.getChildren().addAll(popupLabel, yesButton, noButton);
@@ -313,11 +343,12 @@ public class LifestyleCalendar extends Application {
                     Scene popupScene = new Scene(popupVBox);
                     popupStage.setScene(popupScene);
                     popupStage.showAndWait();
-                } else {
+                } else { // xexplicitly say personal or owuldn't matter??
                     UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
                     userDetailsMap.put(userId, userDetails);
                     showAlert("Sign up successful.");
                     showLoginScreen();
+                    saveUserData(); // Save user data after sign up
                 }
             }
         });
@@ -353,7 +384,7 @@ public class LifestyleCalendar extends Application {
         Label accountSettingsLabel = new Label("Account Settings");
         accountSettingsLabel.setFont(new Font(30));//15));
         Label companyCodeDescriptionLabel = new Label();
-        if (loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
+        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
             companyCodeDescriptionLabel.setText("Add company code below:");
         } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
             companyCodeDescriptionLabel.setText("Company code below:");
@@ -365,7 +396,11 @@ public class LifestyleCalendar extends Application {
         Label companyCodeLabel = new Label("Company Code:");
         TextField companyCodeField = new TextField();
         Optional<UUID> linkingCode = loggedInUser.getLinkingCode();
-        companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
+        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
+            companyCodeField.setText("");
+        }else{
+            companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
+        }
         if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
             companyCodeField.setEditable(true);
         }
@@ -437,6 +472,7 @@ public class LifestyleCalendar extends Application {
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
             loggedInUser = updatedUserDetails;
             showAlert("Details updated successfully.");
+            saveUserData(); // Save user data after updating details
         });
 
         if (Objects.equals(loggedInUser.getAccountType(), "Personal")){
@@ -447,6 +483,47 @@ public class LifestyleCalendar extends Application {
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
+    }
+
+    // Method to load user data from file
+    private void loadUserData() {
+        try {
+            FileInputStream fileIn = new FileInputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+            userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject();
+            objectIn.close();
+            fileIn.close();
+
+            // Log linkingCode for each user after loading
+            for (UserDetails userDetails : userDetailsMap.values()) {
+                System.out.println("User: " + userDetails.getEmail() + ", LinkingCode: " + userDetails.getLinkingCode().orElse(null));
+            }
+        } catch (FileNotFoundException e) {
+            // File does not exist, this might be the first run
+            userDetailsMap = new HashMap<>();
+            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void saveUserData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+            // Log linkingCode for each user before saving
+            for (UserDetails userDetails : userDetailsMap.values()) {
+                System.out.println("User: " + userDetails.getEmail() + ", LinkingCode: " + userDetails.getLinkingCode().orElse(null));
+            }
+
+            objectOut.writeObject(userDetailsMap);
+            objectOut.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static boolean isValidUUID(String str) {
@@ -476,21 +553,46 @@ public class LifestyleCalendar extends Application {
         alert.showAndWait();
     }
 
-    private static class UserDetails {
+    private static class UserDetails implements Serializable {
         private final UUID uuid;
         private final String name;
         private final String email;
         private final String password;
         private final String accountType;
-        private final Optional<UUID> linkingCode;
+        private transient Optional<UUID> linkingCode;
 
-        public UserDetails(UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
+        private static final long serialVersionUID = 1L;
+
+
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
             this.uuid = uuid;
             this.name = name;
             this.email = email;
             this.password = password;
             this.accountType = accountType;
             this.linkingCode = linkingCode;
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            out.writeBoolean(linkingCode.isPresent()); // Write a boolean indicating if linkingCode is present
+            linkingCode.ifPresent(uuid -> {
+                try {
+                    out.writeObject(uuid); // Write the UUID if present
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            boolean isPresent = in.readBoolean(); // Read the boolean indicating if linkingCode is present
+            if (isPresent) {
+                linkingCode = Optional.of((UUID) in.readObject()); // Read the UUID if present
+            } else {
+                linkingCode = Optional.empty(); // Set linkingCode to empty if not present
+            }
         }
 
         public UUID getUuid() {
