@@ -487,36 +487,29 @@ public class LifestyleCalendar extends Application {
 
     // Method to load user data from file
     private void loadUserData() {
-        try {
-            FileInputStream fileIn = new FileInputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
-            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-            userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject();
-            objectIn.close();
-            fileIn.close();
+        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
 
-            // Log linkingCode for each user after loading
-            for (UserDetails userDetails : userDetailsMap.values()) {
-                System.out.println("User: " + userDetails.getEmail() + ", LinkingCode: " + userDetails.getLinkingCode().orElse(null));
+        if (file.exists() && file.length() > 0) {
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject();
+                objectIn.close();
+                fileIn.close();
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            // File does not exist, this might be the first run
+        } else {
+            System.out.println("userData.dat file is empty or does not exist.");
             userDetailsMap = new HashMap<>();
-            e.printStackTrace();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
-
 
     private void saveUserData() {
         try {
             FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-
-            // Log linkingCode for each user before saving
-            for (UserDetails userDetails : userDetailsMap.values()) {
-                System.out.println("User: " + userDetails.getEmail() + ", LinkingCode: " + userDetails.getLinkingCode().orElse(null));
-            }
 
             objectOut.writeObject(userDetailsMap);
             objectOut.close();
