@@ -1,3 +1,7 @@
+/**
+ * LifestyleCalendar, a JavaFX application for promoting and maanging a better work/life balance whilst taking into consideration health aspects such as eye-strain
+ * It includes features like user authentication, profile management, and event scheduling.
+ */
 package com.example.cab302javaproject;
 
 import javafx.application.Application;
@@ -18,34 +22,58 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import java.time.ZonedDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.io.*;
+import java.io.Serializable;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
+/**
+ * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
+ */
 public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
     private HashMap<UUID, UserDetails> userDetailsMap;
+    private HashMap<UUID, CalendarDetails> calendarDetailsMap;
     private UserDetails loggedInUser;
     private Image image;
 
+    /**
+     * The start method initializes the primary stage and displays the home page.
+     * @param stage The primary stage for the JavaFX application.
+     */
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
         rootPane = new StackPane();
         userDetailsMap = new HashMap<>();
+        calendarDetailsMap = new HashMap<>();
+
         Scene scene = new Scene(rootPane, 600, 400);
+        //stage.getIcons().add(new Image("https://genuinecoder.com/wp-content/uploads/2022/06/genuine_coder-3.png"));
+
         stage.setTitle("Lifestyle Calendar!");
         stage.setScene(scene);
         stage.show();
 
+        // Load application logo
         image = new Image("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\LifestyleCalendarLogo.png"); //new Image("jetbrains://idea/navigate/reference?project=CAB302Java&path=com/example/cab302javaproject/LifestyleCalendarLogo.png");
 
+        // Load user data when the application starts
+        loadUserData();
+
+        // Display home page
         showHomePage();
     }
 
+    /**
+     * Displays the home page with login and signup options.
+     */
     private void showHomePage() {
         BorderPane homePane = new BorderPane();
 
@@ -125,6 +153,7 @@ public class LifestyleCalendar extends Application {
             String password = passwordField.getText();
 
             if (authenticateUser(email, password)) {
+                loadCalendarData();
                 showProfileEditScreen();
             } else {
                 showAlert("Invalid email or password.");
@@ -210,7 +239,7 @@ public class LifestyleCalendar extends Application {
 
             final String selectedAccountType = atomicSelectedAccountType.get();
 
-            if (userDetailsMap.containsKey(email)) {
+            if (isEmailRegistered(email)) {
                 showAlert("Email already exists.");
             } else if (selectedAccountType == null) {
                 showAlert("Please select an account type.");
@@ -240,6 +269,7 @@ public class LifestyleCalendar extends Application {
                         userDetailsMap.put(userId, userDetails);
                         showAlert("Sign up successful.");
                         showLoginScreen();
+                        saveUserData(); // Save user data after sign up
                     });
 
                     popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton);
@@ -277,8 +307,13 @@ public class LifestyleCalendar extends Application {
                             UUID managerLinkingCode = null;
                             try {
                                 managerLinkingCode = UUID.fromString(linkingCodeString);
+                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString);
+                                if (!isValidLinkingCode) {
+                                    showAlert("Invalid linking code.");
+                                    return; // Exit the method if the code is invalid
+                                }
                             } catch (IllegalArgumentException e) {
-                                showAlert("Invalid linking code format.");
+                                showAlert("Invalid linking code.");
                                 return;
                             }
                             linkingCodeStage.close();
@@ -287,6 +322,7 @@ public class LifestyleCalendar extends Application {
                             showAlert("Sign up successful.");
                             popupStage.close();
                             showLoginScreen();
+                            saveUserData(); // Save user data after sign up
                         });
 
                         cancelPopUpButton.setOnAction(event3 -> {
@@ -306,6 +342,7 @@ public class LifestyleCalendar extends Application {
                         showAlert("Sign up successful.");
                         popupStage.close();
                         showLoginScreen();
+                        saveUserData(); // Save user data after sign up
                     });
 
                     popupVBox.getChildren().addAll(popupLabel, yesButton, noButton);
@@ -313,11 +350,12 @@ public class LifestyleCalendar extends Application {
                     Scene popupScene = new Scene(popupVBox);
                     popupStage.setScene(popupScene);
                     popupStage.showAndWait();
-                } else {
+                } else { // xexplicitly say personal or owuldn't matter??
                     UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
                     userDetailsMap.put(userId, userDetails);
                     showAlert("Sign up successful.");
                     showLoginScreen();
+                    saveUserData(); // Save user data after sign up
                 }
             }
         });
@@ -353,7 +391,7 @@ public class LifestyleCalendar extends Application {
         Label accountSettingsLabel = new Label("Account Settings");
         accountSettingsLabel.setFont(new Font(30));//15));
         Label companyCodeDescriptionLabel = new Label();
-        if (loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
+        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {//companyCodeDescriptionLabel == null) {
             companyCodeDescriptionLabel.setText("Add company code below:");
         } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
             companyCodeDescriptionLabel.setText("Company code below:");
@@ -365,7 +403,11 @@ public class LifestyleCalendar extends Application {
         Label companyCodeLabel = new Label("Company Code:");
         TextField companyCodeField = new TextField();
         Optional<UUID> linkingCode = loggedInUser.getLinkingCode();
-        companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
+        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
+            companyCodeField.setText("");
+        }else{
+            companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
+        }
         if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
             companyCodeField.setEditable(true);
         }
@@ -412,10 +454,20 @@ public class LifestyleCalendar extends Application {
             if (!companyCodeField.getText().isEmpty() && !isValidUUID){
                 showAlert("Not valid linking code");
                 return;
+            }   else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
+                showAlert("Email already exists.");
+                return;
             }
 
             UserDetails updatedUserDetails;
             if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
+                String companyCode = companyCodeField.getText();// Validate linking code against manager profiles
+                boolean isValidLinkingCode = isValidLinkingCode(companyCode);
+                if (!isValidLinkingCode) {
+                    showAlert("Invalid linking code.");
+                    return; // Exit the method if the code is invalid
+                }
+
                 Optional<UUID> linkingCodeOptional;
                 if (companyCodeField.getText().isEmpty()) {
                     linkingCodeOptional = Optional.empty();
@@ -437,6 +489,7 @@ public class LifestyleCalendar extends Application {
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
             loggedInUser = updatedUserDetails;
             showAlert("Details updated successfully.");
+            saveUserData(); // Save user data after updating details
         });
 
         if (Objects.equals(loggedInUser.getAccountType(), "Personal")){
@@ -447,6 +500,63 @@ public class LifestyleCalendar extends Application {
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
+    }
+
+    private boolean isValidLinkingCode(String linkingCode) {
+        // Iterate over userDetailsMap to find manager profiles
+        for (UserDetails userDetails : userDetailsMap.values()) {
+            if (Objects.equals(userDetails.getAccountType(), "Manager")) {
+                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode();
+                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) {
+                    return true; // Valid linking code found
+                }
+            }
+        }
+        return false; // No matching linking code found
+    }
+
+    private boolean isEmailRegistered(String email) {
+        // Iterate over userDetailsMap to check if email is already registered
+        for (UserDetails userDetails : userDetailsMap.values()) {
+            if (userDetails.getEmail().equals(email)) {
+                return true; // Email already registered
+            }
+        }
+        return false; // Email not registered
+    }
+
+    // Method to load user data from file
+    private void loadUserData() {
+        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+
+        if (file.exists() && file.length() > 0) {
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject();
+                objectIn.close();
+                fileIn.close();
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("userData.dat file is empty or does not exist.");
+            userDetailsMap = new HashMap<>();
+        }
+    }
+
+    private void saveUserData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\userData.dat");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+            objectOut.writeObject(userDetailsMap);
+            objectOut.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static boolean isValidUUID(String str) {
@@ -476,21 +586,46 @@ public class LifestyleCalendar extends Application {
         alert.showAndWait();
     }
 
-    private static class UserDetails {
+    private static class UserDetails implements Serializable {
         private final UUID uuid;
         private final String name;
         private final String email;
         private final String password;
         private final String accountType;
-        private final Optional<UUID> linkingCode;
+        private transient Optional<UUID> linkingCode;
 
-        public UserDetails(UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
+        private static final long serialVersionUID = 1L;
+
+
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) {
             this.uuid = uuid;
             this.name = name;
             this.email = email;
             this.password = password;
             this.accountType = accountType;
             this.linkingCode = linkingCode;
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            out.writeBoolean(linkingCode.isPresent()); // Write a boolean indicating if linkingCode is present
+            linkingCode.ifPresent(uuid -> {
+                try {
+                    out.writeObject(uuid); // Write the UUID if present
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            boolean isPresent = in.readBoolean(); // Read the boolean indicating if linkingCode is present
+            if (isPresent) {
+                linkingCode = Optional.of((UUID) in.readObject()); // Read the UUID if present
+            } else {
+                linkingCode = Optional.empty(); // Set linkingCode to empty if not present
+            }
         }
 
         public UUID getUuid() {
@@ -518,13 +653,49 @@ public class LifestyleCalendar extends Application {
         }
     }
 
-    private static class CalendarDetails {
+    // Method to load user data from file
+    private void loadCalendarData() {
+        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+
+        if (file.exists() && file.length() > 0) {
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject();
+                objectIn.close();
+                fileIn.close();
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("calendarData.dat file is empty or does not exist.");
+            calendarDetailsMap = new HashMap<>();
+        }
+    }
+
+    private void saveCalendarData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+            objectOut.writeObject(calendarDetailsMap);
+            objectOut.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class CalendarDetails implements Serializable {
         private final UUID uuid;
         private final String eventName;
         private final String eventDescription;
         private final ZonedDateTime eventFrom;
         private final ZonedDateTime eventTo;
         private final List<UUID> linkingUsers;
+
+        private static final long serialVersionUID = 1L;
 
         public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) {
             this.uuid = uuid;
