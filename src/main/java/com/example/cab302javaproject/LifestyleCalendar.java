@@ -23,7 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import java.io.*;
-import java.util.HashMap;
 import java.io.Serializable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,6 +39,7 @@ public class LifestyleCalendar extends Application {
     private Stage primaryStage;
     private StackPane rootPane;
     private HashMap<UUID, UserDetails> userDetailsMap;
+    private HashMap<UUID, CalendarDetails> calendarDetailsMap;
     private UserDetails loggedInUser;
     private Image image;
 
@@ -52,6 +52,7 @@ public class LifestyleCalendar extends Application {
         primaryStage = stage;
         rootPane = new StackPane();
         userDetailsMap = new HashMap<>();
+        calendarDetailsMap = new HashMap<>();
 
         Scene scene = new Scene(rootPane, 600, 400);
         //stage.getIcons().add(new Image("https://genuinecoder.com/wp-content/uploads/2022/06/genuine_coder-3.png"));
@@ -152,6 +153,7 @@ public class LifestyleCalendar extends Application {
             String password = passwordField.getText();
 
             if (authenticateUser(email, password)) {
+                loadCalendarData();
                 showProfileEditScreen();
             } else {
                 showAlert("Invalid email or password.");
@@ -651,13 +653,49 @@ public class LifestyleCalendar extends Application {
         }
     }
 
-    private static class CalendarDetails {
+    // Method to load user data from file
+    private void loadCalendarData() {
+        File file = new File("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+
+        if (file.exists() && file.length() > 0) {
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject();
+                objectIn.close();
+                fileIn.close();
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("calendarData.dat file is empty or does not exist.");
+            calendarDetailsMap = new HashMap<>();
+        }
+    }
+
+    private void saveCalendarData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("C:\\Users\\ryanwallace\\IdeaProjects\\CAB302Java\\src\\main\\java\\com\\example\\cab302javaproject\\calendarData.dat");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+            objectOut.writeObject(calendarDetailsMap);
+            objectOut.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class CalendarDetails implements Serializable {
         private final UUID uuid;
         private final String eventName;
         private final String eventDescription;
         private final ZonedDateTime eventFrom;
         private final ZonedDateTime eventTo;
         private final List<UUID> linkingUsers;
+
+        private static final long serialVersionUID = 1L;
 
         public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) {
             this.uuid = uuid;
