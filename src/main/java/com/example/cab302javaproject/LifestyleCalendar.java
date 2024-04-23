@@ -237,7 +237,7 @@ public class LifestyleCalendar extends Application {
 
             final String selectedAccountType = atomicSelectedAccountType.get();
 
-            if (userDetailsMap.containsKey(email)) {
+            if (isEmailRegistered(email)) {
                 showAlert("Email already exists.");
             } else if (selectedAccountType == null) {
                 showAlert("Please select an account type.");
@@ -305,8 +305,13 @@ public class LifestyleCalendar extends Application {
                             UUID managerLinkingCode = null;
                             try {
                                 managerLinkingCode = UUID.fromString(linkingCodeString);
+                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString);
+                                if (!isValidLinkingCode) {
+                                    showAlert("Invalid linking code.");
+                                    return; // Exit the method if the code is invalid
+                                }
                             } catch (IllegalArgumentException e) {
-                                showAlert("Invalid linking code format.");
+                                showAlert("Invalid linking code.");
                                 return;
                             }
                             linkingCodeStage.close();
@@ -447,10 +452,20 @@ public class LifestyleCalendar extends Application {
             if (!companyCodeField.getText().isEmpty() && !isValidUUID){
                 showAlert("Not valid linking code");
                 return;
+            }   else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
+                showAlert("Email already exists.");
+                return;
             }
 
             UserDetails updatedUserDetails;
             if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
+                String companyCode = companyCodeField.getText();// Validate linking code against manager profiles
+                boolean isValidLinkingCode = isValidLinkingCode(companyCode);
+                if (!isValidLinkingCode) {
+                    showAlert("Invalid linking code.");
+                    return; // Exit the method if the code is invalid
+                }
+
                 Optional<UUID> linkingCodeOptional;
                 if (companyCodeField.getText().isEmpty()) {
                     linkingCodeOptional = Optional.empty();
@@ -483,6 +498,29 @@ public class LifestyleCalendar extends Application {
         updatePane.setCenter(updateBox);
 
         rootPane.getChildren().setAll(updatePane);
+    }
+
+    private boolean isValidLinkingCode(String linkingCode) {
+        // Iterate over userDetailsMap to find manager profiles
+        for (UserDetails userDetails : userDetailsMap.values()) {
+            if (Objects.equals(userDetails.getAccountType(), "Manager")) {
+                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode();
+                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) {
+                    return true; // Valid linking code found
+                }
+            }
+        }
+        return false; // No matching linking code found
+    }
+
+    private boolean isEmailRegistered(String email) {
+        // Iterate over userDetailsMap to check if email is already registered
+        for (UserDetails userDetails : userDetailsMap.values()) {
+            if (userDetails.getEmail().equals(email)) {
+                return true; // Email already registered
+            }
+        }
+        return false; // Email not registered
     }
 
     // Method to load user data from file
