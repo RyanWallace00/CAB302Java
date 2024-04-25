@@ -570,7 +570,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
     private boolean authenticateUser(String email, String password) { // Defines a private method to authenticate a user
         for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (userDetails.getEmail().equals(email) && userDetails.getPassword().equals(password)) { // Checks if the email and password match the current UserDetails object
+            if (userDetails.getEmail().equalsIgnoreCase(email) && userDetails.getPassword().equals(password)) { // Checks if the email and password match the current UserDetails object, ignoring case sensitivity on email field
                 loggedInUser = userDetails; // Updates the loggedInUser instance variable with the authenticated user's details
                 return true; // User authenticated successfully
             }
