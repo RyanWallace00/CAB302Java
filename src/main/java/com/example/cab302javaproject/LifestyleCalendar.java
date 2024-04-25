@@ -367,147 +367,152 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         rootPane.getChildren().setAll(signUpPane); // Sets the contents of the rootPane to the signUpPane
     }
 
-    private void showProfileEditScreen() {
-        BorderPane updatePane = new BorderPane();
+    private void showProfileEditScreen() { // This method shows the profile edit screen
+        BorderPane updatePane = new BorderPane(); // Create a new BorderPane to hold the UI elements
 
         // Image Properties
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
+        ImageView imageView = new ImageView(); // Create an ImageView for displaying the user's profile picture
+        imageView.setFitWidth(200); // Set the width of the image to 200 pixels
+        imageView.setFitHeight(150); // Set the height of the image to 150 pixels
+        imageView.setPreserveRatio(true); // Preserve the aspect ratio of the image
+        imageView.setSmooth(true); // Enable smooth rendering of the image
+        imageView.setCache(true); // Cache the image for better performance
 
         // Image Setting
-        imageView.setImage(image);
+        imageView.setImage(image); // Set the image to display in the ImageView
 
-        updatePane.setTop(imageView);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        updatePane.setTop(imageView); // Set the ImageView at the top of the BorderPane
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Center the ImageView at the top
 
-        VBox updateBox = new VBox(10);
-        updateBox.setPadding(new Insets(0, 10, 50, 10));
-        updateBox.setAlignment(Pos.CENTER);
+        VBox updateBox = new VBox(10); // Create a VBox to hold the form elements
+        updateBox.setPadding(new Insets(0, 10, 50, 10)); // Set padding for the VBox
+        updateBox.setAlignment(Pos.CENTER); // Center the contents of the VBox
 
-        Label accountSettingsLabel = new Label("Account Settings");
-        accountSettingsLabel.setFont(new Font(30));//15));
-        Label companyCodeDescriptionLabel = new Label();
+        Label accountSettingsLabel = new Label("Account Settings"); // Create a label for account settings
+        accountSettingsLabel.setFont(new Font(30)); // Set the font size for the label
+        Label companyCodeDescriptionLabel = new Label(); // Create a label to display the company code description
+        // Set the description label text based on the user's account type and linking code
         if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
             companyCodeDescriptionLabel.setText("Add company code below:");
         } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
             companyCodeDescriptionLabel.setText("Company code below:");
-        }
-        else {
+        } else {
             companyCodeDescriptionLabel.setText("Modify company code below:");
         }
-        accountSettingsLabel.setFont(new Font(15));
-        Label companyCodeLabel = new Label("Company Code:");
-        TextField companyCodeField = new TextField();
-        Optional<UUID> linkingCode = loggedInUser.getLinkingCode();
+        accountSettingsLabel.setFont(new Font(15)); // Set the font size for the description label
+        Label companyCodeLabel = new Label("Company Code:"); // Create a label for the company code
+        TextField companyCodeField = new TextField(); // Create a text field for the company code
+        Optional<UUID> linkingCode = loggedInUser.getLinkingCode(); // Get the linking code of the logged-in user
+        // Set the text in the company code field based on the user's linking code
         if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
             companyCodeField.setText("");
-        }else{
+        } else {
             companyCodeField.setText(linkingCode.isPresent() ? linkingCode.get().toString() : "");
         }
-        if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
+        // Set the editable property of the company code field based on the user's account type
+        if (Objects.equals(loggedInUser.getAccountType(), "Employee")) {
             companyCodeField.setEditable(true);
-        }
-        else {
+        } else {
             companyCodeField.setEditable(false);
         }
 
-        HBox companyBox = new HBox(10);
-        companyBox.getChildren().addAll(companyCodeLabel, companyCodeField);
-        companyBox.setAlignment(Pos.CENTER);
+        HBox companyBox = new HBox(10); // Create an HBox to hold the company code label and text field
+        companyBox.getChildren().addAll(companyCodeLabel, companyCodeField); // Add the label and text field to the HBox
+        companyBox.setAlignment(Pos.CENTER); // Center the contents of the HBox
 
-        new Label();
+        Label updateDetailsLabel = new Label("Update your details below:"); // Create a label for updating user details
+        updateDetailsLabel.setFont(new Font(15)); // Set the font size for the label
 
-        Label updateDetailsLabel = new Label("Update your details below:");
-        updateDetailsLabel.setFont(new Font(15));
+        VBox formBox = new VBox(5); // Create a VBox to hold the form fields
+        Label nameLabel = new Label("Name"); // Create a label for the name field
 
-        VBox formBox = new VBox(5);
-        Label nameLabel = new Label("Name");
+        TextField nameField = new TextField(); // Create a text field for the name
+        nameField.setText(loggedInUser.getName()); // Set the text in the name field with the logged-in user's name
+        Label emailLabel = new Label("Email"); // Create a label for the email field
+        TextField emailField = new TextField(); // Create a text field for the email
+        emailField.setText(loggedInUser.getEmail()); // Set the text in the email field with the logged-in user's email
+        Label passwordLabel = new Label("Password"); // Create a label for the password field
+        TextField passwordField = new TextField(); // Create a text field for the password
+        passwordField.setText(loggedInUser.getPassword()); // Set the text in the password field with the logged-in user's password
 
-        TextField nameField = new TextField();
-        nameField.setText(loggedInUser.getName());
-        Label emailLabel = new Label("Email");
-        TextField emailField = new TextField();
-        emailField.setText(loggedInUser.getEmail());
-        Label passwordLabel = new Label("Password");
-        TextField passwordField = new TextField();
-        passwordField.setText(loggedInUser.getPassword());
-
+        // Add the form fields to the formBox
         formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
-        formBox.setAlignment(Pos.CENTER_LEFT);
+        formBox.setAlignment(Pos.CENTER_LEFT); // Align the form fields to the center-left
 
-        HBox buttonsBox = new HBox(10);
-        buttonsBox.setAlignment(Pos.CENTER);
-        Button updateButton = new Button("UPDATE");
-        Button cancelButton = new Button("CANCEL");
-        cancelButton.setOnAction(event -> showHomePage());
-        buttonsBox.getChildren().addAll(updateButton, cancelButton);
+        HBox buttonsBox = new HBox(10); // Create an HBox to hold the update and cancel buttons
+        buttonsBox.setAlignment(Pos.CENTER); // Center the contents of the buttonsBox
+        Button updateButton = new Button("UPDATE"); // Create an update button
+        Button cancelButton = new Button("CANCEL"); // Create a cancel button
+        cancelButton.setOnAction(event -> showHomePage()); // Set the action for the cancel button to show the home page
+        buttonsBox.getChildren().addAll(updateButton, cancelButton); // Add the buttons to the buttonsBox
 
         updateButton.setOnAction(event -> {
-            String name = nameField.getText();
-            String email = emailField.getText();
-            String password = passwordField.getText();
-            boolean isValidUUID = isValidUUID(companyCodeField.getText());
-            if (!companyCodeField.getText().isEmpty() && !isValidUUID){
-                showAlert("Not valid linking code");
+            String name = nameField.getText(); // Get the name from the name field
+            String email = emailField.getText(); // Get the email from the email field
+            String password = passwordField.getText(); // Get the password from the password field
+            boolean isValidUUID = isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
+            if (!companyCodeField.getText().isEmpty() && !isValidUUID) {
+                showAlert("Not valid linking code"); // Show an alert if the linking code is not a valid UUID
                 return;
-            }   else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
-                showAlert("Email already exists.");
+            } else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
+                showAlert("Email already exists."); // Show an alert if the email is already registered and not the same as the logged-in user's email
                 return;
             }
 
             UserDetails updatedUserDetails;
-            if (Objects.equals(loggedInUser.getAccountType(), "Employee")){
-                String companyCode = companyCodeField.getText();// Validate linking code against manager profiles
-                boolean isValidLinkingCode = isValidLinkingCode(companyCode);
+            if (Objects.equals(loggedInUser.getAccountType(), "Employee")) {
+                String companyCode = companyCodeField.getText(); // Get the company code from the text field
+                boolean isValidLinkingCode = isValidLinkingCode(companyCode); // Validate the linking code against manager profiles
                 if (!isValidLinkingCode) {
-                    showAlert("Invalid linking code.");
+                    showAlert("Invalid linking code."); // Show an alert if the linking code is invalid
                     return; // Exit the method if the code is invalid
                 }
 
                 Optional<UUID> linkingCodeOptional;
                 if (companyCodeField.getText().isEmpty()) {
-                    linkingCodeOptional = Optional.empty();
+                    linkingCodeOptional = Optional.empty(); // If the company code field is empty, create an empty Optional
                 } else {
                     try {
-                        UUID linkingCodeUUID = UUID.fromString(companyCodeField.getText());
-                        linkingCodeOptional = Optional.of(linkingCodeUUID);
+                        UUID linkingCodeUUID = UUID.fromString(companyCodeField.getText()); // Convert the company code string to a UUID
+                        linkingCodeOptional = Optional.of(linkingCodeUUID); // Create an Optional with the UUID
                     } catch (IllegalArgumentException e) {
                         // Invalid UUID format
-                        linkingCodeOptional = loggedInUser.getLinkingCode();
+                        linkingCodeOptional = loggedInUser.getLinkingCode(); // Use the existing linking code if the format is invalid
                     }
                 }
 
+                // Create a new UserDetails object with the updated information
                 updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
-            }else{
+            } else {
+                // For non-employee accounts, create a new UserDetails object without changing the linking code
                 updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
             }
 
-            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
-            loggedInUser = updatedUserDetails;
-            showAlert("Details updated successfully.");
-            saveUserData(); // Save user data after updating details
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map
+            loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
+            showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
+            saveUserData(); // Save the updated user data
         });
 
-        if (Objects.equals(loggedInUser.getAccountType(), "Personal")){
+        if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
+            // If the user is a personal account, only show the account settings, update details, form, and buttons
             updateBox.getChildren().addAll(accountSettingsLabel, updateDetailsLabel, formBox, buttonsBox);
-        }else{
+        } else {
+            // For other account types, also show the company code description and company code fields
             updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox);
         }
-        updatePane.setCenter(updateBox);
 
-        rootPane.getChildren().setAll(updatePane);
+        updatePane.setCenter(updateBox); // Set the updateBox in the center of the BorderPane
+
+        rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
     }
 
-    private boolean isValidLinkingCode(String linkingCode) {
+    private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
         // Iterate over userDetailsMap to find manager profiles
-        for (UserDetails userDetails : userDetailsMap.values()) {
-            if (Objects.equals(userDetails.getAccountType(), "Manager")) {
-                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode();
-                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) {
+        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
+            if (Objects.equals(userDetails.getAccountType(), "Manager")) { // Checks if the current UserDetails object is of type "Manager"
+                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode(); // Gets the linking code of the manager
+                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) { // Checks if the manager's linking code matches the provided linking code
                     return true; // Valid linking code found
                 }
             }
@@ -515,67 +520,62 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         return false; // No matching linking code found
     }
 
-    private boolean isEmailRegistered(String email) {
+    private boolean isEmailRegistered(String email) { // Defines a private method to check if an email is already registered
         // Iterate over userDetailsMap to check if email is already registered
-        for (UserDetails userDetails : userDetailsMap.values()) {
-            if (userDetails.getEmail().equals(email)) {
+        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
+            if (userDetails.getEmail().equals(email)) { // Checks if the email of the current UserDetails object matches the provided email
                 return true; // Email already registered
             }
         }
         return false; // Email not registered
     }
 
-    // Method to load user data from file
-    private void loadUserData() {
-        File file = new File("src/main/resources/userData.dat");
-
-        if (file.exists() && file.length() > 0) {
+    private void loadUserData() { // This method loads user data from a file named "userData.dat" located in the "src/main/resources" directory
+        File file = new File("src/main/resources/userData.dat"); // Create a File object for the "userData.dat" file
+        if (file.exists() && file.length() > 0) { // Check if the file exists and has a non-zero length
             try {
-                FileInputStream fileIn = new FileInputStream(file);
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject();
-                objectIn.close();
-                fileIn.close();
-
+                FileInputStream fileIn = new FileInputStream(file); // Create a FileInputStream to read from the file
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Create an ObjectInputStream to read objects from the FileInputStream
+                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
+                objectIn.close(); // Close the input streams
+                fileIn.close(); // Close the input streams
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // If an exception occurs during reading, print the stack trace
             }
         } else {
-            //System.out.println("userData.dat file is empty or does not exist.");
-            userDetailsMap = new HashMap<>();
+            userDetailsMap = new HashMap<>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
         }
     }
 
-    private void saveUserData() {
+    private void saveUserData() { // This method saves the userDetailsMap to the "userData.dat" file
         try {
-            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat");
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-
-            objectOut.writeObject(userDetailsMap);
-            objectOut.close();
-            fileOut.close();
+            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat"); // Create a FileOutputStream to write to the "userData.dat" file
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Create an ObjectOutputStream to write objects to the FileOutputStream
+            objectOut.writeObject(userDetailsMap); // Write the userDetailsMap object to the file
+            objectOut.close(); // Close the output streams
+            fileOut.close(); // Close the output streams
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // If an exception occurs during writing, print the stack trace
         }
     }
 
-    private static boolean isValidUUID(String str) {
+    private static boolean isValidUUID(String str) { // This method checks if a given string is a valid UUID (Universally Unique Identifier)
         try {
-            UUID uuid = UUID.fromString(str);
-            return true;
+            UUID uuid = UUID.fromString(str); // Attempt to create a UUID object from the input string using the correct method
+            return true; // If no exception is thrown, the string is a valid UUID
         } catch (IllegalArgumentException e) {
-            return false;
+            return false; // If an exception is thrown, the string is not a valid UUID
         }
     }
 
-    private boolean authenticateUser(String email, String password) {
-        for (UserDetails userDetails : userDetailsMap.values()) {
-            if (userDetails.getEmail().equals(email) && userDetails.getPassword().equals(password)) {
-                loggedInUser = userDetails;
-                return true;
+    private boolean authenticateUser(String email, String password) { // Defines a private method to authenticate a user
+        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
+            if (userDetails.getEmail().equals(email) && userDetails.getPassword().equals(password)) { // Checks if the email and password match the current UserDetails object
+                loggedInUser = userDetails; // Updates the loggedInUser instance variable with the authenticated user's details
+                return true; // User authenticated successfully
             }
         }
-        return false;
+        return false; // User authentication failed
     }
 
     private void showAlert(String message) { // Defines a private method to display an alert
@@ -732,6 +732,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     public static void main(String[] args) {
-        launch(); // Launches application
+        launch(); // calls for the JavaFx application to launch
     }
 }
