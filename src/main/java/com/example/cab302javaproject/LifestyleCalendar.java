@@ -4,6 +4,8 @@
  */
 package com.example.cab302javaproject;
 
+//Java FX libraries
+//JavaFX is used for the UI elements of the application
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +17,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
+//Java Util libraries
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +39,8 @@ import java.io.ObjectOutputStream;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+
+
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -132,6 +142,7 @@ public class LifestyleCalendar extends Application {
         informationLabel.setFont(new Font(15));
         informationLabel.setAlignment(Pos.CENTER);
 
+        //email and password text boxes
         VBox formBox = new VBox(5);
         Label emailLabel = new Label("Email");
         TextField emailField = new TextField();
@@ -139,6 +150,7 @@ public class LifestyleCalendar extends Application {
         TextField passwordField = new TextField();
         formBox.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField);
         formBox.setAlignment(Pos.CENTER_LEFT);
+
 
         HBox buttonsBox = new HBox(10);
         Button loginButton = new Button("LOGIN");
@@ -152,9 +164,11 @@ public class LifestyleCalendar extends Application {
             String email = emailField.getText();
             String password = passwordField.getText();
 
+            //If the username and password exists/is correct, load the calendar data and open the Calendar Screen
             if (authenticateUser(email, password)) {
                 loadCalendarData();
-                showProfileEditScreen();
+                //showProfileEditScreen();
+                showCalendarScreen();
             } else {
                 showAlert("Invalid email or password.");
             }
@@ -502,6 +516,59 @@ public class LifestyleCalendar extends Application {
         rootPane.getChildren().setAll(updatePane);
     }
 
+    private void showCalendarScreen() {
+        BorderPane calendarPane = new BorderPane();
+
+        // Create a VBox for the button
+        VBox buttonBox = new VBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        // Create the "Back" button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> showHomePage());
+
+        // Add the button to the VBox
+        buttonBox.getChildren().add(backButton);
+
+        // Add the VBox to the center of the BorderPane
+        calendarPane.setCenter(buttonBox);
+
+        // Create a Rectangle for the top partition
+        Rectangle topPartition = new Rectangle();
+        topPartition.setFill(Color.LIGHTGRAY); // Set the color of the partition
+
+        // Set the width of the Rectangle to the width of the BorderPane
+        topPartition.widthProperty().bind(calendarPane.widthProperty());
+
+        // Set the height of the Rectangle to 5% of the height of the BorderPane
+        topPartition.heightProperty().bind(calendarPane.heightProperty().multiply(0.05));
+
+        // Add the Rectangle to the top of the BorderPane
+        calendarPane.setTop(topPartition);
+
+        // Create a Button with the ImageView
+        image = new Image("userProfilePicture.png");
+        Button profileButton = new Button();
+        //profileButton.setGraphic(userProfilePicture);
+        // Set the button size to be a 1:1 square and the height of the partition
+        profileButton.prefWidthProperty().bind(topPartition.heightProperty());
+        profileButton.prefHeightProperty().bind(topPartition.heightProperty());
+        // Create an HBox to hold the partition and the button
+        HBox header = new HBox(topPartition, profileButton);
+        header.setAlignment(Pos.CENTER_RIGHT);
+
+        // Add the HBox to the top of the BorderPane
+        calendarPane.setTop(header);
+        // Create a scene with the BorderPane
+        Scene scene = new Scene(calendarPane, 1280, 720);
+
+        // Set the scene on the stage
+        primaryStage.setScene(scene);
+
+        // Show the stage
+        primaryStage.show();
+    }
+
     private boolean isValidLinkingCode(String linkingCode) {
         // Iterate over userDetailsMap to find manager profiles
         for (UserDetails userDetails : userDetailsMap.values()) {
@@ -734,4 +801,5 @@ public class LifestyleCalendar extends Application {
     public static void main(String[] args) {
         launch();
     }
+
 }
