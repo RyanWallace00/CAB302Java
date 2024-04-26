@@ -15,20 +15,17 @@ import javafx.scene.text.Font; // Imports the Font class from the JavaFX library
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
-
 import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
 import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
 import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
 import java.util.UUID; // Imports the UUID class from the Java utility package for generating unique identifiers
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
-
 import java.io.*; // Imports all classes related to input/output from the Java I/O package
 import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
 import java.io.FileInputStream; // Imports the FileInputStream class from the Java I/O package for reading from files
 import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
 import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
-
 import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
 import java.util.List; // Imports the List interface from the Java Collections Framework
 
