@@ -9,6 +9,9 @@ import javafx.geometry.Insets; // Imports the Insets class from the JavaFX libra
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
 import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
 import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
@@ -28,7 +31,8 @@ import java.io.ObjectInputStream; // Imports the ObjectInputStream class from th
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
 import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
 import java.util.List; // Imports the List interface from the Java Collections Framework
-
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
  */
