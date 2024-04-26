@@ -50,21 +50,13 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
         userDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
         calendarDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
-
         Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
-
         stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
         stage.setScene(scene); // Sets the scene of the primary stage
         stage.show(); // Displays the primary stage
-
-        // Load application logo
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
-
         stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
-        // Load user data when the application starts
         loadUserData(); // Calls the loadUserData method to load user data from a file
-
-        // Display home page
         showHomePage(); // Calls the showHomePage method to display the home page
     }
 
