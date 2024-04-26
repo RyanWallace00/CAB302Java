@@ -28,6 +28,11 @@ import java.io.ObjectInputStream; // Imports the ObjectInputStream class from th
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
 import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
 import java.util.List; // Imports the List interface from the Java Collections Framework
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
