@@ -15,10 +15,8 @@ import javafx.scene.text.Font; // Imports the Font class from the JavaFX library
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
-import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
-import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
-import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
-import java.util.UUID; // Imports the UUID class from the Java utility package for generating unique identifiers
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
 import java.io.*; // Imports all classes related to input/output from the Java I/O package
 import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
@@ -27,7 +25,7 @@ import java.io.FileOutputStream; // Imports the FileOutputStream class from the 
 import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
 import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
-import java.util.List; // Imports the List interface from the Java Collections Framework
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -419,54 +417,76 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showCalendarScreen() {
-        BorderPane calendarPane = new BorderPane();
+        BorderPane calendarPane = new BorderPane(); //initialise the calendar pane
 
         // Create a VBox for the button
         VBox buttonBox = new VBox(10);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // Create the "Back" button
-        Button backButton = new Button("Back");
-        backButton.setOnAction(event -> showHomePage());
-
-        // Add the button to the VBox
-        buttonBox.getChildren().add(backButton);
-
-        // Add the VBox to the center of the BorderPane
-        calendarPane.setCenter(buttonBox);
-
+        /**
+        This is code for the 'menu bar' at the top of the screen.
+        */
         // Create a Rectangle for the top partition
         Rectangle topPartition = new Rectangle();
-        topPartition.setFill(Color.LIGHTGRAY); // Set the color of the partition
-
+        // Set the fill color of the Rectangle to a very light grey using a hex color code
+        topPartition.setFill(Color.web("#e9e9e9"));
+        // Set the stroke color of the Rectangle to grey using a hex color code
+        topPartition.setStroke(Color.web("#b3b3b3"));
         // Set the width of the Rectangle to the width of the BorderPane
         topPartition.widthProperty().bind(calendarPane.widthProperty());
-
         // Set the height of the Rectangle to 5% of the height of the BorderPane
         topPartition.heightProperty().bind(calendarPane.heightProperty().multiply(0.05));
-
         // Add the Rectangle to the top of the BorderPane
         calendarPane.setTop(topPartition);
 
-        // Create a Button with the ImageView
-        image = new Image("userProfilePicture.png");
-        Button profileButton = new Button();
-        //profileButton.setGraphic(userProfilePicture);
-        // Set the button size to be a 1:1 square and the height of the partition
-        profileButton.prefWidthProperty().bind(topPartition.heightProperty());
-        profileButton.prefHeightProperty().bind(topPartition.heightProperty());
-        // Create an HBox to hold the partition and the button
-        HBox header = new HBox(topPartition, profileButton);
-        header.setAlignment(Pos.CENTER_RIGHT);
+        // Create the "Back" button
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> showHomePage());
+        // Create the "Profile button
+        Button profileButton = new Button("Profile");
+        profileButton.setOnAction(event -> showProfileEditScreen());
 
+        // Create a StackPane to hold the rectangle and the buttons
+        StackPane headerStackPane = new StackPane();
+        headerStackPane.getChildren().addAll(topPartition, backButton, new Pane(), profileButton);
+        // Set the alignment of the buttons within the StackPane
+        StackPane.setAlignment(backButton, Pos.CENTER_LEFT);
+        StackPane.setAlignment(profileButton, Pos.CENTER_RIGHT);
+        // Create an HBox to hold the StackPane
+        HBox header = new HBox();
+        header.getChildren().addAll(new Pane(), headerStackPane);
+        HBox.setHgrow(header.getChildren().get(1), Priority.ALWAYS); // Make the Pane grow to push the StackPane to the right
         // Add the HBox to the top of the BorderPane
         calendarPane.setTop(header);
+
+        /**
+         * This is code for the left column
+         */
+        //Create rectangle for sidebar
+        Rectangle sideBar = new Rectangle();
+        // Set the fill color of the Rectangle to a very light grey using a hex color code
+        sideBar.setFill(Color.web("#e9e9e9"));
+        // Set the stroke color of the Rectangle to grey using a hex color code
+        sideBar.setStroke(Color.web("#b3b3b3"));
+        // Set the width of the Rectangle to the 20% of the width of the BorderPane
+        sideBar.widthProperty().bind(calendarPane.widthProperty().multiply(0.20));
+        // Set the height of the Rectangle to 95% of the height of the BorderPane, to account for the header bar
+        sideBar.heightProperty().bind(calendarPane.heightProperty().multiply(0.95));
+        //Add the rectangle to the left of the BorderPane
+        calendarPane.setLeft(sideBar);
+
+        /**
+         * This is code for the calendar segment.
+         */
+        //...
+
+        /**
+         * This is code for the creation of the window
+         */
         // Create a scene with the BorderPane
         Scene scene = new Scene(calendarPane, 1280, 720);
-
         // Set the scene on the stage
         primaryStage.setScene(scene);
-
         // Show the stage
         primaryStage.show();
     }
