@@ -38,6 +38,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.ComboBox;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -452,13 +453,21 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create the "Profile button
         Button profileButton = new Button("Profile");
         profileButton.setOnAction(event -> showProfileEditScreen());
+        // Create the "Settings" button
+        Button settingsButton = new Button("Settings");
+        // Create the "Add Event" button
+        Button addEventButton = new Button("Add Event");
+        addEventButton.setOnAction(event -> showAddEvent());
 
         // Create a StackPane to hold the rectangle and the buttons
         StackPane headerStackPane = new StackPane();
-        headerStackPane.getChildren().addAll(topPartition, backButton, new Pane(), profileButton);
+        headerStackPane.getChildren().addAll(topPartition, backButton, new Pane(), addEventButton, new Pane(), settingsButton, new Pane(), profileButton);
+
         // Set the alignment of the buttons within the StackPane
         StackPane.setAlignment(backButton, Pos.CENTER_LEFT);
+        StackPane.setAlignment(settingsButton, Pos.CENTER_RIGHT);
         StackPane.setAlignment(profileButton, Pos.CENTER_RIGHT);
+        StackPane.setAlignment(addEventButton, Pos.CENTER);
         // Create an HBox to hold the StackPane
         HBox header = new HBox();
         header.getChildren().addAll(new Pane(), headerStackPane);
@@ -534,6 +543,70 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         primaryStage.setScene(scene);
         // Show the stage
         primaryStage.show();
+    }
+
+    private void showAddEvent() {
+        // Create a new stage for the pop-up window
+        Stage addEventStage = new Stage();
+        addEventStage.setTitle("Add Event");
+
+        // Create the layout for the pop-up window
+        GridPane layout = new GridPane();
+        layout.setAlignment(Pos.CENTER);
+        layout.setHgap(10);
+        layout.setVgap(10);
+
+        // Labels for the fields
+        Label titleLabel = new Label("Title:");
+        Label typeLabel = new Label("Type:");
+        Label dateLabel = new Label("Date:");
+        Label timeFromLabel = new Label("Time From:");
+        Label timeToLabel = new Label("Time To:");
+        Label descriptionLabel = new Label("Description:");
+
+        // TextFields and ComboBox for user input
+        TextField titleField = new TextField();
+        ComboBox<String> typeComboBox = new ComboBox<>();
+        typeComboBox.getItems().addAll("Meeting", "Reminder");
+        DatePicker datePicker = new DatePicker();
+        TextArea descriptionArea = new TextArea();
+        TextField timeToPicker = new TextField();
+        TextField timeFromPicker = new TextField();
+
+
+        // Add components to the layout
+        layout.add(titleLabel, 0, 0);
+        layout.add(titleField, 1, 0);
+        layout.add(typeLabel, 0, 1);
+        layout.add(typeComboBox, 1, 1);
+        layout.add(dateLabel, 0, 2);
+        layout.add(datePicker, 1, 2);
+        layout.add(timeFromLabel, 0, 3);
+        layout.add(timeFromPicker, 1, 3);
+        layout.add(timeToLabel, 0, 4);
+        layout.add(timeToPicker, 1, 4);
+        layout.add(descriptionLabel, 0, 5);
+        layout.add(descriptionArea, 1, 5);
+
+        // Create a button to confirm adding the event
+        Button addButton = new Button("Add");
+        addButton.setOnAction(event -> {
+            // Add functionality to handle adding the event
+            // You can access the data entered by the user from the UI elements
+            // Perform any necessary actions (e.g., add the event to the calendar data)
+            // Close the pop-up window after adding the event (optional)
+            addEventStage.close();
+        });
+
+        // Add the button to the layout
+        layout.add(addButton, 1, 6);
+
+        // Create a scene with the layout
+        Scene scene = new Scene(layout, 600, 500);
+
+        // Set the scene on the stage and show the stage
+        addEventStage.setScene(scene);
+        addEventStage.show();
     }
 
     private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
