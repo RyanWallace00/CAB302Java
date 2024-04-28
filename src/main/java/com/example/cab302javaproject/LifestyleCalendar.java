@@ -32,6 +32,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
  */
@@ -478,7 +485,45 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         /**
          * This is code for the calendar segment.
          */
-        //...
+        // Calendar Grid
+        TableView<String[]> calendarGrid = new TableView<>();
+        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Ensure columns fill the available width
+
+        // Add the "Time" column
+        TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
+        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
+        timeColumn.setPrefWidth(70); // Adjust the width as needed
+        calendarGrid.getColumns().add(timeColumn);
+
+        // Add columns for each day of the week
+        String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        TableColumn<String[], String>[] columns = new TableColumn[daysOfWeek.length]; // Array to hold columns
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            TableColumn<String[], String> column = new TableColumn<>(daysOfWeek[i]);
+            final int index = i + 1; // Increment by 1 to skip the "Time" column
+            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
+            column.setPrefWidth(TableView.USE_COMPUTED_SIZE); // Let the column size adjust to fit content
+            columns[i] = column; // Assign column to array
+        }
+        calendarGrid.getColumns().addAll(columns); // Add columns to TableView
+
+        // Add rows for each hour of the day
+        for (int hour = 0; hour < 24; hour++) {
+            String[] row = new String[8]; // 8 columns (including the "Time" column)
+            // Adjust time to display 00:00 - 23:00
+            row[0] = String.format("%02d:00", hour);
+            for (int day = 1; day < 8; day++) {
+                row[day] = ""; // Placeholder for event information (to be implemented later)
+            }
+            calendarGrid.getItems().add(row);
+        }
+
+        // Limit the number of rows to 25
+        calendarGrid.setFixedCellSize(25); // Set the height of each row
+        calendarGrid.prefHeightProperty().bind(calendarGrid.fixedCellSizeProperty().multiply(25)); // Set the TableView's height
+
+        // Add calendar grid to center of the BorderPane
+        calendarPane.setCenter(calendarGrid);
 
         /**
          * This is code for the creation of the window
