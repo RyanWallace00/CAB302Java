@@ -4,6 +4,9 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
@@ -15,6 +18,11 @@ import javafx.scene.text.Font; // Imports the Font class from the JavaFX library
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
+import javafx.util.Duration;
+
+import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
 import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
 import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
@@ -26,8 +34,9 @@ import java.io.FileInputStream; // Imports the FileInputStream class from the Ja
 import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
 import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
-import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
+import java.time.LocalTime; // Imports the LocalTime class from the Java time package for representing dates and times
 import java.util.List; // Imports the List interface from the Java Collections Framework
+
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -39,6 +48,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the application logo image
+
 
     /**
      * The start method initializes the primary stage and displays the home page.
@@ -57,8 +67,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
         stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
         loadUserData(); // Calls the loadUserData method to load user data from a file
-        showHomePage(); // Calls the showHomePage method to display the home page
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(20), event -> {
+            showNotification("Reminder", "This is your scheduled notification!");
+        }));
+        timeline.setCycleCount(1);  // Ensures the timeline only runs once
+        timeline.play();
+
+        showHomePage();  // Display the home page
     }
+
 
     /**
      * Displays the home page with login and signup options.
@@ -591,22 +609,27 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
     }
 
+
     private static class CalendarDetails implements Serializable { // Defines a private static nested class CalendarDetails that implements the Serializable interface
         private final UUID uuid; // Declares a final instance variable uuid of type UUID
         private final String eventName; // Declares a final instance variable eventName of type String
         private final String eventDescription; // Declares a final instance variable eventDescription of type String
-        private final ZonedDateTime eventFrom; // Declares a final instance variable eventFrom of type ZonedDateTime
-        private final ZonedDateTime eventTo; // Declares a final instance variable eventTo of type ZonedDateTime
-        private final List<UUID> linkingUsers; // Declares a final instance variable linkingUsers of type List<UUID>
+        private final String eventType; // Declares a final instance variable eventType of type String
+        private final LocalTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
+        private final LocalTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
+        private final DatePicker eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
+        private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) { // Defines a constructor that takes parameters for all instance variables
+        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker eventDate, LocalTime eventTimeFrom, LocalTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.eventName = eventName; // Initializes the eventName instance variable
+            this.eventType = eventType; // Initializes the eventType instance variable
             this.eventDescription = eventDescription; // Initializes the eventDescription instance variable
-            this.eventFrom = eventFrom; // Initializes the eventFrom instance variable
-            this.eventTo = eventTo; // Initializes the eventTo instance variable
-            this.linkingUsers = linkingUsers; // Initializes the linkingUsers instance variable
+            this.eventDate = eventDate;
+            this.eventTimeFrom = eventTimeFrom; // Initializes the eventFrom instance variable
+            this.eventTimeTo = eventTimeTo; // Initializes the eventTo instance variable
+            this.linkingCode = linkingCode; // Initializes the linkingUsers instance variable
         }
 
         public UUID getUuid() { // Defines a public method to get the uuid
@@ -621,16 +644,76 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             return eventDescription; // Returns the eventDescription instance variable
         }
 
-        public ZonedDateTime getEventFrom() { // Defines a public method to get the eventFrom
-            return eventFrom; // Returns the eventFrom instance variable
+        public LocalTime getEventFrom() { // Defines a public method to get the eventFrom
+            return eventTimeFrom; // Returns the eventTimeFrom instance variable
         }
 
-        public ZonedDateTime getEventTo() { // Defines a public method to get the eventTo
-            return eventTo; // Returns the eventTo instance variable
+        public LocalTime getEventTo() { // Defines a public method to get the eventTo
+            return eventTimeTo; // Returns the eventTimeTo instance variable
         }
 
-        public List<UUID> getLinkingUsers() { // Defines a public method to get the linkingUsers list
-            return linkingUsers; // Returns the linkingUsers instance variable list
+        public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
+            return linkingCode; // Returns the linkingCode instance variable
+        }
+    }
+
+
+    public static class NotificationService {
+        private final HashMap<UUID, CalendarDetails> calendarDetailsMap;
+        private UserDetails loggedInUser;
+        private Timeline notificationTimeline;
+
+        public NotificationService(HashMap<UUID, CalendarDetails> calendarDetailsMap, UserDetails loggedInUser) {
+            this.calendarDetailsMap = calendarDetailsMap;
+            this.loggedInUser = loggedInUser;
+            initializeNotificationTimeline();
+        }
+
+        private void initializeNotificationTimeline() {
+            Timeline notificationTimeline = new Timeline(new KeyFrame(Duration.seconds(15), event -> {
+                checkForNotifications();
+            }));
+            notificationTimeline.setCycleCount(Animation.INDEFINITE);
+            notificationTimeline.play();
+        }
+
+        private void checkForNotifications() {
+            LocalTime currentTime = LocalTime.now();
+
+            for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
+                if (Objects.equals(loggedInUser.accountType, "Personal")) {
+                    if (calendarDetails.linkingCode.isPresent() && calendarDetails.linkingCode.get().equals(loggedInUser.uuid)) {
+                        LocalTime eventStartTime = calendarDetails.getEventFrom();
+                        LocalTime eventEndTime = calendarDetails.getEventTo();
+
+                        if (currentTime.isAfter(eventStartTime) && currentTime.isBefore(eventEndTime)) {
+                            showNotification(calendarDetails.getEventName(), calendarDetails.getEventDescrption());
+                        }
+                    } else {
+                        if (calendarDetails.linkingCode.isPresent() && calendarDetails.linkingCode.get().equals(loggedInUser.linkingCode)) {
+                            LocalTime eventStartTime = calendarDetails.getEventFrom();
+                            LocalTime eventEndTime = calendarDetails.getEventTo();
+
+                            if (currentTime.isAfter(eventStartTime) && currentTime.isBefore(eventEndTime)) {
+                                showNotification(calendarDetails.getEventName(), calendarDetails.getEventDescrption());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void showNotification(String eventName, String eventDescription){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, eventDescription, ButtonType.OK);
+            alert.setTitle("Notification");
+            alert.setHeaderText(eventName);
+            alert.showAndWait();
+        }
+
+        public void stop() {
+            if (notificationTimeline != null) {
+                notificationTimeline.stop();
+            }
         }
     }
 
@@ -638,3 +721,5 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         launch(); // calls for the JavaFx application to launch
     }
 }
+
+
