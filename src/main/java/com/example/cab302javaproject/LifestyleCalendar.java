@@ -581,6 +581,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         buttonsBox.getChildren().addAll(saveChangesButton, discardChangesButton);
         settingsBox.getChildren().add(buttonsBox); // Add buttons to settingsBox
 
+        notificationPane.setCenter(settingsBox); // Set settings box to the center of the borderpane
+
+        Scene notificationScene = new Scene(notificationPane, 600, 400); // Create scene and set it to the stage
+        Stage notificationStage = new Stage(); // Create a new stage
+        notificationStage.setScene(notificationScene); // Set scene to the stage
+        notificationStage.setTitle("Notification Settings"); // Create heading for the pane
+        notificationStage.show(); // Show the stage
+
         saveChangesButton.setOnAction(event -> { // Save changes
             // Code will be put here for functionality
             Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates an alert dialog
@@ -588,6 +596,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             alert.setHeaderText(null); // Sets the header text of the alert dialog to null
             alert.setContentText("Changes have been Saved."); // Save changes message for user
             alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+            notificationStage.close(); // Close the notification screen
         });
 
         discardChangesButton.setOnAction(event -> { // Discard changes
@@ -597,15 +606,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             alert.setHeaderText(null); // Sets the header text of the alert dialog to null
             alert.setContentText("Changes have been Discarded."); // Discard changes message for user
             alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+            notificationStage.close(); // Close the notification screen
         });
 
-        notificationPane.setCenter(settingsBox); // Set settings box to the center of the borderpane
-
-        Scene notificationScene = new Scene(notificationPane, 600, 400); // Create scene and set it to the stage
-        Stage notificationStage = new Stage(); // Create a new stage
-        notificationStage.setScene(notificationScene); // Set scene to the stage
-        notificationStage.setTitle("Notification Settings"); // Create heading for the pane
-        notificationStage.show(); // Show the stage
     }
 
     private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface

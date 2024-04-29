@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="added comments to notification settings">
+    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="add message for when save and discard changes option is used">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
@@ -158,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714383821081</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="add message for when save and discard changes option is used">
+      <option name="closed" value="true" />
+      <created>1714384557376</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1714384557376</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +185,7 @@
     <MESSAGE value="change category dropmenu items" />
     <MESSAGE value="added event reminder dropdown box, updated options a bit" />
     <MESSAGE value="added comments to notification settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="added comments to notification settings" />
+    <MESSAGE value="add message for when save and discard changes option is used" />
+    <option name="LAST_COMMIT_MESSAGE" value="add message for when save and discard changes option is used" />
   </component>
 </project>
