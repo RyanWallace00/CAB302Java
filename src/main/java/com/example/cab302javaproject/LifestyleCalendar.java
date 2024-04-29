@@ -533,7 +533,19 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Label categoryLabel = new Label("Category:");
         ComboBox<String> categoryDropdown = new ComboBox<>();
         categoryDropdown.getItems().addAll("All", "Eye Strains Only", "Shift Times Only", "Eye Strain Breaks Only");
-        categoryDropdown.setValue("General");
+        categoryDropdown.setValue("All");
+
+        // Snooze notifications
+        Label snoozeLabel = new Label("Snooze Notifications:");
+        ComboBox<String> snoozeDropdown = new ComboBox<>();
+        snoozeDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes");
+        snoozeDropdown.setValue("None");
+
+        // Event Reminder Time
+        Label reminderLabel = new Label("Event Reminder Time:");
+        ComboBox<String> reminderDropdown = new ComboBox<>();
+        reminderDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes");
+        reminderDropdown.setValue("None");
 
         // Personalised notifications
         Label personalisedLabel = new Label("Personalised Notifications:");
@@ -553,27 +565,20 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         noAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
         yesAppUpdatesRadio.setSelected(true);
 
-        // Silence notifications
-        Label silenceLabel = new Label("Silence Notifications:");
-        ToggleGroup silenceToggleGroup = new ToggleGroup();
-        RadioButton yesSilenceRadio = new RadioButton("Yes");
-        yesSilenceRadio.setToggleGroup(silenceToggleGroup);
-        RadioButton noSilenceRadio = new RadioButton("No");
-        noSilenceRadio.setToggleGroup(silenceToggleGroup);
-        yesSilenceRadio.setSelected(true);
-
         // Add components to optionsBox with appropriate spacing
         labelsBox.getChildren().addAll(
                 categoryLabel,
+                snoozeLabel,
+                reminderLabel,
                 personalisedLabel,
-                appUpdatesLabel,
-                silenceLabel
+                appUpdatesLabel
         );
         controlsBox.getChildren().addAll(
                 categoryDropdown,
+                snoozeDropdown,
+                reminderDropdown,
                 new HBox(10, yesPersonalisedRadio, noPersonalisedRadio),
-                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio),
-                new HBox(10, yesSilenceRadio, noSilenceRadio)
+                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio)
         );
 
         // Add components to settingsBox
