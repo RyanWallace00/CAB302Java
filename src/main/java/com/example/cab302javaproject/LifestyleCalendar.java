@@ -532,7 +532,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Category dropdown
         Label categoryLabel = new Label("Category:");
         ComboBox<String> categoryDropdown = new ComboBox<>();
-        categoryDropdown.getItems().addAll("General", "News", "Reminders", "Social");
+        categoryDropdown.getItems().addAll("All", "Eye Strains Only", "Shift Times Only", "Eye Strain Breaks Only");
         categoryDropdown.setValue("General");
 
         // Personalised notifications
