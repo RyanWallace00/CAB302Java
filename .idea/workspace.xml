@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="">
+    <list default="true" id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="Adding Notification Functionality">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/userData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/userData.dat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -17,6 +18,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -28,6 +30,7 @@
             <value>
               <list>
                 <branch-info repo="$PROJECT_DIR$" source="origin/Ryan" />
+                <branch-info repo="$PROJECT_DIR$" source="origin/Jin" />
               </list>
             </value>
           </entry>
@@ -40,8 +43,18 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SET_USER_NAME_GLOBALLY" value="false" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {}
+}]]></component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/RyanWallace00/CAB302Java.git&quot;,
+    &quot;accountId&quot;: &quot;bb44690e-01ff-49c6-81c9-7950cc0602b6&quot;
+  }
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -60,20 +73,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Application.LifeStyleCalendar.executor&quot;: &quot;Run&quot;,
-    &quot;Application.LifestyleCalendar.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.All in CAB302JavaProject.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Ryan&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Application.LifeStyleCalendar.executor": "Run",
+    "Application.LifestyleCalendar.executor": "Run",
+    "JUnit.All in CAB302JavaProject.executor": "Run",
+    "Maven.CAB302JavaProject [clean].executor": "Run",
+    "Maven.CAB302JavaProject [install].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Jin",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject" />
@@ -135,6 +150,15 @@
       <option name="presentableId" value="Default" />
       <updated>1710813739271</updated>
     </task>
+    <task id="LOCAL-00001" summary="Adding Notification Functionality">
+      <option name="closed" value="true" />
+      <created>1714402352334</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1714402352334</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -150,6 +174,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Adding Notification Functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding Notification Functionality" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
