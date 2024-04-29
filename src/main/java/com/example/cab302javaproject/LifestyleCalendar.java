@@ -581,6 +581,24 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         buttonsBox.getChildren().addAll(saveChangesButton, discardChangesButton);
         settingsBox.getChildren().add(buttonsBox); // Add buttons to settingsBox
 
+        saveChangesButton.setOnAction(event -> { // Save changes
+            // Code will be put here for functionality
+            Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates an alert dialog
+            alert.setTitle("Changes Saved"); // Title of function
+            alert.setHeaderText(null); // Sets the header text of the alert dialog to null
+            alert.setContentText("Changes have been Saved."); // Save changes message for user
+            alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+        });
+
+        discardChangesButton.setOnAction(event -> { // Discard changes
+            // Code will be put here for functionality
+            Alert alert = new Alert(Alert.AlertType.INFORMATION); // creates an alert dialog
+            alert.setTitle("Changes Discarded"); // Title of function
+            alert.setHeaderText(null); // Sets the header text of the alert dialog to null
+            alert.setContentText("Changes have been Discarded."); // Discard changes message for user
+            alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+        });
+
         notificationPane.setCenter(settingsBox); // Set settings box to the center of the borderpane
 
         Scene notificationScene = new Scene(notificationPane, 600, 400); // Create scene and set it to the stage

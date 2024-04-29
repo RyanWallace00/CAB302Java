@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="added event reminder dropdown box, updated options a bit">
+    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="added comments to notification settings">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
@@ -150,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714382251046</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added comments to notification settings">
+      <option name="closed" value="true" />
+      <created>1714383821081</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1714383821081</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -168,6 +176,7 @@
     <MESSAGE value="added notification panel (not functional atm) + want to add more later" />
     <MESSAGE value="change category dropmenu items" />
     <MESSAGE value="added event reminder dropdown box, updated options a bit" />
-    <option name="LAST_COMMIT_MESSAGE" value="added event reminder dropdown box, updated options a bit" />
+    <MESSAGE value="added comments to notification settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="added comments to notification settings" />
   </component>
 </project>
