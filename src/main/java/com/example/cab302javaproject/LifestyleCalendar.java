@@ -411,6 +411,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         updatePane.setCenter(updateBox); // Set the updateBox in the center of the BorderPane
         rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
+
+    Button notificationSettingsButton = new Button("Notification Settings"); // Create a button for notification settings
+        notificationSettingsButton.setOnAction(event -> showNotificationSettingsScreen()); // Set action to navigate to notification settings
+        updateBox.getChildren().add(notificationSettingsButton); // Add the button to the VBox for form elements
+
     }
 
     private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
@@ -490,6 +495,120 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         alert.setHeaderText(null); // Sets the header text of the alert to null (no header text)
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
+    }
+
+    private void showNotificationSettingsScreen() { // Code to navigate to the notification settings screen
+        BorderPane notificationPane = new BorderPane(); // Create a new BorderPane to hold the UI elements
+
+        Image image = new Image("LifestyleCalendarLogo.png"); // Load the image
+
+        ImageView imageView = new ImageView(image); // Create an ImageView for displaying the image
+        imageView.setFitWidth(200); // Set the width of the image
+        imageView.setPreserveRatio(true); // Preserve the aspect ratio of the image
+
+        BorderPane.setAlignment(imageView, Pos.CENTER); // Center the image in the top of the BorderPane
+        notificationPane.setTop(imageView);
+
+        VBox settingsBox = new VBox(10); // Create a VBox to hold the form elements
+        settingsBox.setPadding(new Insets(0, 10, 50, 10)); // Set padding for the VBox
+        settingsBox.setAlignment(Pos.CENTER); // Center the contents of the VBox
+
+        Label notificationSettingsLabel = new Label("Notification Settings"); // Create a label for notification settings
+        notificationSettingsLabel.setFont(new Font(15)); // Set font of heading to 15
+
+        VBox labelsBox = new VBox(15); // Increased spacing between labels
+        VBox controlsBox = new VBox(15); // Increased spacing between controls
+        labelsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;"); // Make background colour light gray and adjust padding size for label box
+        controlsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;"); // Make background colour light gray and adjust padding size for control box
+
+        Label categoryLabel = new Label("Category:"); // Category dropdown
+        ComboBox<String> categoryDropdown = new ComboBox<>();
+        categoryDropdown.getItems().addAll("All", "Eye Strains Only", "Shift Times Only", "Eye Strain Breaks Only"); // Add options to category dropdown box
+        categoryDropdown.setValue("All"); // Make default option All
+
+        Label snoozeLabel = new Label("Snooze Notifications:"); // Snooze Notifications
+        ComboBox<String> snoozeDropdown = new ComboBox<>();
+        snoozeDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes"); // Add options to snooze dropdown box
+        snoozeDropdown.setValue("None"); // Make default option None
+
+        Label reminderLabel = new Label("Event Reminder Time:"); // Event Reminder Time
+        ComboBox<String> reminderDropdown = new ComboBox<>();
+        reminderDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes"); // Add options to reminder dropdown box
+        reminderDropdown.setValue("None"); // Make default option None
+
+        Label personalisedLabel = new Label("Personalised Notifications:"); // Personalised notifications
+        ToggleGroup personalizedToggleGroup = new ToggleGroup();
+        RadioButton yesPersonalisedRadio = new RadioButton("Yes"); // Add a yes radio button
+        yesPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
+        RadioButton noPersonalisedRadio = new RadioButton("No"); // Add a no radio button
+        noPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
+        yesPersonalisedRadio.setSelected(true);
+
+        Label appUpdatesLabel = new Label("Receive App Updates:"); // Receive app updates
+        ToggleGroup appUpdatesToggleGroup = new ToggleGroup();
+        RadioButton yesAppUpdatesRadio = new RadioButton("Yes"); // Add a yes radio button
+        yesAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
+        RadioButton noAppUpdatesRadio = new RadioButton("No"); // Add a no radio button
+        noAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
+        yesAppUpdatesRadio.setSelected(true);
+
+        // Add components to optionsBox with appropriate spacing
+        labelsBox.getChildren().addAll(
+                categoryLabel, // Category label
+                snoozeLabel, // Snooze label
+                reminderLabel, // Reminder label
+                personalisedLabel, // Personalised notifications label
+                appUpdatesLabel // App updates label
+        );
+        controlsBox.getChildren().addAll(
+                categoryDropdown, // Category dropdown menu
+                snoozeDropdown, // Snooze dropdown menu
+                reminderDropdown, // Reminder dropdown menu
+                new HBox(10, yesPersonalisedRadio, noPersonalisedRadio), // Personalised notifications radio buttons
+                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio) // App updates radio buttons
+        );
+
+        // Add components to settingsBox
+        settingsBox.getChildren().addAll(
+                notificationSettingsLabel, // Notification settings label
+                new HBox(20, labelsBox, controlsBox) // Labels and controls in HBox
+        );
+
+        HBox buttonsBox = new HBox(10); // Create HBox for buttons
+        buttonsBox.setAlignment(Pos.BOTTOM_RIGHT); // Align buttons to the bottom right
+        Button saveChangesButton = new Button("Save Changes"); // Add save changes button
+        Button discardChangesButton = new Button("Discard Changes"); // Add discard changes button
+        buttonsBox.getChildren().addAll(saveChangesButton, discardChangesButton);
+        settingsBox.getChildren().add(buttonsBox); // Add buttons to settingsBox
+
+        notificationPane.setCenter(settingsBox); // Set settings box to the center of the borderpane
+
+        Scene notificationScene = new Scene(notificationPane, 600, 400); // Create scene and set it to the stage
+        Stage notificationStage = new Stage(); // Create a new stage
+        notificationStage.setScene(notificationScene); // Set scene to the stage
+        notificationStage.setTitle("Notification Settings"); // Create heading for the pane
+        notificationStage.show(); // Show the stage
+
+        saveChangesButton.setOnAction(event -> { // Save changes
+            // Code will be put here for functionality
+            Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates an alert dialog
+            alert.setTitle("Changes Saved"); // Title of function
+            alert.setHeaderText(null); // Sets the header text of the alert dialog to null
+            alert.setContentText("Changes have been Saved."); // Save changes message for user
+            alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+            notificationStage.close(); // Close the notification screen
+        });
+
+        discardChangesButton.setOnAction(event -> { // Discard changes
+            // Code will be put here for functionality
+            Alert alert = new Alert(Alert.AlertType.INFORMATION); // creates an alert dialog
+            alert.setTitle("Changes Discarded"); // Title of function
+            alert.setHeaderText(null); // Sets the header text of the alert dialog to null
+            alert.setContentText("Changes have been Discarded."); // Discard changes message for user
+            alert.showAndWait(); // Displays the alert dialog and waits for the user to close it
+            notificationStage.close(); // Close the notification screen
+        });
+
     }
 
     private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface

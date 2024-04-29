@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="">
+    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="add message for when save and discard changes option is used">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/userData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/userData.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,19 +21,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <favorite-branches>
-      <branch-storage>
-        <map>
-          <entry type="REMOTE">
-            <value>
-              <list>
-                <branch-info repo="$PROJECT_DIR$" source="origin/Ryan" />
-              </list>
-            </value>
-          </entry>
-        </map>
-      </branch-storage>
-    </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
@@ -41,6 +28,9 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -53,34 +43,28 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2dt3qd4un59vxWUSAaPkqpy5y1z" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Application.LifeStyleCalendar.executor&quot;: &quot;Run&quot;,
-    &quot;Application.LifestyleCalendar.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.All in CAB302JavaProject.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Ryan&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.LifeStyleCalendar.executor": "Run",
+    "Application.LifestyleCalendar.executor": "Run",
+    "JUnit.All in CAB302JavaProject.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Najma",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/najma/IdeaProjects/CAB302Java",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\ryanwallace\IdeaProjects\CAB302Java\src\main\resources" />
-      <recent name="C:\Users\ryanwallace\IdeaProjects\CAB302Java\src\main\resources\com\example\cab302javaproject" />
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.cab302javaproject" />
     </key>
   </component>
   <component name="RunManager" selected="Application.LifestyleCalendar">
@@ -126,15 +110,63 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="" />
+      <changelist id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="" />
       <created>1710813739271</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1710813739271</updated>
     </task>
+    <task id="LOCAL-00001" summary="added notification panel (not functional atm) + want to add more later">
+      <option name="closed" value="true" />
+      <created>1714381061199</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1714381061199</updated>
+    </task>
+    <task id="LOCAL-00002" summary="change category dropmenu items">
+      <option name="closed" value="true" />
+      <created>1714381381938</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1714381381938</updated>
+    </task>
+    <task id="LOCAL-00003" summary="added event reminder dropdown box, updated options a bit">
+      <option name="closed" value="true" />
+      <created>1714382251046</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714382251046</updated>
+    </task>
+    <task id="LOCAL-00004" summary="added comments to notification settings">
+      <option name="closed" value="true" />
+      <created>1714383821081</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1714383821081</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add message for when save and discard changes option is used">
+      <option name="closed" value="true" />
+      <created>1714384557376</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1714384557376</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -149,16 +181,11 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="java-exception">
-          <properties class="java.lang.IllegalArgumentException" package="java.lang" />
-          <option name="timeStamp" value="1" />
-        </breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="added notification panel (not functional atm) + want to add more later" />
+    <MESSAGE value="change category dropmenu items" />
+    <MESSAGE value="added event reminder dropdown box, updated options a bit" />
+    <MESSAGE value="added comments to notification settings" />
+    <MESSAGE value="add message for when save and discard changes option is used" />
+    <option name="LAST_COMMIT_MESSAGE" value="add message for when save and discard changes option is used" />
   </component>
 </project>
