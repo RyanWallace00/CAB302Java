@@ -497,112 +497,97 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         alert.showAndWait(); // Displays the alert and waits for it to be closed
     }
 
-    private void showNotificationSettingsScreen() {
-        // Code to navigate to the notification settings screen
-        // Create a new BorderPane to hold the UI elements
-        BorderPane notificationPane = new BorderPane();
+    private void showNotificationSettingsScreen() { // Code to navigate to the notification settings screen
+        BorderPane notificationPane = new BorderPane(); // Create a new BorderPane to hold the UI elements
 
-        // Load the image
-        Image image = new Image("LifestyleCalendarLogo.png");
+        Image image = new Image("LifestyleCalendarLogo.png"); // Load the image
 
-        // Create an ImageView for displaying the image
-        ImageView imageView = new ImageView(image);
+        ImageView imageView = new ImageView(image); // Create an ImageView for displaying the image
         imageView.setFitWidth(200); // Set the width of the image
         imageView.setPreserveRatio(true); // Preserve the aspect ratio of the image
 
-        // Center the image in the top of the BorderPane
-        BorderPane.setAlignment(imageView, Pos.CENTER);
+        BorderPane.setAlignment(imageView, Pos.CENTER); // Center the image in the top of the BorderPane
         notificationPane.setTop(imageView);
 
-        // Create a VBox to hold the form elements
-        VBox settingsBox = new VBox(10);
+        VBox settingsBox = new VBox(10); // Create a VBox to hold the form elements
         settingsBox.setPadding(new Insets(0, 10, 50, 10)); // Set padding for the VBox
         settingsBox.setAlignment(Pos.CENTER); // Center the contents of the VBox
 
-        // Create a label for notification settings
-        Label notificationSettingsLabel = new Label("Notification Settings");
-        notificationSettingsLabel.setFont(new Font(15));
+        Label notificationSettingsLabel = new Label("Notification Settings"); // Create a label for notification settings
+        notificationSettingsLabel.setFont(new Font(15)); // Set font of heading to 15
 
-        // Create a VBox to contain the options with a light gray background
-        VBox labelsBox = new VBox(15); // Increased spacing between options
-        VBox controlsBox = new VBox(15);
-        labelsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;");
-        controlsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;");
+        VBox labelsBox = new VBox(15); // Increased spacing between labels
+        VBox controlsBox = new VBox(15); // Increased spacing between controls
+        labelsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;"); // Make background colour light gray and adjust padding size for label box
+        controlsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;"); // Make background colour light gray and adjust padding size for control box
 
-        // Category dropdown
-        Label categoryLabel = new Label("Category:");
+        Label categoryLabel = new Label("Category:"); // Category dropdown
         ComboBox<String> categoryDropdown = new ComboBox<>();
-        categoryDropdown.getItems().addAll("All", "Eye Strains Only", "Shift Times Only", "Eye Strain Breaks Only");
-        categoryDropdown.setValue("All");
+        categoryDropdown.getItems().addAll("All", "Eye Strains Only", "Shift Times Only", "Eye Strain Breaks Only"); // Add options to category dropdown box
+        categoryDropdown.setValue("All"); // Make default option All
 
-        // Snooze notifications
-        Label snoozeLabel = new Label("Snooze Notifications:");
+        Label snoozeLabel = new Label("Snooze Notifications:"); // Snooze Notifications
         ComboBox<String> snoozeDropdown = new ComboBox<>();
-        snoozeDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes");
-        snoozeDropdown.setValue("None");
+        snoozeDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes"); // Add options to snooze dropdown box
+        snoozeDropdown.setValue("None"); // Make default option None
 
-        // Event Reminder Time
-        Label reminderLabel = new Label("Event Reminder Time:");
+        Label reminderLabel = new Label("Event Reminder Time:"); // Event Reminder Time
         ComboBox<String> reminderDropdown = new ComboBox<>();
-        reminderDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes");
-        reminderDropdown.setValue("None");
+        reminderDropdown.getItems().addAll("None", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "45 minutes", "60 minutes"); // Add options to reminder dropdown box
+        reminderDropdown.setValue("None"); // Make default option None
 
-        // Personalised notifications
-        Label personalisedLabel = new Label("Personalised Notifications:");
+        Label personalisedLabel = new Label("Personalised Notifications:"); // Personalised notifications
         ToggleGroup personalizedToggleGroup = new ToggleGroup();
-        RadioButton yesPersonalisedRadio = new RadioButton("Yes");
+        RadioButton yesPersonalisedRadio = new RadioButton("Yes"); // Add a yes radio button
         yesPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
-        RadioButton noPersonalisedRadio = new RadioButton("No");
+        RadioButton noPersonalisedRadio = new RadioButton("No"); // Add a no radio button
         noPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
         yesPersonalisedRadio.setSelected(true);
 
-        // Receive app updates
-        Label appUpdatesLabel = new Label("Receive App Updates:");
+        Label appUpdatesLabel = new Label("Receive App Updates:"); // Receive app updates
         ToggleGroup appUpdatesToggleGroup = new ToggleGroup();
-        RadioButton yesAppUpdatesRadio = new RadioButton("Yes");
+        RadioButton yesAppUpdatesRadio = new RadioButton("Yes"); // Add a yes radio button
         yesAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
-        RadioButton noAppUpdatesRadio = new RadioButton("No");
+        RadioButton noAppUpdatesRadio = new RadioButton("No"); // Add a no radio button
         noAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
         yesAppUpdatesRadio.setSelected(true);
 
         // Add components to optionsBox with appropriate spacing
         labelsBox.getChildren().addAll(
-                categoryLabel,
-                snoozeLabel,
-                reminderLabel,
-                personalisedLabel,
-                appUpdatesLabel
+                categoryLabel, // Category label
+                snoozeLabel, // Snooze label
+                reminderLabel, // Reminder label
+                personalisedLabel, // Personalised notifications label
+                appUpdatesLabel // App updates label
         );
         controlsBox.getChildren().addAll(
-                categoryDropdown,
-                snoozeDropdown,
-                reminderDropdown,
-                new HBox(10, yesPersonalisedRadio, noPersonalisedRadio),
-                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio)
+                categoryDropdown, // Category dropdown menu
+                snoozeDropdown, // Snooze dropdown menu
+                reminderDropdown, // Reminder dropdown menu
+                new HBox(10, yesPersonalisedRadio, noPersonalisedRadio), // Personalised notifications radio buttons
+                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio) // App updates radio buttons
         );
 
         // Add components to settingsBox
         settingsBox.getChildren().addAll(
-                notificationSettingsLabel,
-                new HBox(20, labelsBox, controlsBox)
+                notificationSettingsLabel, // Notification settings label
+                new HBox(20, labelsBox, controlsBox) // Labels and controls in HBox
         );
 
-        // Create HBox for buttons
-        HBox buttonsBox = new HBox(10);
+        HBox buttonsBox = new HBox(10); // Create HBox for buttons
         buttonsBox.setAlignment(Pos.BOTTOM_RIGHT); // Align buttons to the bottom right
-        Button saveChangesButton = new Button("Save Changes");
-        Button discardChangesButton = new Button("Discard Changes");
+        Button saveChangesButton = new Button("Save Changes"); // Add save changes button
+        Button discardChangesButton = new Button("Discard Changes"); // Add discard changes button
         buttonsBox.getChildren().addAll(saveChangesButton, discardChangesButton);
         settingsBox.getChildren().add(buttonsBox); // Add buttons to settingsBox
 
-        notificationPane.setCenter(settingsBox);
+        notificationPane.setCenter(settingsBox); // Set settings box to the center of the borderpane
 
-        // Create scene and set it to the stage
-        Scene notificationScene = new Scene(notificationPane, 600, 400);
-        Stage notificationStage = new Stage();
-        notificationStage.setScene(notificationScene);
-        notificationStage.setTitle("Notification Settings");
-        notificationStage.show();
+        Scene notificationScene = new Scene(notificationPane, 600, 400); // Create scene and set it to the stage
+        Stage notificationStage = new Stage(); // Create a new stage
+        notificationStage.setScene(notificationScene); // Set scene to the stage
+        notificationStage.setTitle("Notification Settings"); // Create heading for the pane
+        notificationStage.show(); // Show the stage
     }
 
     private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
