@@ -45,6 +45,8 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+
 
 
 /**
@@ -587,13 +589,13 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             timeToComboBox.getItems().add(hourString);
         }
 
+        /**
         // Convert selected time from ComboBox to LocalTime
         String selectedFromTime = timeFromComboBox.getValue();
         String selectedToTime = timeToComboBox.getValue();
 
         LocalDateTime timeFrom = LocalDateTime.parse(selectedFromTime);
-        LocalDateTime timeTo = LocalDateTime.parse(selectedToTime);
-
+        LocalDateTime timeTo = LocalDateTime.parse(selectedToTime); */
 
         // Add components to the layout
         layout.add(titleLabel, 0, 0);
@@ -611,6 +613,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         Button addButton = new Button("Add");
         addButton.setOnAction(event -> {
+            String selectedFromTime = timeFromComboBox.getValue();
+            String selectedToTime = timeToComboBox.getValue();
+            LocalTime timeFrom = LocalTime.parse(selectedFromTime, DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime timeTo = LocalTime.parse(selectedToTime, DateTimeFormatter.ofPattern("HH:mm"));
+
             final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
                 CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
@@ -820,13 +827,13 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         private final String eventName; // Declares a final instance variable eventName of type String
         private final String eventDescription; // Declares a final instance variable eventDescription of type String
         private final String eventType; // Declares a final instance variable eventType of type String
-        private final LocalDateTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
-        private final LocalDateTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
+        private final LocalTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
+        private final LocalTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
         private final DatePicker eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
         private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker eventDate, LocalDateTime eventTimeFrom, LocalDateTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker eventDate, LocalTime eventTimeFrom, LocalTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.eventName = eventName; // Initializes the eventName instance variable
             this.eventType = eventType; // Initializes the eventType instance variable
@@ -849,11 +856,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             return eventDescription; // Returns the eventDescription instance variable
         }
 
-        public LocalDateTime getEventFrom() { // Defines a public method to get the eventFrom
+        public LocalTime getEventFrom() { // Defines a public method to get the eventFrom
             return eventTimeFrom; // Returns the eventTimeFrom instance variable
         }
 
-        public LocalDateTime getEventTo() { // Defines a public method to get the eventTo
+        public LocalTime getEventTo() { // Defines a public method to get the eventTo
             return eventTimeTo; // Returns the eventTimeTo instance variable
         }
 
