@@ -217,6 +217,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             } else {
                 final UUID userId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the userId variable
                 Optional<UUID> linkingCode = Optional.empty(); // Creates an empty Optional<UUID> and assigns it to the linkingCode variable
+                final boolean notificationsPreference = true;
+                final String notificationsSnoozeDuration = "10 minutes";
+                final String notificationsReminderTime = "15 minutes before";
                 if (selectedAccountType.equals("Manager")) { // Checks if the selected account type is "Manager"
                     // Create a popup for Manager account type
                     Stage popupStage = new Stage(); // Creates a new instance of Stage and assigns it to the popupStage variable
@@ -232,7 +235,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     okButton.setOnAction(e -> { // Sets an event handler for the okButton
                         popupStage.close(); // Closes the popupStage
                         //linkingCode = Optional.ofNullable(managerLinkingCode);
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode)); //linkingCode);
+                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime); //linkingCode);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -276,7 +279,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                                 return;
                             }
                             linkingCodeStage.close(); // Closes the linkingCodeStage
-                            UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
+                            UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                             userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                             saveUserData(); // Calls the saveUserData method to save user data to a file
                             popupStage.close(); // Closes the popupStage
@@ -292,7 +295,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         linkingCodeStage.showAndWait(); // Displays the linkingCodeStage and waits for it to be closed
                     });
                     noButton.setOnAction(event2 -> { // Sets an event handler for the noButton
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         popupStage.close(); // Closes the popupStage
@@ -304,7 +307,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
                     popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
                 } else { // If the selected account type is neither "Manager" nor "Employee" (implicitly "Personal")
-                    UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                    UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                     userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                     showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                     showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -416,10 +419,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     }
                 }
                 // Create a new UserDetails object with the updated information
-                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
+                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.notificationsPreference, loggedInUser.notificationsSnoozeDuration, loggedInUser.notificationsReminderTime);
             } else {
                 // For non-employee accounts, create a new UserDetails object without changing the linking code
-                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.notificationsPreference, loggedInUser.notificationsSnoozeDuration, loggedInUser.notificationsReminderTime);
             }
             userDetailsMap.put(loggedInUser.uuid, updatedUserDetails); // Update the user details in the map
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
@@ -453,7 +456,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create the enable notifications toggle button
         Label enableNotificationsLabel = new Label("Enable Notifications:");
         ToggleButton enableNotificationsToggle = new ToggleButton();
-        enableNotificationsToggle.setSelected(true); // Default value
+        enableNotificationsToggle.setSelected(loggedInUser.notificationsPreference); // Set the value from userDetailsMap
 
         // Create a rectangle to represent the toggle button background
         Rectangle toggleBackground = new Rectangle(50, 20);
@@ -466,12 +469,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         toggleThumb.setFill(Color.WHITE);
         toggleThumb.setStroke(Color.LIGHTGRAY);
         toggleThumb.setStrokeWidth(1);
-        toggleThumb.setTranslateX(15);
+        toggleThumb.setTranslateX(loggedInUser.notificationsPreference ? 15 : -15); // Set the initial position based on the value from userDetailsMap
 
         // Create a stack pane to hold the toggle button components
         StackPane togglePane = new StackPane(toggleBackground, toggleThumb);
 
-        toggleBackground.setFill(Color.LIMEGREEN);
+        toggleBackground.setFill(loggedInUser.notificationsPreference ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
         // Update the toggle button appearance when its state changes
         enableNotificationsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -496,7 +499,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 "30 minutes",
                 "1 hour"
         );
-        snoozeDurationComboBox.setValue("10 minutes"); // Default value
+        snoozeDurationComboBox.setValue(loggedInUser.notificationsSnoozeDuration); // Set the value from userDetailsMap
 
         // Create the reminder time dropdown
         Label reminderTimeLabel = new Label("Reminder Time:");
@@ -508,7 +511,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 "30 minutes before",
                 "1 hour before"
         );
-        reminderTimeComboBox.setValue("15 minutes before"); // Default value
+        reminderTimeComboBox.setValue(loggedInUser.notificationsReminderTime); // Set the value from userDetailsMap
 
         // Add the labels, toggle button, and dropdown boxes to the grid
         grid.add(enableNotificationsLabel, 0, 0);
@@ -521,15 +524,33 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Set the content of the alert to the grid
         alert.getDialogPane().setContent(grid);
 
+        // Add an event handler to the OK button
+        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setOnAction(event -> {
+            boolean enableNotifications = enableNotificationsToggle.isSelected();
+            String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
+            String selectedReminderTime = reminderTimeComboBox.getValue();
+
+            // Update the userDetailsMap with the selected values
+            UserDetails updatedUserDetails = new UserDetails(
+                    loggedInUser.uuid,
+                    loggedInUser.name,
+                    loggedInUser.email,
+                    loggedInUser.password,
+                    loggedInUser.accountType,
+                    loggedInUser.linkingCode,
+                    enableNotifications,
+                    selectedSnoozeDuration,
+                    selectedReminderTime
+            );
+            userDetailsMap.put(loggedInUser.uuid, updatedUserDetails);
+            loggedInUser = updatedUserDetails;
+            showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
+            saveUserData(); // Save the updated user data to file
+        });
+
         // Show the alert and wait for user response
         alert.showAndWait();
-
-        // Process the selected values
-        boolean enableNotifications = enableNotificationsToggle.isSelected();
-        String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
-        String selectedReminderTime = reminderTimeComboBox.getValue();
-
-        //save somewhere - change default values above to be previous entries if applcable save in userdetails
     }
 
     private void showCalendarScreen() {
@@ -832,15 +853,21 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         private final String password; // Declares a final instance variable password of type String
         private final String accountType; // Declares a final instance variable accountType of type String
         private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
+        private final Boolean notificationsPreference; // Declares a final instance variable notificationsPreference of type Boolean
+        private final String notificationsSnoozeDuration; // Declares a final instance variable notificationsSnoozeDuration of type String
+        private final String notificationsReminderTime; // Declares a final instance variable notificationsReminderTime of type String
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode, Boolean notificationsPreference, String notificationsSnoozeDuration, String notificationsReminderTime) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.name = name; // Initializes the name instance variable
             this.email = email; // Initializes the email instance variable
             this.password = password; // Initializes the password instance variable
             this.accountType = accountType; // Initializes the accountType instance variable
             this.linkingCode = linkingCode; // Initializes the linkingCode instance variable
+            this.notificationsPreference = notificationsPreference; // Initializes the notificationsPreference instance variable
+            this.notificationsSnoozeDuration = notificationsSnoozeDuration; // Initializes the notificationsSnoozeDuration instance variable
+            this.notificationsReminderTime = notificationsReminderTime; // Initializes the notificationsReminderTime instance variable
         }
 
         private void writeObject(ObjectOutputStream out) throws IOException { // Defines a private method for custom serialization of the linkingCode field
