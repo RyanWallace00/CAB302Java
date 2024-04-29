@@ -42,7 +42,10 @@ import javafx.scene.control.ComboBox;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import java.text.DateFormat;
+
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -574,8 +577,22 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         typeComboBox.getItems().addAll("Meeting", "Reminder");
         DatePicker datePicker = new DatePicker();
         TextArea descriptionArea = new TextArea();
-        TextField timeToPicker = new TextField();
-        TextField timeFromPicker = new TextField();
+        ComboBox<String> timeFromComboBox = new ComboBox<>();
+        ComboBox<String> timeToComboBox = new ComboBox<>();
+
+        // Populate time ComboBoxes
+        for (int hour = 0; hour < 24; hour++) {
+            String hourString = String.format("%02d:00", hour);
+            timeFromComboBox.getItems().add(hourString);
+            timeToComboBox.getItems().add(hourString);
+        }
+
+        // Convert selected time from ComboBox to LocalTime
+        String selectedFromTime = timeFromComboBox.getValue();
+        String selectedToTime = timeToComboBox.getValue();
+
+        LocalDateTime timeFrom = LocalDateTime.parse(selectedFromTime);
+        LocalDateTime timeTo = LocalDateTime.parse(selectedToTime);
 
 
         // Add components to the layout
@@ -586,9 +603,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         layout.add(dateLabel, 0, 2);
         layout.add(datePicker, 1, 2);
         layout.add(timeFromLabel, 0, 3);
-        layout.add(timeFromPicker, 1, 3);
+        layout.add(timeFromComboBox, 1, 3);
         layout.add(timeToLabel, 0, 4);
-        layout.add(timeToPicker, 1, 4);
+        layout.add(timeToComboBox, 1, 4);
         layout.add(descriptionLabel, 0, 5);
         layout.add(descriptionArea, 1, 5);
 
@@ -596,10 +613,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         addButton.setOnAction(event -> {
             final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFromPicker, timeToPicker, loggedInUser.uuid);
+                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.uuid);
                 calendarDetailsMap.put(loggedInUser.uuid, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
             }   else {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFromPicker, timeToPicker, loggedInUser.linkingCode);
+                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.linkingCode);
                 calendarDetailsMap.put(loggedInUser.linkingCode, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
             }
             showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
@@ -803,20 +820,20 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         private final String eventName; // Declares a final instance variable eventName of type String
         private final String eventDescription; // Declares a final instance variable eventDescription of type String
         private final String eventType; // Declares a final instance variable eventType of type String
-        private final DateFormat eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
-        private final DateFormat eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
+        private final LocalDateTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
+        private final LocalDateTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
         private final DatePicker eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
         private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker DatePicker, DateFormat eventTimeFrom, DateFormat eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker eventDate, LocalDateTime eventTimeFrom, LocalDateTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.eventName = eventName; // Initializes the eventName instance variable
             this.eventType = eventType; // Initializes the eventType instance variable
             this.eventDescription = eventDescription; // Initializes the eventDescription instance variable
             this.eventDate = eventDate;
-            this.eventTimeFrom = eventFrom; // Initializes the eventFrom instance variable
-            this.eventTimeTo = eventTo; // Initializes the eventTo instance variable
+            this.eventTimeFrom = eventTimeFrom; // Initializes the eventFrom instance variable
+            this.eventTimeTo = eventTimeTo; // Initializes the eventTo instance variable
             this.linkingCode = linkingCode; // Initializes the linkingUsers instance variable
         }
 
@@ -832,11 +849,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             return eventDescription; // Returns the eventDescription instance variable
         }
 
-        public DateFormat getEventFrom() { // Defines a public method to get the eventFrom
+        public LocalDateTime getEventFrom() { // Defines a public method to get the eventFrom
             return eventTimeFrom; // Returns the eventTimeFrom instance variable
         }
 
-        public DateFormat getEventTo() { // Defines a public method to get the eventTo
+        public LocalDateTime getEventTo() { // Defines a public method to get the eventTo
             return eventTimeTo; // Returns the eventTimeTo instance variable
         }
 

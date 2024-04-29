@@ -1,4 +1,4 @@
-package com.example.cab302javaproject;
+/**package com.example.cab302javaproject;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,4 +20,4 @@ public class Event implements Serializable{
         this.timeTo = timeTo;
         this.description = description;
     }
-}
+} */
