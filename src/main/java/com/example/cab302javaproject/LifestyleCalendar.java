@@ -11,7 +11,9 @@ import javafx.scene.Scene; // Imports the Scene class from the JavaFX library fo
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
 import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
@@ -58,7 +60,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
     private HashMap<Optional<UUID>, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
-    private Image image; // Declares a private instance variable to hold the application logo image
+    private Image image; // Declares a private instance variable to hold the logo image
+    private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
 
     /**
      * The start method initializes the primary stage and displays the home page.
@@ -75,7 +78,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         stage.setScene(scene); // Sets the scene of the primary stage
         stage.show(); // Displays the primary stage
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
-        stage.getIcons().add(new Image("LifestyleCalendarLogoCalendar.png")); // Adds the loaded image as an icon to the primary stage
+        imageAppLogo= new Image("LifestyleCalendarLogoCalendar.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
+        stage.getIcons().add(imageAppLogo); // Adds the loaded image as an icon to the primary stage
         loadUserData(); // Calls the loadUserData method to load user data from a file
         showHomePage(); // Calls the showHomePage method to display the home page
     }
@@ -99,7 +103,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
         loginButton.setOnAction(event -> showLoginScreen()); // Sets an event handler for the loginButton to call the showLoginScreen method
         Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
-        signUpButton.setOnAction(event -> showSignUpScreen()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
+        signUpButton.setOnAction(event -> showNotificationSettingsPopup()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
         buttonBox.getChildren().addAll(imageView,loginButton, signUpButton); // Adds the ImageView, loginButton, and signUpButton to the buttonBox
         homePane.setCenter(buttonBox); // Sets the center of the homePane to the buttonBox
         rootPane.getChildren().setAll(homePane); // Sets the contents of the rootPane to the homePane
@@ -139,7 +143,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
             if (authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
                 loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
-                showCalendarScreen(); // Calls the showCalendarScreen method to display the calendar screen
+                showProfileEditScreen(); // Calls the showCalendarScreen method to display the calendar screen
             } else {
                 showAlert("Invalid email or password."); // Displays an alert with the message "Invalid email or password."
             }
@@ -433,6 +437,101 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
     }
 
+    private void showNotificationSettingsPopup() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notification Settings");
+        alert.setHeaderText(null);
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
+        // Create the layout for the popup
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Create the enable notifications toggle button
+        Label enableNotificationsLabel = new Label("Enable Notifications:");
+        ToggleButton enableNotificationsToggle = new ToggleButton();
+        enableNotificationsToggle.setSelected(true); // Default value
+
+        // Create a rectangle to represent the toggle button background
+        Rectangle toggleBackground = new Rectangle(50, 20);
+        toggleBackground.setArcWidth(20);
+        toggleBackground.setArcHeight(20);
+        toggleBackground.setFill(Color.LIGHTGRAY);
+
+        // Create a circle to represent the toggle button thumb
+        Circle toggleThumb = new Circle(10);
+        toggleThumb.setFill(Color.WHITE);
+        toggleThumb.setStroke(Color.LIGHTGRAY);
+        toggleThumb.setStrokeWidth(1);
+        toggleThumb.setTranslateX(15);
+
+        // Create a stack pane to hold the toggle button components
+        StackPane togglePane = new StackPane(toggleBackground, toggleThumb);
+
+        toggleBackground.setFill(Color.LIMEGREEN);
+        // Update the toggle button appearance when its state changes
+        enableNotificationsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                toggleBackground.setFill(Color.LIMEGREEN);
+                toggleThumb.setTranslateX(15);
+            } else {
+                toggleBackground.setFill(Color.LIGHTGRAY);
+                toggleThumb.setTranslateX(-15);
+            }
+        });
+
+        // Set the toggle button graphic to the custom toggle pane
+        enableNotificationsToggle.setGraphic(togglePane);
+
+        // Create the snooze duration dropdown
+        Label snoozeDurationLabel = new Label("Snooze Duration:");
+        ComboBox<String> snoozeDurationComboBox = new ComboBox<>();
+        snoozeDurationComboBox.getItems().addAll(
+                "5 minutes",
+                "10 minutes",
+                "15 minutes",
+                "30 minutes",
+                "1 hour"
+        );
+        snoozeDurationComboBox.setValue("10 minutes"); // Default value
+
+        // Create the reminder time dropdown
+        Label reminderTimeLabel = new Label("Reminder Time:");
+        ComboBox<String> reminderTimeComboBox = new ComboBox<>();
+        reminderTimeComboBox.getItems().addAll(
+                "5 minutes before",
+                "10 minutes before",
+                "15 minutes before",
+                "30 minutes before",
+                "1 hour before"
+        );
+        reminderTimeComboBox.setValue("15 minutes before"); // Default value
+
+        // Add the labels, toggle button, and dropdown boxes to the grid
+        grid.add(enableNotificationsLabel, 0, 0);
+        grid.add(enableNotificationsToggle, 1, 0);
+        grid.add(snoozeDurationLabel, 0, 1);
+        grid.add(snoozeDurationComboBox, 1, 1);
+        grid.add(reminderTimeLabel, 0, 2);
+        grid.add(reminderTimeComboBox, 1, 2);
+
+        // Set the content of the alert to the grid
+        alert.getDialogPane().setContent(grid);
+
+        // Show the alert and wait for user response
+        alert.showAndWait();
+
+        // Process the selected values
+        boolean enableNotifications = enableNotificationsToggle.isSelected();
+        String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
+        String selectedReminderTime = reminderTimeComboBox.getValue();
+
+        //save somewhere - change default values above to be previous entries if applcable save in userdetails
+    }
+
     private void showCalendarScreen() {
         BorderPane calendarPane = new BorderPane(); //initialise the calendar pane
 
@@ -719,6 +818,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates a new instance of Alert with the type INFORMATION
         alert.setTitle("Information"); // Sets the title of the alert to "Information"
         alert.setHeaderText(null); // Sets the header text of the alert to null (no header text)
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
     }
