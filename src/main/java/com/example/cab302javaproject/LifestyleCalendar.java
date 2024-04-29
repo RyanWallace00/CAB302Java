@@ -40,6 +40,10 @@ import javafx.scene.layout.VBox;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ComboBox;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.UUID;
+
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
  */
@@ -591,10 +595,24 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create a button to confirm adding the event
         Button addButton = new Button("Add");
         addButton.setOnAction(event -> {
-            // Add functionality to handle adding the event
-            // You can access the data entered by the user from the UI elements
-            // Perform any necessary actions (e.g., add the event to the calendar data)
-            // Close the pop-up window after adding the event (optional)
+            // Extract event data from UI
+            String title = titleField.getText();
+            String type = typeComboBox.getValue();
+            LocalDate date = datePicker.getValue();
+            LocalTime timeFrom = LocalTime.parse(timeFromPicker.getText());
+            LocalTime timeTo = LocalTime.parse(timeToPicker.getText());
+            String description = descriptionArea.getText();
+
+            // Create a new event object
+            Event calendarEvent = new Event(title, type, date, timeFrom, timeTo, description);
+
+            // Add the event to the calendarDetails map
+            calendarDetailsMap.put(UUID.randomUUID(), event);
+
+            // Save calendar data
+            saveCalendarData();
+
+            // Close the pop-up window
             addEventStage.close();
         });
 
@@ -786,6 +804,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             e.printStackTrace(); // Prints the stack trace in case of an exception
         }
     }
+
 
     private static class CalendarDetails implements Serializable { // Defines a private static nested class CalendarDetails that implements the Serializable interface
         private final UUID uuid; // Declares a final instance variable uuid of type UUID
