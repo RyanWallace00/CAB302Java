@@ -75,7 +75,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         stage.setScene(scene); // Sets the scene of the primary stage
         stage.show(); // Displays the primary stage
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
-        stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
+        stage.getIcons().add(new Image("LifestyleCalendarLogoCalendar.png")); // Adds the loaded image as an icon to the primary stage
         loadUserData(); // Calls the loadUserData method to load user data from a file
         showHomePage(); // Calls the showHomePage method to display the home page
     }
@@ -790,7 +790,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
     // Method to load user data from file
     private void loadCalendarData() { // Defines a private method to load calendar data from a file
-        File file = new File("calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
+        File file = new File("src/main/resources/calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
 
         if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
             try {
@@ -811,7 +811,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
     private void saveCalendarData() { // Defines a private method to save calendar data to a file
         try {
-            FileOutputStream fileOut = new FileOutputStream("calendarData.dat"); // Creates a new instance of FileOutputStream with the filename "calendarData.dat"
+            FileOutputStream fileOut = new FileOutputStream("src/main/resources/calendarData.dat"); // Creates a new instance of FileOutputStream with the filename "calendarData.dat"
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Creates a new instance of ObjectOutputStream with the FileOutputStream
 
             objectOut.writeObject(calendarDetailsMap); // Writes the calendarDetailsMap object to the ObjectOutputStream
