@@ -411,6 +411,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         updatePane.setCenter(updateBox); // Set the updateBox in the center of the BorderPane
         rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
+
+    Button notificationSettingsButton = new Button("Notification Settings"); // Create a button for notification settings
+        notificationSettingsButton.setOnAction(event -> showNotificationSettingsScreen()); // Set action to navigate to notification settings
+        updateBox.getChildren().add(notificationSettingsButton); // Add the button to the VBox for form elements
+
     }
 
     private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
@@ -490,6 +495,109 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         alert.setHeaderText(null); // Sets the header text of the alert to null (no header text)
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
+    }
+
+    private void showNotificationSettingsScreen() {
+        // Code to navigate to the notification settings screen
+        // Create a new BorderPane to hold the UI elements
+        BorderPane notificationPane = new BorderPane();
+
+        // Load the image
+        Image image = new Image("LifestyleCalendarLogo.png");
+
+        // Create an ImageView for displaying the image
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(200); // Set the width of the image
+        imageView.setPreserveRatio(true); // Preserve the aspect ratio of the image
+
+        // Center the image in the top of the BorderPane
+        BorderPane.setAlignment(imageView, Pos.CENTER);
+        notificationPane.setTop(imageView);
+
+        // Create a VBox to hold the form elements
+        VBox settingsBox = new VBox(10);
+        settingsBox.setPadding(new Insets(0, 10, 50, 10)); // Set padding for the VBox
+        settingsBox.setAlignment(Pos.CENTER); // Center the contents of the VBox
+
+        // Create a label for notification settings
+        Label notificationSettingsLabel = new Label("Notification Settings");
+        notificationSettingsLabel.setFont(new Font(15));
+
+        // Create a VBox to contain the options with a light gray background
+        VBox labelsBox = new VBox(15); // Increased spacing between options
+        VBox controlsBox = new VBox(15);
+        labelsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;");
+        controlsBox.setStyle("-fx-background-color: #f2f2f2; -fx-padding: 10px;");
+
+        // Category dropdown
+        Label categoryLabel = new Label("Category:");
+        ComboBox<String> categoryDropdown = new ComboBox<>();
+        categoryDropdown.getItems().addAll("General", "News", "Reminders", "Social");
+        categoryDropdown.setValue("General");
+
+        // Personalised notifications
+        Label personalisedLabel = new Label("Personalised Notifications:");
+        ToggleGroup personalizedToggleGroup = new ToggleGroup();
+        RadioButton yesPersonalisedRadio = new RadioButton("Yes");
+        yesPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
+        RadioButton noPersonalisedRadio = new RadioButton("No");
+        noPersonalisedRadio.setToggleGroup(personalizedToggleGroup);
+        yesPersonalisedRadio.setSelected(true);
+
+        // Receive app updates
+        Label appUpdatesLabel = new Label("Receive App Updates:");
+        ToggleGroup appUpdatesToggleGroup = new ToggleGroup();
+        RadioButton yesAppUpdatesRadio = new RadioButton("Yes");
+        yesAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
+        RadioButton noAppUpdatesRadio = new RadioButton("No");
+        noAppUpdatesRadio.setToggleGroup(appUpdatesToggleGroup);
+        yesAppUpdatesRadio.setSelected(true);
+
+        // Silence notifications
+        Label silenceLabel = new Label("Silence Notifications:");
+        ToggleGroup silenceToggleGroup = new ToggleGroup();
+        RadioButton yesSilenceRadio = new RadioButton("Yes");
+        yesSilenceRadio.setToggleGroup(silenceToggleGroup);
+        RadioButton noSilenceRadio = new RadioButton("No");
+        noSilenceRadio.setToggleGroup(silenceToggleGroup);
+        yesSilenceRadio.setSelected(true);
+
+        // Add components to optionsBox with appropriate spacing
+        labelsBox.getChildren().addAll(
+                categoryLabel,
+                personalisedLabel,
+                appUpdatesLabel,
+                silenceLabel
+        );
+        controlsBox.getChildren().addAll(
+                categoryDropdown,
+                new HBox(10, yesPersonalisedRadio, noPersonalisedRadio),
+                new HBox(10, yesAppUpdatesRadio, noAppUpdatesRadio),
+                new HBox(10, yesSilenceRadio, noSilenceRadio)
+        );
+
+        // Add components to settingsBox
+        settingsBox.getChildren().addAll(
+                notificationSettingsLabel,
+                new HBox(20, labelsBox, controlsBox)
+        );
+
+        // Create HBox for buttons
+        HBox buttonsBox = new HBox(10);
+        buttonsBox.setAlignment(Pos.BOTTOM_RIGHT); // Align buttons to the bottom right
+        Button saveChangesButton = new Button("Save Changes");
+        Button discardChangesButton = new Button("Discard Changes");
+        buttonsBox.getChildren().addAll(saveChangesButton, discardChangesButton);
+        settingsBox.getChildren().add(buttonsBox); // Add buttons to settingsBox
+
+        notificationPane.setCenter(settingsBox);
+
+        // Create scene and set it to the stage
+        Scene notificationScene = new Scene(notificationPane, 600, 400);
+        Stage notificationStage = new Stage();
+        notificationStage.setScene(notificationScene);
+        notificationStage.setTitle("Notification Settings");
+        notificationStage.show();
     }
 
     private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
