@@ -53,7 +53,7 @@ import java.text.DateFormat;
 public class LifestyleCalendar extends Application { // Defines the LifestyleCalendar class which extends the Application class from JavaFX
     private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
     private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
-    private HashMap<Optional<UUID>, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
+    private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
     private HashMap<Optional<UUID>, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the application logo image
@@ -66,7 +66,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     public void start(Stage stage) { // Defines the start method which takes a Stage object as a parameter
         primaryStage = stage; // Assigns the passed Stage object to the primaryStage instance variable
         rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
-        userDetailsMap = new HashMap<Optional<UUID>, UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
+        userDetailsMap = new HashMap<UUID, UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
         calendarDetailsMap = new HashMap<Optional<UUID>, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
         Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
         stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
@@ -209,7 +209,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             } else if (selectedAccountType == null) { // Checks if no account type is selected
                 showAlert("Please select an account type."); // Displays an alert with the message "Please select an account type."
             } else {
-                final Optional<UUID> userId = Optional.of(UUID.randomUUID()); // Generates a new random UUID and assigns it to the userId variable
+                final UUID userId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the userId variable
                 Optional<UUID> linkingCode = Optional.empty(); // Creates an empty Optional<UUID> and assigns it to the linkingCode variable
                 if (selectedAccountType.equals("Manager")) { // Checks if the selected account type is "Manager"
                     // Create a popup for Manager account type
@@ -410,12 +410,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     }
                 }
                 // Create a new UserDetails object with the updated information
-                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
+                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
             } else {
                 // For non-employee accounts, create a new UserDetails object without changing the linking code
-                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
             }
-            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map
+            userDetailsMap.put(loggedInUser.uuid, updatedUserDetails); // Update the user details in the map
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
             showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
             saveUserData(); // Save the updated user data
@@ -613,8 +613,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         addButton.setOnAction(event -> {
             final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.uuid);
-                calendarDetailsMap.put(loggedInUser.uuid, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
+                calendarDetailsMap.put(Optional.ofNullable(loggedInUser.uuid), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
             }   else {
                 CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.linkingCode);
                 calendarDetailsMap.put(loggedInUser.linkingCode, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
@@ -666,14 +666,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             try {
                 FileInputStream fileIn = new FileInputStream(file); // Create a FileInputStream to read from the file
                 ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Create an ObjectInputStream to read objects from the FileInputStream
-                userDetailsMap = (HashMap<Optional<UUID>, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
+                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
                 objectIn.close(); // Close the input streams
                 fileIn.close(); // Close the input streams
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace(); // If an exception occurs during reading, print the stack trace
             }
         } else {
-            userDetailsMap = new HashMap<Optional<UUID>, UserDetails>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
+            userDetailsMap = new HashMap<>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
         }
     }
 
@@ -717,7 +717,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
-        private final Optional<UUID> uuid; // Declares a final instance variable uuid of type UUID
+        private final UUID uuid; // Declares a final instance variable uuid of type UUID
         private final String name; // Declares a final instance variable name of type String
         private final String email; // Declares a final instance variable email of type String
         private final String password; // Declares a final instance variable password of type String
@@ -725,7 +725,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public UserDetails (Optional<UUID> uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.name = name; // Initializes the name instance variable
             this.email = email; // Initializes the email instance variable
@@ -756,7 +756,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
         }
 
-        public Optional<UUID> getUuid() { // Defines a public method to get the uuid
+        public UUID getUuid() { // Defines a public method to get the uuid
             return uuid; // Returns the uuid instance variable
         }
 
