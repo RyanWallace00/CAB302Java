@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8ea3ebe4-b132-4047-9e2f-b4e959ec8b27" name="Changes" comment="Adding Notification Functionality">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/userData.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/userData.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,9 +47,9 @@
     <option name="SET_USER_NAME_GLOBALLY" value="false" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {}
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {}
+}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/RyanWallace00/CAB302Java.git&quot;,
@@ -73,22 +74,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Application.LifeStyleCalendar.executor": "Run",
-    "Application.LifestyleCalendar.executor": "Run",
-    "JUnit.All in CAB302JavaProject.executor": "Run",
-    "Maven.CAB302JavaProject [clean].executor": "Run",
-    "Maven.CAB302JavaProject [install].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Jin",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.LifeStyleCalendar.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LifestyleCalendar.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in CAB302JavaProject.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.CAB302JavaProject [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.CAB302JavaProject [install].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Jin&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ryanwallace/IdeaProjects/CAB302JavaProject/src/main/java/com/example/cab302javaproject&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject" />
@@ -136,8 +137,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.LifestyleCalendar" />
-        <item itemvalue="Application.LifeStyleCalendar" />
         <item itemvalue="JUnit.All in CAB302JavaProject" />
+        <item itemvalue="Application.LifeStyleCalendar" />
+        <item itemvalue="Application.LifestyleCalendar" />
+        <item itemvalue="Application.LifeStyleCalendar" />
       </list>
     </recent_temporary>
   </component>

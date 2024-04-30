@@ -1,6 +1,7 @@
 module com.example.cab302javaproject {
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.controlsfx.controls;
 
 
     opens com.example.cab302javaproject to javafx.fxml;

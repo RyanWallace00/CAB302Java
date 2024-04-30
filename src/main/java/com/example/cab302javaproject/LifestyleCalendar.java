@@ -11,6 +11,7 @@ import javafx.application.Application; // Imports the Application class from the
 import javafx.application.Platform;
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
+import javafx.scene.Group;
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
@@ -40,7 +41,7 @@ import java.util.List; // Imports the List interface from the Java Collections F
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import org.controlsfx.control.Notifications;
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
  */
@@ -81,37 +82,57 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         showHomePage();  // Display the home page
     }
 
-    private void showNotification(String eventName, String eventDescription){
+    private void showNotification(String eventName, String eventDescription) {
         Platform.runLater(() -> {
-            // Create a new alert with a custom button
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Notification");
-            alert.setHeaderText(eventName);
-            alert.setContentText(eventDescription);
-
-            // Set a custom icon
-            Image image = new Image("LifestyleCalendar.png"); // Update this path to your actual image file
-            ImageView imageView = new ImageView(image);
-            imageView.setFitHeight(48);  // Set the icon size as needed
-            imageView.setFitWidth(50);
-            alert.setGraphic(imageView);
-
-
             // Create the Snooze button
-            ButtonType snoozeButton = new ButtonType("Snooze", ButtonBar.ButtonData.OTHER);
-            alert.getButtonTypes().setAll(snoozeButton, ButtonType.CANCEL);
-
-            // Show the alert and wait for response
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == snoozeButton) {
-                // If Snooze is clicked, schedule the notification to show again after x minutes
-                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), e -> showNotification(eventName, eventDescription)));
-                snoozeTimeline.setCycleCount(1);  // Only run once
+            Button snoozeButton = new Button("Snooze");
+            snoozeButton.setOnAction(e -> {
+                // Schedule the notification to show again after x minutes
+                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> showNotification(eventName, eventDescription)));
+                snoozeTimeline.setCycleCount(1); // Only run once
                 snoozeTimeline.play();
-            }
+            });
+
+            // Create the notification image
+            ImageView imageView = new ImageView(new Image("LifestyleCalendar.png")); // Update the path to your actual image file
+            imageView.setFitHeight(100); // Adjust the height of the image as needed
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+
+            // Create a Label for the event name
+            Label eventNameLabel = new Label(eventName);
+            eventNameLabel.setAlignment(Pos.TOP_RIGHT);
+
+            // Create a Label for the event description
+            Label eventDescriptionLabel = new Label(eventDescription);
+            eventDescriptionLabel.setAlignment(Pos.TOP_RIGHT);
+
+            // Create an HBox for the event info (name and description)
+            VBox eventInfoVBox = new VBox(eventNameLabel, eventDescriptionLabel);
+            eventInfoVBox.setAlignment(Pos.TOP_RIGHT);
+            eventInfoVBox.setSpacing(5);
+
+            // Create an HBox for the snooze button
+            HBox snoozeHBox = new HBox();
+            snoozeHBox.getChildren().add(snoozeButton);
+            snoozeHBox.setAlignment(Pos.BOTTOM_RIGHT);
+            snoozeHBox.setPadding(new Insets(0, 10, 10, 0));
+
+            // Create a BorderPane to hold all components
+            BorderPane borderPane = new BorderPane();
+            borderPane.setLeft(imageView);
+            borderPane.setRight(eventInfoVBox);
+            borderPane.setBottom(snoozeHBox);
+
+            // Create the notification and show it
+            Notifications notification = Notifications.create()
+                    .hideAfter(Duration.seconds(10)) // Auto-hide after 5 seconds
+                    .position(Pos.BOTTOM_RIGHT)
+                    .graphic(borderPane);
+
+            notification.show();
         });
     }
-
 
     /**
      * Displays the home page with login and signup options.
