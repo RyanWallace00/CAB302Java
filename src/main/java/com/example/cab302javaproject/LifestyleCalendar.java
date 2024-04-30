@@ -7,6 +7,7 @@ package com.example.cab302javaproject; // Declares the package name for the Java
 import javafx.application.Application; // Imports the Application class from the JavaFX library
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
+import javafx.scene.Node;
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
@@ -87,26 +88,29 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     /**
      * Displays the home page with login and signup options.
      */
-    private void showHomePage() { // Defines a private method to display the home page
-        BorderPane homePane = new BorderPane(); // Creates a new instance of BorderPane and assigns it to the homePane variable
-        ImageView imageView = new ImageView(); // Creates a new instance of ImageView and assigns it to the imageView variable
-        imageView.setFitWidth(200); // Sets the fitted width of the ImageView to 200
-        imageView.setFitHeight(150); // Sets the fitted height of the ImageView to 150
-        imageView.setPreserveRatio(true); // Sets the ImageView to preserve the aspect ratio of the image
-        imageView.setSmooth(true); // Enables smooth scaling for the ImageView
-        imageView.setCache(true); // Enables caching for the ImageView
-        imageView.setImage(image); // Sets the image of the ImageView to the loaded application logo
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Aligns the ImageView to the top center of the BorderPane
-        VBox buttonBox = new VBox(10); // Creates a new instance of VBox with a spacing of 10 and assigns it to the buttonBox variable
-        buttonBox.setPadding(new Insets(10)); // Sets the padding of the VBox to 10
-        buttonBox.setAlignment(Pos.CENTER); // Aligns the contents of the VBox to the center
-        Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
-        loginButton.setOnAction(event -> showLoginScreen()); // Sets an event handler for the loginButton to call the showLoginScreen method
-        Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
-        signUpButton.setOnAction(event -> showSignUpScreen()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
-        buttonBox.getChildren().addAll(imageView,loginButton, signUpButton); // Adds the ImageView, loginButton, and signUpButton to the buttonBox
-        homePane.setCenter(buttonBox); // Sets the center of the homePane to the buttonBox
-        rootPane.getChildren().setAll(homePane); // Sets the contents of the rootPane to the homePane
+    private void showHomePage() {
+        BorderPane homePane = new BorderPane();
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(150);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
+        imageView.setImage(image);
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        VBox buttonBox = new VBox(10);
+        buttonBox.setPadding(new Insets(10));
+        buttonBox.setAlignment(Pos.CENTER);
+        Button loginButton = new Button("LOGIN");
+        loginButton.setOnAction(event -> showLoginScreen());
+        Button signUpButton = new Button("SIGN UP");
+        signUpButton.setOnAction(event -> showSignUpScreen());
+        buttonBox.getChildren().addAll(imageView, loginButton, signUpButton);
+        homePane.setCenter(buttonBox);
+
+        // Update the rootPane's children with the homePane
+        rootPane.getChildren().setAll(homePane);
+
     }
 
     private void showLoginScreen() { // Defines a private method to display the login screen
@@ -143,7 +147,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
             if (authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
                 loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
-                showProfileEditScreen(); // Calls the showCalendarScreen method to display the calendar screen
+                showCalendarScreen(); // Calls the showCalendarScreen method to display the calendar screen
             } else {
                 showAlert("Invalid email or password."); // Displays an alert with the message "Invalid email or password."
             }
@@ -321,6 +325,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showProfileEditScreen() { // This method shows the profile edit screen
+        // Create a new stage for the profile edit screen
+        Stage profileEditStage = new Stage();
+        profileEditStage.setTitle("Profile Edit");
         BorderPane updatePane = new BorderPane(); // Create a new BorderPane to hold the UI elements
         ImageView imageView = new ImageView(); // Create an ImageView for displaying the user's profile picture
         imageView.setFitWidth(200); // Set the width of the image to 200 pixels
@@ -384,7 +391,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         buttonsBox.setAlignment(Pos.CENTER); // Center the contents of the buttonsBox
         Button updateButton = new Button("UPDATE"); // Create an update button
         Button cancelButton = new Button("CANCEL"); // Create a cancel button
-        cancelButton.setOnAction(event -> showHomePage()); // Set the action for the cancel button to show the home page
+        cancelButton.setOnAction(event -> profileEditStage.close()); // Set the action for the cancel button to show the home page
         buttonsBox.getChildren().addAll(updateButton, cancelButton); // Add the buttons to the buttonsBox
         updateButton.setOnAction(event -> {
             String name = nameField.getText(); // Get the name from the name field
@@ -392,7 +399,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String password = passwordField.getText(); // Get the password from the password field
             boolean isValidUUID = isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
             if (!companyCodeField.getText().isEmpty() && !isValidUUID) {
-                showAlert("Not valid linking code"); // Show an alert if the linking code is not a valid UUID
+                showAlert("Invalid linking code"); // Show an alert if the linking code is not a valid UUID
                 return;
             } else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
                 showAlert("Email already exists."); // Show an alert if the email is already registered and not the same as the logged-in user's email
@@ -428,6 +435,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
             showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
             saveUserData(); // Save the updated user data
+            profileEditStage.close(); // Close the profile edit stage
         });
         if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
             // If the user is a personal account, only show the account settings, update details, form, and buttons
@@ -437,7 +445,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox);
         }
         updatePane.setCenter(updateBox); // Set the updateBox in the center of the BorderPane
-        rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
+        Scene scene = new Scene(updatePane, 400, 500); // Create a scene with the updatePane
+        // Set the scene on the profile edit stage and show the stage
+        profileEditStage.setScene(scene);
+        profileEditStage.show();
     }
 
     private void showNotificationSettingsPopup() {
@@ -544,9 +555,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             userDetailsMap.put(loggedInUser.uuid, updatedUserDetails);
             loggedInUser = updatedUserDetails;
             saveUserData(); // Save the updated user data to file
-
-            // Show the success alert after saving the user data
-            showAlert("Details updated successfully.");
         });
 
         // Set the icon for the alert popup window
@@ -555,63 +563,55 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Show the alert and wait for user response
         alert.showAndWait();
+
+        // Show the success alert after the notification settings popup is closed
+        showAlert("Details updated successfully.");
     }
 
     private void showCalendarScreen() {
-        BorderPane calendarPane = new BorderPane(); //initialise the calendar pane
+        BorderPane calendarPane = new BorderPane();
 
-        // Create a VBox for the button
-        VBox buttonBox = new VBox(10);
-        buttonBox.setAlignment(Pos.CENTER);
-
-        /**
-        This is code for the 'menu bar' at the top of the screen.
-        */
         // Create a Rectangle for the top partition
         Rectangle topPartition = new Rectangle();
-        // Set the fill color of the Rectangle to a very light grey using a hex color code
         topPartition.setFill(Color.web("#e9e9e9"));
-        // Set the stroke color of the Rectangle to grey using a hex color code
         topPartition.setStroke(Color.web("#b3b3b3"));
-        // Set the width of the Rectangle to the width of the BorderPane
         topPartition.widthProperty().bind(calendarPane.widthProperty());
-        // Set the height of the Rectangle to 5% of the height of the BorderPane
         topPartition.heightProperty().bind(calendarPane.heightProperty().multiply(0.05));
-        // Add the Rectangle to the top of the BorderPane
-        calendarPane.setTop(topPartition);
 
-        // Create the "Back" button
-        Button backButton = new Button("Back");
-        backButton.setOnAction(event -> showHomePage());
-        // Create the "Profile button
-        Button profileButton = new Button("Profile");
-        profileButton.setOnAction(event -> showProfileEditScreen());
-        // Create the "Settings" button
-        Button settingsButton = new Button("Settings");
+        // Create the hamburger menu
+        MenuButton menuButton = new MenuButton();
+        menuButton.setGraphic(createHamburgerIcon());
+        //menuButton.setGraphic(new ImageView("hamburger-icon.png"));
+        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
+        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
+        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
+        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
+        MenuItem logOutMenuItem = new MenuItem("Log Out");
+        logOutMenuItem.setOnAction(event -> {
+            loggedInUser = null;
+            showAlert("Signed Out");
+            rootPane.getChildren().setAll(createHomePage()); // Update the rootPane's children directly
+            //showHomePage();
+        });
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
+
         // Create the "Add Event" button
         Button addEventButton = new Button("Add Event");
         addEventButton.setOnAction(event -> showAddEvent());
 
-        // Create a StackPane to hold the rectangle and the buttons
-        StackPane headerStackPane = new StackPane();
-        headerStackPane.getChildren().addAll(topPartition, backButton, new Pane(), addEventButton, new Pane(), settingsButton, new Pane(), profileButton);
-
-        // Set the alignment of the buttons within the StackPane
-        StackPane.setAlignment(backButton, Pos.CENTER_LEFT);
-        StackPane.setAlignment(settingsButton, Pos.CENTER_RIGHT);
-        StackPane.setAlignment(profileButton, Pos.CENTER_RIGHT);
+        // Create a StackPane to hold the top partition, hamburger menu, "Add Event" button
+        StackPane topPane = new StackPane();
+        topPane.getChildren().addAll(topPartition, menuButton, addEventButton);
+        StackPane.setAlignment(menuButton, Pos.TOP_RIGHT);
         StackPane.setAlignment(addEventButton, Pos.CENTER);
-        // Create an HBox to hold the StackPane
-        HBox header = new HBox();
-        header.getChildren().addAll(new Pane(), headerStackPane);
-        HBox.setHgrow(header.getChildren().get(1), Priority.ALWAYS); // Make the Pane grow to push the StackPane to the right
-        // Add the HBox to the top of the BorderPane
-        calendarPane.setTop(header);
+        StackPane.setMargin(menuButton, new Insets(10));
+
+        calendarPane.setTop(topPane);
 
         /**
          * This is code for the left column
          */
-        //Create rectangle for sidebar
+        // Create rectangle for sidebar
         Rectangle sideBar = new Rectangle();
         // Set the fill color of the Rectangle to a very light grey using a hex color code
         sideBar.setFill(Color.web("#e9e9e9"));
@@ -621,7 +621,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         sideBar.widthProperty().bind(calendarPane.widthProperty().multiply(0.20));
         // Set the height of the Rectangle to 95% of the height of the BorderPane, to account for the header bar
         sideBar.heightProperty().bind(calendarPane.heightProperty().multiply(0.95));
-        //Add the rectangle to the left of the BorderPane
+        // Add the rectangle to the left of the BorderPane
         calendarPane.setLeft(sideBar);
 
         /**
@@ -678,10 +678,49 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         primaryStage.show();
     }
 
+    private Node createHomePage() {
+        BorderPane homePane = new BorderPane();
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(150);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
+        imageView.setImage(image);
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
+        VBox buttonBox = new VBox(10);
+        buttonBox.setPadding(new Insets(10));
+        buttonBox.setAlignment(Pos.CENTER);
+        Button loginButton = new Button("LOGIN");
+        loginButton.setOnAction(event -> showLoginScreen());
+        Button signUpButton = new Button("SIGN UP");
+        signUpButton.setOnAction(event -> showSignUpScreen());
+        buttonBox.getChildren().addAll(imageView, loginButton, signUpButton);
+        homePane.setCenter(buttonBox);
+        return homePane;
+    }
+
+    private Node createHamburgerIcon() {
+        VBox hamburgerIcon = new VBox();
+        hamburgerIcon.setSpacing(3);
+        hamburgerIcon.setAlignment(Pos.CENTER);
+        hamburgerIcon.setPadding(new Insets(5));
+
+        for (int i = 0; i < 3; i++) {
+            Rectangle line = new Rectangle(20, 2);
+            line.setFill(Color.BLACK);
+            hamburgerIcon.getChildren().add(line);
+        }
+
+        return hamburgerIcon;
+    }
+
     private void showAddEvent() {
         // Create a new stage for the pop-up window
         Stage addEventStage = new Stage();
         addEventStage.setTitle("Add Event");
+
+        addEventStage.getIcons().add(imageAppLogo); // Set the app icon in the top left of the stage
 
         // Create the layout for the pop-up window
         GridPane layout = new GridPane();
