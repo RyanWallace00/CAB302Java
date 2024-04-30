@@ -88,29 +88,26 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     /**
      * Displays the home page with login and signup options.
      */
-    private void showHomePage() {
-        BorderPane homePane = new BorderPane();
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
-        imageView.setImage(image);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
-        VBox buttonBox = new VBox(10);
-        buttonBox.setPadding(new Insets(10));
-        buttonBox.setAlignment(Pos.CENTER);
-        Button loginButton = new Button("LOGIN");
-        loginButton.setOnAction(event -> showLoginScreen());
-        Button signUpButton = new Button("SIGN UP");
-        signUpButton.setOnAction(event -> showSignUpScreen());
-        buttonBox.getChildren().addAll(imageView, loginButton, signUpButton);
-        homePane.setCenter(buttonBox);
-
-        // Update the rootPane's children with the homePane
-        rootPane.getChildren().setAll(homePane);
-
+    private void showHomePage() { // Defines a private method to display the home page
+        BorderPane homePane = new BorderPane(); // Creates a new instance of BorderPane and assigns it to the homePane variable
+        ImageView imageView = new ImageView(); // Creates a new instance of ImageView and assigns it to the imageView variable
+        imageView.setFitWidth(200); // Sets the fitted width of the ImageView to 200
+        imageView.setFitHeight(150); // Sets the fitted height of the ImageView to 150
+        imageView.setPreserveRatio(true); // Sets the ImageView to preserve the aspect ratio of the image
+        imageView.setSmooth(true); // Enables smooth scaling for the ImageView
+        imageView.setCache(true); // Enables caching for the ImageView
+        imageView.setImage(image); // Sets the image of the ImageView to the loaded application logo
+        BorderPane.setAlignment(imageView, Pos.TOP_CENTER); // Aligns the ImageView to the top center of the BorderPane
+        VBox buttonBox = new VBox(10); // Creates a new instance of VBox with a spacing of 10 and assigns it to the buttonBox variable
+        buttonBox.setPadding(new Insets(10)); // Sets the padding of the VBox to 10
+        buttonBox.setAlignment(Pos.CENTER); // Aligns the contents of the VBox to the center
+        Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
+        loginButton.setOnAction(event -> showLoginScreen()); // Sets an event handler for the loginButton to call the showLoginScreen method
+        Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
+        signUpButton.setOnAction(event -> showSignUpScreen()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
+        buttonBox.getChildren().addAll(imageView,loginButton, signUpButton); // Adds the ImageView, loginButton, and signUpButton to the buttonBox
+        homePane.setCenter(buttonBox); // Sets the center of the homePane to the buttonBox
+        rootPane.getChildren().setAll(homePane); // Sets the contents of the rootPane to the homePane
     }
 
     private void showLoginScreen() { // Defines a private method to display the login screen
@@ -590,8 +587,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         logOutMenuItem.setOnAction(event -> {
             loggedInUser = null;
             showAlert("Signed Out");
-            rootPane.getChildren().setAll(createHomePage()); // Update the rootPane's children directly
-            //showHomePage();
+            showHomePage();
         });
         menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
 
@@ -676,28 +672,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         primaryStage.setScene(scene);
         // Show the stage
         primaryStage.show();
-    }
-
-    private Node createHomePage() {
-        BorderPane homePane = new BorderPane();
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
-        imageView.setImage(image);
-        BorderPane.setAlignment(imageView, Pos.TOP_CENTER);
-        VBox buttonBox = new VBox(10);
-        buttonBox.setPadding(new Insets(10));
-        buttonBox.setAlignment(Pos.CENTER);
-        Button loginButton = new Button("LOGIN");
-        loginButton.setOnAction(event -> showLoginScreen());
-        Button signUpButton = new Button("SIGN UP");
-        signUpButton.setOnAction(event -> showSignUpScreen());
-        buttonBox.getChildren().addAll(imageView, loginButton, signUpButton);
-        homePane.setCenter(buttonBox);
-        return homePane;
     }
 
     private Node createHamburgerIcon() {
