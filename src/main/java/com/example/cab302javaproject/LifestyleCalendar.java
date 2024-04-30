@@ -4,22 +4,30 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
-
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
+import javafx.application.Platform;
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
 import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
+import javafx.util.Duration;
 
-import java.util.*;
+import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
+import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
+import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
+import java.util.UUID; // Imports the UUID class from the Java utility package for generating unique identifiers
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
 import java.io.*; // Imports all classes related to input/output from the Java I/O package
 import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
@@ -27,29 +35,11 @@ import java.io.FileInputStream; // Imports the FileInputStream class from the Ja
 import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
 import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
-import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
-
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.ComboBox;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
-
+import java.time.LocalTime; // Imports the LocalTime class from the Java time package for representing dates and times
+import java.util.List; // Imports the List interface from the Java Collections Framework
+import javafx.util.Duration;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -80,9 +70,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
         stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
         loadUserData(); // Calls the loadUserData method to load user data from a file
-
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
-            showNotification("Reminder", "This is your scheduled notification!");
+        String eventName = "Ops & Eng Meeting";
+        String eventDescription = "11am - 12pm";
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+            showNotification("Reminder", eventName + ": " + eventDescription + "\nThis event is scheduled in 15 minutes!");
         }));
         timeline.setCycleCount(1);  // Ensures the timeline only runs once
         timeline.play();
@@ -91,18 +82,34 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showNotification(String eventName, String eventDescription){
-        Image appIcon = new Image("https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/whatsapp-128.png");
+        Platform.runLater(() -> {
+            // Create a new alert with a custom button
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Notification");
+            alert.setHeaderText(eventName);
+            alert.setContentText(eventDescription);
 
-        com.github.plushaze.traynotification.notification.TrayNotification tray = new com.github.plushaze.traynotification.notification.TrayNotification();
-        String title = "Congratulations sir";
-        String message = "You've successfully created your first Tray Notification";
-        Notification notification = Notifications.SUCCESS;
+            // Set a custom icon
+            Image image = new Image("LifestyleCalendar.png"); // Update this path to your actual image file
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(48);  // Set the icon size as needed
+            imageView.setFitWidth(50);
+            alert.setGraphic(imageView);
 
-        com.github.plushaze.traynotification.notification.TrayNotification tray = new com.github.plushaze.traynotification.notification.TrayNotification();
-        tray.setTitle(title);
-        tray.setMessage(message);
-        tray.setNotification(notification);
-        tray.showAndWait();
+
+            // Create the Snooze button
+            ButtonType snoozeButton = new ButtonType("Snooze", ButtonBar.ButtonData.OTHER);
+            alert.getButtonTypes().setAll(snoozeButton, ButtonType.CANCEL);
+
+            // Show the alert and wait for response
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == snoozeButton) {
+                // If Snooze is clicked, schedule the notification to show again after x minutes
+                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), e -> showNotification(eventName, eventDescription)));
+                snoozeTimeline.setCycleCount(1);  // Only run once
+                snoozeTimeline.play();
+            }
+        });
     }
 
 
@@ -732,10 +739,26 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
 
         private void showNotification(String eventName, String eventDescription){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, eventDescription, ButtonType.OK);
-            alert.setTitle("Notification");
-            alert.setHeaderText(eventName);
-            alert.show();
+            Platform.runLater(() -> {
+                // Create a new alert with a custom button
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Notification");
+                alert.setHeaderText(eventName);
+                alert.setContentText(eventDescription);
+
+                // Create the Snooze button
+                ButtonType snoozeButton = new ButtonType("Snooze", ButtonBar.ButtonData.OTHER);
+                alert.getButtonTypes().setAll(snoozeButton, ButtonType.CANCEL);
+
+                // Show the alert and wait for response
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == snoozeButton) {
+                    // If Snooze is clicked, schedule the notification to show again after x minutes
+                    Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), e -> showNotification(eventName, eventDescription)));
+                    snoozeTimeline.setCycleCount(1);  // Only run once
+                    snoozeTimeline.play();
+                }
+            });
         }
 
         public void stop() {
