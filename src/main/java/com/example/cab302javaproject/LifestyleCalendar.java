@@ -49,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 
 
 
@@ -645,13 +646,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         calendarGrid.getColumns().addAll(columns); // Add columns to TableView
 
-        // Add rows for each hour of the day
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Populate rows for each hour of the day, excluding the dates
         for (int hour = 0; hour < 24; hour++) {
-            String[] row = new String[8]; // 8 columns (including the "Time" column)
-            // Adjust time to display 00:00 - 23:00
+            String[] row = new String[8]; // +1 for the "Time" column
             row[0] = String.format("%02d:00", hour);
-            for (int day = 1; day < 8; day++) {
-                row[day] = ""; // Placeholder for event information (to be implemented later)
+            for (int day = 1; day <= 7; day++) {
+                // Leave the cells for the days empty or use them for events
+                row[day] = "";
             }
             calendarGrid.getItems().add(row);
         }
@@ -779,6 +783,19 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Set the scene on the stage and show the stage
         addEventStage.setScene(scene);
         addEventStage.show();
+    }
+
+    private String checkForEvent(LocalDate date, LocalTime time) {
+        // Iterate through your calendarDetailsMap to find events that match the given date and time
+        for (CalendarDetails event : calendarDetailsMap.values()) {
+            if (event.eventDate.getValue().equals(date) &&
+                    event.getEventFrom().equals(time)) {
+                // Return the event details if an event is found
+                return event.getEventName() + " (" + event.eventType + ")";
+            }
+        }
+        // Return null if no event is found
+        return null;
     }
 
     private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
