@@ -103,7 +103,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Button loginButton = new Button("LOGIN"); // Creates a new instance of Button with the text "LOGIN" and assigns it to the loginButton variable
         loginButton.setOnAction(event -> showLoginScreen()); // Sets an event handler for the loginButton to call the showLoginScreen method
         Button signUpButton = new Button("SIGN UP"); // Creates a new instance of Button with the text "SIGN UP" and assigns it to the signUpButton variable
-        signUpButton.setOnAction(event -> showNotificationSettingsPopup()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
+        signUpButton.setOnAction(event -> showSignUpScreen()); // Sets an event handler for the signUpButton to call the showSignUpScreen method
         buttonBox.getChildren().addAll(imageView,loginButton, signUpButton); // Adds the ImageView, loginButton, and signUpButton to the buttonBox
         homePane.setCenter(buttonBox); // Sets the center of the homePane to the buttonBox
         rootPane.getChildren().setAll(homePane); // Sets the contents of the rootPane to the homePane
@@ -444,9 +444,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Notification Settings");
         alert.setHeaderText(null);
-        // Set the icon for the alert popup window
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(imageAppLogo);
+
         // Create the layout for the popup
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -545,9 +543,15 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             );
             userDetailsMap.put(loggedInUser.uuid, updatedUserDetails);
             loggedInUser = updatedUserDetails;
-            showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
             saveUserData(); // Save the updated user data to file
+
+            // Show the success alert after saving the user data
+            showAlert("Details updated successfully.");
         });
+
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
 
         // Show the alert and wait for user response
         alert.showAndWait();

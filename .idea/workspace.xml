@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="add message for when save and discard changes option is used">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +42,9 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2dt3qd4un59vxWUSAaPkqpy5y1z" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -55,7 +56,7 @@
     "JUnit.All in CAB302JavaProject.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Najma",
+    "git-widget-placeholder": "Jacob",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/najma/IdeaProjects/CAB302Java",
@@ -105,8 +106,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.LifestyleCalendar" />
-        <item itemvalue="Application.LifeStyleCalendar" />
         <item itemvalue="JUnit.All in CAB302JavaProject" />
+        <item itemvalue="Application.LifeStyleCalendar" />
+        <item itemvalue="Application.LifestyleCalendar" />
+        <item itemvalue="Application.LifeStyleCalendar" />
       </list>
     </recent_temporary>
   </component>
@@ -187,5 +190,15 @@
     <MESSAGE value="added comments to notification settings" />
     <MESSAGE value="add message for when save and discard changes option is used" />
     <option name="LAST_COMMIT_MESSAGE" value="add message for when save and discard changes option is used" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IllegalArgumentException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
