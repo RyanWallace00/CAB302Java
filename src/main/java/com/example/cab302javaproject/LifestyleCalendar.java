@@ -628,6 +628,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         TableView<String[]> calendarGrid = new TableView<>();
         calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Ensure columns fill the available width
 
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
         // Add the "Time" column
         TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
         timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
@@ -637,17 +640,33 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Add columns for each day of the week
         String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
         TableColumn<String[], String>[] columns = new TableColumn[daysOfWeek.length]; // Array to hold columns
+
         for (int i = 0; i < daysOfWeek.length; i++) {
+            final int columnIndex = i; // Store the index in a final variable for lambda expression
             TableColumn<String[], String> column = new TableColumn<>(daysOfWeek[i]);
             final int index = i + 1; // Increment by 1 to skip the "Time" column
             column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
-            column.setPrefWidth(TableView.USE_COMPUTED_SIZE); // Let the column size adjust to fit content
+            column.setCellFactory(cell -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                    } else {
+                        String time = getTableRow().getItem()[0];
+                        // Convert the time string to LocalTime
+                        LocalTime eventTime = LocalTime.parse(time);
+                        // Calculate the date for this day of the week
+                        LocalDate date = startOfWeek.plusDays(columnIndex);
+                        // Check if there's an event for this day and time
+                        String eventDetails = checkForEvent(date, eventTime);
+                        setText(eventDetails != null ? eventDetails : "");
+                    }
+                }
+            });
             columns[i] = column; // Assign column to array
         }
         calendarGrid.getColumns().addAll(columns); // Add columns to TableView
-
-        LocalDate currentDate = LocalDate.now();
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
 
         // Populate rows for each hour of the day, excluding the dates
         for (int hour = 0; hour < 24; hour++) {
@@ -770,6 +789,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
             addEventStage.close();
             saveCalendarData(); // Calls the saveCalendarData method to save calendar data to a file
+            populateCalendarGrid();
             });
       //      }
       //  }
@@ -783,6 +803,34 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Set the scene on the stage and show the stage
         addEventStage.setScene(scene);
         addEventStage.show();
+    }
+
+    private void populateCalendarGrid(TableView<String[]> calendarGrid) {
+        // Clear existing items in the calendarGrid
+        calendarGrid.getItems().clear();
+
+        // Repopulate the calendarGrid with updated events
+        for (int hour = 0; hour < 24; hour++) {
+            String[] row = new String[8]; // +1 for the "Time" column
+            row[0] = String.format("%02d:00", hour);
+            for (int day = 1; day <= 7; day++) {
+                row[day] = ""; // Initialize each cell with an empty string
+            }
+            calendarGrid.getItems().add(row); // Add the row to the calendarGrid
+        }
+
+
+        // Iterate over the calendarDetailsMap to add events to the calendarGrid
+        for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
+            LocalDate eventDate = calendarDetails.eventDate.getValue();
+            if (eventDate != null && eventDate.equals(LocalDate.now())) { // Check if event is for the current day
+                LocalTime eventTimeFrom = calendarDetails.eventTimeFrom; // Assuming this is the field name
+                int row = eventTimeFrom.getHour();
+                int column = LocalDate.now().getDayOfWeek().getValue();
+                String[] rowData = calendarGrid.getItems().get(row);
+                rowData[column] = calendarDetails.eventName; // Assuming title is stored in the CalendarDetails
+            }
+        }
     }
 
     private String checkForEvent(LocalDate date, LocalTime time) {
