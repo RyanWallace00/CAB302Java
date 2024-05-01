@@ -4,7 +4,11 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
+import javafx.animation.Animation;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
+import javafx.application.Platform;
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
 import javafx.scene.Node;
@@ -51,6 +55,8 @@ import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.ChronoUnit;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 
 
@@ -696,6 +702,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         primaryStage.setScene(scene);
         // Show the stage
         primaryStage.show();
+
+        String eventName = "Ops & Eng Meeting";
+        String eventDescription = "11am - 12pm";
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+            showNotification("Reminder", eventName + ": " + eventDescription + "\nThis event is scheduled in 15 minutes!");
+        }));
+        timeline.setCycleCount(1);  // Ensures the timeline only runs once
+        timeline.play();
     }
 
     private Node createHamburgerIcon() {
@@ -788,16 +802,17 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 if (loggedInUser.linkingCode.isPresent()) {
                     calendarDetailsMap.put((loggedInUser.linkingCode.get()), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
                 } else {
-                    // Handle the case when linkingCode is empty
-                    // You can choose to throw an exception, log an error, or take appropriate action
-                    throw new IllegalStateException("Linking code is not available for the logged-in user.");
+                    CalendarDetails calendarDetails2 = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
+                    calendarDetailsMap.put(loggedInUser.uuid, calendarDetails2); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
                 }
             }
             showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
             addEventStage.close();
             saveCalendarData(); // Calls the saveCalendarData method to save calendar data to a file
             //populateCalendarGrid();
-            });
+        });
+      //      }
+      //  }
 
         // Add the button to the layout
         layout.add(addButton, 1, 6);
@@ -854,6 +869,58 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         // Return null if no event is found
         return null;
+    }
+
+    private void showNotification(String eventName, String eventDescription) {
+        Platform.runLater(() -> {
+            // Create the Snooze button
+            Button snoozeButton = new Button("Snooze");
+            snoozeButton.setOnAction(e -> {
+                // Schedule the notification to show again after x minutes
+                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> showNotification(eventName, eventDescription)));
+                snoozeTimeline.setCycleCount(1); // Only run once
+                snoozeTimeline.play();
+            });
+
+            // Create the notification image
+            ImageView imageView = new ImageView(imageAppLogo); // Update the path to your actual image file
+            imageView.setFitHeight(100); // Adjust the height of the image as needed
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+
+            // Create a Label for the event name
+            Label eventNameLabel = new Label(eventName);
+            eventNameLabel.setAlignment(Pos.TOP_RIGHT);
+
+            // Create a Label for the event description
+            Label eventDescriptionLabel = new Label(eventDescription);
+            eventDescriptionLabel.setAlignment(Pos.TOP_RIGHT);
+
+            // Create an HBox for the event info (name and description)
+            VBox eventInfoVBox = new VBox(eventNameLabel, eventDescriptionLabel);
+            eventInfoVBox.setAlignment(Pos.TOP_RIGHT);
+            eventInfoVBox.setSpacing(5);
+
+            // Create an HBox for the snooze button
+            HBox snoozeHBox = new HBox();
+            snoozeHBox.getChildren().add(snoozeButton);
+            snoozeHBox.setAlignment(Pos.BOTTOM_RIGHT);
+            snoozeHBox.setPadding(new Insets(0, 10, 10, 0));
+
+            // Create a BorderPane to hold all components
+            BorderPane borderPane = new BorderPane();
+            borderPane.setLeft(imageView);
+            borderPane.setRight(eventInfoVBox);
+            borderPane.setBottom(snoozeHBox);
+
+            // Create the notification and show it
+            Notifications notification = Notifications.create()
+                    .hideAfter(Duration.seconds(10)) // Auto-hide after 5 seconds
+                    .position(Pos.BOTTOM_RIGHT)
+                    .graphic(borderPane);
+
+            notification.show();
+        });
     }
 
     private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
@@ -1073,7 +1140,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             return eventName; // Returns the eventName instance variable
         }
 
-        public String getEventDescription() { // Defines a public method to get the eventDescription
+        public String getEventDescrption() { // Defines a public method to get the eventDescription
             return eventDescription; // Returns the eventDescription instance variable
         }
 
@@ -1088,6 +1155,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
             return linkingCode; // Returns the linkingCode instance variable
         }
+
         public LocalDate getEventDate() {
             LocalDate selectedDate = eventDate.getValue ();
             return selectedDate;
