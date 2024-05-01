@@ -795,15 +795,15 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
             final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
+                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
                 calendarDetailsMap.put(loggedInUser.uuid, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
             }   else {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.linkingCode);
+                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
                 if (loggedInUser.linkingCode.isPresent()) {
-                    calendarDetailsMap.put((loggedInUser.linkingCode.get()), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                    calendarDetailsMap.put((loggedInUser.linkingCode.get()), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the company linking code as the key
                 } else {
-                    CalendarDetails calendarDetails2 = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
-                    calendarDetailsMap.put(loggedInUser.uuid, calendarDetails2); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                    CalendarDetails calendarDetails2 = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
+                    calendarDetailsMap.put(loggedInUser.uuid, calendarDetails2); // Adds the newly created calendarDetails object to the calendarDetailsMap with the userId as the key
                 }
             }
             showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
@@ -861,7 +861,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private String checkForEvent(LocalDate date, LocalTime time) {
         // Iterate through your calendarDetailsMap to find events that match the given date and time
         for (CalendarDetails event : calendarDetailsMap.values()) {
-            if (event.eventDate.getValue().equals(date) &&
+            if (event.eventDate.equals(date) &&
                     event.getEventFrom().equals(time)) {
                 // Return the event details if an event is found
                 return event.getEventName() + " (" + event.eventType + ")";
@@ -1117,11 +1117,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         private final String eventType; // Declares a final instance variable eventType of type String
         private final LocalTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
         private final LocalTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
-        private final DatePicker eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
+        private final LocalDate eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
         private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, DatePicker eventDate, LocalTime eventTimeFrom, LocalTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
+        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, LocalDate eventDate, LocalTime eventTimeFrom, LocalTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.eventName = eventName; // Initializes the eventName instance variable
             this.eventType = eventType; // Initializes the eventType instance variable
@@ -1157,7 +1157,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
 
         public LocalDate getEventDate() {
-            LocalDate selectedDate = eventDate.getValue ();
+            LocalDate selectedDate = eventDate;
             return selectedDate;
         }
     }
