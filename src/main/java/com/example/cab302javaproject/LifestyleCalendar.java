@@ -50,6 +50,7 @@ import java.util.UUID;
 import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.ChronoUnit;
 
 
 
@@ -60,7 +61,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
     private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
     private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
-    private HashMap<Optional<UUID>, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
+    private HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the logo image
     private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
@@ -74,7 +75,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         primaryStage = stage; // Assigns the passed Stage object to the primaryStage instance variable
         rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
         userDetailsMap = new HashMap<UUID, UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
-        calendarDetailsMap = new HashMap<Optional<UUID>, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
+        calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
         Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
         stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
         stage.setScene(scene); // Sets the scene of the primary stage
@@ -781,18 +782,22 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
                 CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
-                calendarDetailsMap.put(Optional.ofNullable(loggedInUser.uuid), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                calendarDetailsMap.put(loggedInUser.uuid, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
             }   else {
                 CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker, timeFrom, timeTo, loggedInUser.linkingCode);
-                calendarDetailsMap.put(loggedInUser.linkingCode, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                if (loggedInUser.linkingCode.isPresent()) {
+                    calendarDetailsMap.put((loggedInUser.linkingCode.get()), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
+                } else {
+                    // Handle the case when linkingCode is empty
+                    // You can choose to throw an exception, log an error, or take appropriate action
+                    throw new IllegalStateException("Linking code is not available for the logged-in user.");
+                }
             }
             showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
             addEventStage.close();
             saveCalendarData(); // Calls the saveCalendarData method to save calendar data to a file
-            populateCalendarGrid();
+            //populateCalendarGrid();
             });
-      //      }
-      //  }
 
         // Add the button to the layout
         layout.add(addButton, 1, 6);
@@ -806,30 +811,35 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void populateCalendarGrid(TableView<String[]> calendarGrid) {
-        // Clear existing items in the calendarGrid
-        calendarGrid.getItems().clear();
 
-        // Repopulate the calendarGrid with updated events
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Populate rows for each hour of the day, including events
         for (int hour = 0; hour < 24; hour++) {
             String[] row = new String[8]; // +1 for the "Time" column
             row[0] = String.format("%02d:00", hour);
-            for (int day = 1; day <= 7; day++) {
-                row[day] = ""; // Initialize each cell with an empty string
-            }
-            calendarGrid.getItems().add(row); // Add the row to the calendarGrid
-        }
 
+            // Calculate the time range for this hour
+            LocalTime startTime = LocalTime.of(hour, 0);
+            LocalTime endTime = LocalTime.of(hour, 59); // You may need to adjust this depending on your data structure
 
-        // Iterate over the calendarDetailsMap to add events to the calendarGrid
-        for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
-            LocalDate eventDate = calendarDetails.eventDate.getValue();
-            if (eventDate != null && eventDate.equals(LocalDate.now())) { // Check if event is for the current day
-                LocalTime eventTimeFrom = calendarDetails.eventTimeFrom; // Assuming this is the field name
-                int row = eventTimeFrom.getHour();
-                int column = LocalDate.now().getDayOfWeek().getValue();
-                String[] rowData = calendarGrid.getItems().get(row);
-                rowData[column] = calendarDetails.eventName; // Assuming title is stored in the CalendarDetails
+            // Iterate over the events in the calendarDetailsMap
+            for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
+                CalendarDetails calendarDetails = entry.getValue();
+                // Check if the event falls within the current hour
+                if (calendarDetails.getEventFrom().isAfter(startTime) && calendarDetails.getEventTo().isBefore(endTime)) {
+                    // Find the day column index for this event
+                    LocalDate eventDate = calendarDetails.getEventDate();
+                    int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
+
+                    // Add the event title to the relevant cell in the row
+                    row[columnIndex] = calendarDetails.getEventName();
+                }
             }
+
+            // Add the row to the calendarGrid
+            calendarGrid.getItems().add(row);
         }
     }
 
@@ -1007,7 +1017,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             try {
                 FileInputStream fileIn = new FileInputStream(file); // Creates a new instance of FileInputStream with the file
                 ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Creates a new instance of ObjectInputStream with the FileInputStream
-                calendarDetailsMap = (HashMap<Optional<UUID>, CalendarDetails>) objectIn.readObject(); // Reads the calendarDetailsMap object from the ObjectInputStream
+                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject(); // Reads the calendarDetailsMap object from the ObjectInputStream
                 objectIn.close(); // Closes the ObjectInputStream
                 fileIn.close(); // Closes the FileInputStream
 
@@ -1016,7 +1026,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
         } else {
             //System.out.println("calendarData.dat file is empty or does not exist.");
-            calendarDetailsMap = new HashMap<Optional<UUID>, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
+            calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
         }
     }
 
@@ -1063,7 +1073,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             return eventName; // Returns the eventName instance variable
         }
 
-        public String getEventDescrption() { // Defines a public method to get the eventDescription
+        public String getEventDescription() { // Defines a public method to get the eventDescription
             return eventDescription; // Returns the eventDescription instance variable
         }
 
@@ -1077,6 +1087,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
             return linkingCode; // Returns the linkingCode instance variable
+        }
+        public LocalDate getEventDate() {
+            LocalDate selectedDate = eventDate.getValue ();
+            return selectedDate;
         }
     }
 
