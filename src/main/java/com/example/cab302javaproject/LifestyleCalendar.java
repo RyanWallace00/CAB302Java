@@ -625,8 +625,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Create an HBox to hold the menu button and add event button
         HBox topButtonsBox = new HBox(10);
-        topButtonsBox.setAlignment(Pos.CENTER_RIGHT);
-        topButtonsBox.getChildren().addAll(menuButton, addEventButton);
+        topButtonsBox.setAlignment(Pos.TOP_RIGHT);
+        topButtonsBox.getChildren().addAll(addEventButton, menuButton);
 
         // Create a GridPane to hold the date labels
         GridPane dateLabelsPane = new GridPane();
@@ -643,10 +643,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Create a VBox to hold the top partition, navigation buttons, and date labels
         VBox topPane = new VBox();
-        topPane.getChildren().addAll(topPartition, navigationBox, dateLabelsPane);
+        topPane.getChildren().addAll(topPartition, navigationBox, topButtonsBox, dateLabelsPane);
 
         calendarPane.setTop(topPane);
-        calendarPane.setRight(topButtonsBox);
+        //calendarPane.setRight(topButtonsBox);
 
         // Create rectangle for sidebar
         Rectangle sideBar = new Rectangle();
@@ -863,7 +863,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         row[columnIndex] = calendarDetails.getEventName();
                     }
                 }
-                p
             }
 
             // Add the row to the calendarGrid
