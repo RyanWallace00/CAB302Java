@@ -678,16 +678,15 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         calendarGrid.getColumns().addAll(columns); // Add columns to TableView
 
-        // Populate rows for each hour of the day, excluding the dates
+        // Populate rows for each hour of the day
         for (int hour = 0; hour < 24; hour++) {
             String[] row = new String[8]; // +1 for the "Time" column
             row[0] = String.format("%02d:00", hour);
-            for (int day = 1; day <= 7; day++) {
-                // Leave the cells for the days empty or use them for events
-                row[day] = "";
-            }
             calendarGrid.getItems().add(row);
         }
+
+        // Populate the calendar grid with events
+        populateCalendarGrid(calendarGrid);
 
         // Limit the number of rows to 25
         calendarGrid.setFixedCellSize(25); // Set the height of each row
@@ -796,26 +795,29 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             LocalTime timeFrom = LocalTime.parse(selectedFromTime, DateTimeFormatter.ofPattern("HH:mm"));
             LocalTime timeTo = LocalTime.parse(selectedToTime, DateTimeFormatter.ofPattern("HH:mm"));
 
-            final UUID eventId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the eventId variable
+            final UUID eventId = UUID.randomUUID();
+            CalendarDetails calendarDetails;
+
             if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
-                calendarDetailsMap.put(loggedInUser.uuid, calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the // userId as the key
-            }   else {
-                CalendarDetails calendarDetails = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
-                if (loggedInUser.linkingCode.isPresent()) {
-                    calendarDetailsMap.put((loggedInUser.linkingCode.get()), calendarDetails); // Adds the newly created calendarDetails object to the calendarDetailsMap with the company linking code as the key
+                calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
+            } else if (Objects.equals(loggedInUser.accountType, "Manager")) {
+                calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
+            } else {
+                // For employees
+                if (loggedInUser.linkingCode != null && loggedInUser.linkingCode.isPresent()) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
                 } else {
-                    CalendarDetails calendarDetails2 = new CalendarDetails(eventId, titleField.toString(), typeComboBox.toString(), descriptionArea.toString(), datePicker.getValue(), timeFrom, timeTo, Optional.ofNullable(loggedInUser.uuid));
-                    calendarDetailsMap.put(loggedInUser.uuid, calendarDetails2); // Adds the newly created calendarDetails object to the calendarDetailsMap with the userId as the key
+                    // If the employee doesn't have a linking code, set the event's linking code to their UUID
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
                 }
             }
-            showAlert("Calendar event created."); // Displays an alert with the message "Calendar event created."
+
+            calendarDetailsMap.put(eventId, calendarDetails);
+            showAlert("Calendar event created.");
             addEventStage.close();
-            saveCalendarData(); // Calls the saveCalendarData method to save calendar data to a file
-            //populateCalendarGrid();
+            saveCalendarData();
+            showCalendarScreen();
         });
-      //      }
-      //  }
 
         // Add the button to the layout
         layout.add(addButton, 1, 6);
@@ -829,9 +831,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void populateCalendarGrid(TableView<String[]> calendarGrid) {
-
         LocalDate currentDate = LocalDate.now();
         LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Clear the existing calendar grid
+        calendarGrid.getItems().clear();
 
         // Populate rows for each hour of the day, including events
         for (int hour = 0; hour < 24; hour++) {
@@ -840,13 +844,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
             // Calculate the time range for this hour
             LocalTime startTime = LocalTime.of(hour, 0);
-            LocalTime endTime = LocalTime.of(hour, 59); // You may need to adjust this depending on your data structure
+            LocalTime endTime = LocalTime.of(hour, 59);
 
             // Iterate over the events in the calendarDetailsMap
             for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
                 CalendarDetails calendarDetails = entry.getValue();
-                // Check if the event falls within the current hour
-                if (calendarDetails.getEventFrom().isAfter(startTime) && calendarDetails.getEventTo().isBefore(endTime)) {
+                // Check if the event falls within the current hour and belongs to the logged-in user
+                if (calendarDetails.getEventFrom().equals(startTime) &&
+                        isEventForLoggedInUser(calendarDetails)) {
                     // Find the day column index for this event
                     LocalDate eventDate = calendarDetails.getEventDate();
                     int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
@@ -861,13 +866,67 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
     }
 
+    private boolean isEventForLoggedInUser(CalendarDetails event) {
+        if (loggedInUser.getAccountType().equals("Personal") &&
+                event.getLinkingCode() != null &&
+                event.getLinkingCode().isPresent() &&
+                event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+            return true;
+        } else if (loggedInUser.getAccountType().equals("Manager") &&
+                event.getLinkingCode() != null &&
+                event.getLinkingCode().isPresent() &&
+                event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+            return true;
+        } else if (loggedInUser.getAccountType().equals("Employee")) {
+            if (loggedInUser.getLinkingCode() != null &&
+                    loggedInUser.getLinkingCode().isPresent() &&
+                    event.getLinkingCode() != null &&
+                    event.getLinkingCode().isPresent() &&
+                    event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                return true;
+            } else if ((loggedInUser.getLinkingCode() == null ||
+                    !loggedInUser.getLinkingCode().isPresent()) &&
+                    event.getLinkingCode() != null &&
+                    event.getLinkingCode().isPresent() &&
+                    event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String checkForEvent(LocalDate date, LocalTime time) {
         // Iterate through your calendarDetailsMap to find events that match the given date and time
         for (CalendarDetails event : calendarDetailsMap.values()) {
             if (event.eventDate.equals(date) &&
                     event.getEventFrom().equals(time)) {
-                // Return the event details if an event is found
-                return event.getEventName() + " (" + event.eventType + ")";
+                // Check if the event belongs to the logged-in user
+                if (loggedInUser.getAccountType().equals("Personal") &&
+                        event.getLinkingCode() != null &&
+                        event.getLinkingCode().isPresent() &&
+                        event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                    return event.getEventName() + " (" + event.eventType + ")";
+                } else if (loggedInUser.getAccountType().equals("Manager") &&
+                        event.getLinkingCode() != null &&
+                        event.getLinkingCode().isPresent() &&
+                        event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                    return event.getEventName() + " (" + event.eventType + ")";
+                } else if (loggedInUser.getAccountType().equals("Employee")) {
+                    if (loggedInUser.getLinkingCode() != null &&
+                            loggedInUser.getLinkingCode().isPresent() &&
+                            event.getLinkingCode() != null &&
+                            event.getLinkingCode().isPresent() &&
+                            event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                        return event.getEventName() + " (" + event.eventType + ")";
+                    } else if ((loggedInUser.getLinkingCode() == null ||
+                            !loggedInUser.getLinkingCode().isPresent()) &&
+                            event.getLinkingCode() != null &&
+                            event.getLinkingCode().isPresent() &&
+                            event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                        // If the employee doesn't have a linking code and the event's linking code matches their UUID
+                        return event.getEventName() + " (" + event.eventType + ")";
+                    }
+                }
             }
         }
         // Return null if no event is found
