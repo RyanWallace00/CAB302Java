@@ -660,14 +660,17 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     if (empty) {
                         setText(null);
                     } else {
-                        String time = getTableRow().getItem()[0];
-                        // Convert the time string to LocalTime
-                        LocalTime eventTime = LocalTime.parse(time);
-                        // Calculate the date for this day of the week
-                        LocalDate date = startOfWeek.plusDays(columnIndex);
-                        // Check if there's an event for this day and time
-                        String eventDetails = checkForEvent(date, eventTime);
-                        setText(eventDetails != null ? eventDetails : "");
+                        TableRow<String[]> tableRow = getTableRow();
+                        if (tableRow != null) {
+                            String time = tableRow.getItem()[0];
+                            // Convert the time string to LocalTime
+                            LocalTime eventTime = LocalTime.parse(time);
+                            // Calculate the date for this day of the week
+                            LocalDate date = startOfWeek.plusDays(columnIndex);
+                            // Check if there's an event for this day and time
+                            String eventDetails = checkForEvent(date, eventTime);
+                            setText(eventDetails != null ? eventDetails : "");
+                        }
                     }
                 }
             });
