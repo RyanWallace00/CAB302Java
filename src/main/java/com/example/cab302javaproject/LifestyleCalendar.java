@@ -71,6 +71,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the logo image
     private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
+    private LocalDate currentDate = LocalDate.now(); // Declares current date as variable
+    private TableView<String[]> calendarGrid; // Declare the calendarGrid variable at the class level
 
     /**
      * The start method initializes the primary stage and displays the home page.
@@ -586,7 +588,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create the hamburger menu
         MenuButton menuButton = new MenuButton();
         menuButton.setGraphic(createHamburgerIcon());
-        //menuButton.setGraphic(new ImageView("hamburger-icon.png"));
         MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
         accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
         MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
@@ -603,55 +604,76 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Button addEventButton = new Button("Add Event");
         addEventButton.setOnAction(event -> showAddEvent());
 
-        // Create a StackPane to hold the top partition, hamburger menu, "Add Event" button
-        StackPane topPane = new StackPane();
-        topPane.getChildren().addAll(topPartition, menuButton, addEventButton);
-        StackPane.setAlignment(menuButton, Pos.TOP_RIGHT);
-        StackPane.setAlignment(addEventButton, Pos.CENTER);
-        StackPane.setMargin(menuButton, new Insets(10));
+        // Create navigation buttons
+        Button prevWeekButton = new Button("Previous Week");
+        Button nextWeekButton = new Button("Next Week");
+
+        // Set button actions
+        prevWeekButton.setOnAction(event -> {
+            currentDate = currentDate.minusWeeks(1);
+            populateCalendarGrid();
+        });
+        nextWeekButton.setOnAction(event -> {
+            currentDate = currentDate.plusWeeks(1);
+            populateCalendarGrid();
+        });
+
+        // Create an HBox to hold the navigation buttons
+        HBox navigationBox = new HBox(10);
+        navigationBox.setAlignment(Pos.CENTER_LEFT);
+        navigationBox.getChildren().addAll(prevWeekButton, nextWeekButton);
+
+        // Create an HBox to hold the menu button and add event button
+        HBox topButtonsBox = new HBox(10);
+        topButtonsBox.setAlignment(Pos.CENTER_RIGHT);
+        topButtonsBox.getChildren().addAll(menuButton, addEventButton);
+
+        // Create a GridPane to hold the date labels
+        GridPane dateLabelsPane = new GridPane();
+        dateLabelsPane.setHgap(10);
+        dateLabelsPane.setAlignment(Pos.CENTER);
+
+        // Add date labels to the dateLabelsPane
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startOfWeek.plusDays(i);
+            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            dateLabelsPane.add(dateLabel, i, 0);
+        }
+
+        // Create a VBox to hold the top partition, navigation buttons, and date labels
+        VBox topPane = new VBox();
+        topPane.getChildren().addAll(topPartition, navigationBox, dateLabelsPane);
 
         calendarPane.setTop(topPane);
+        calendarPane.setRight(topButtonsBox);
 
-        /**
-         * This is code for the left column
-         */
         // Create rectangle for sidebar
         Rectangle sideBar = new Rectangle();
-        // Set the fill color of the Rectangle to a very light grey using a hex color code
         sideBar.setFill(Color.web("#e9e9e9"));
-        // Set the stroke color of the Rectangle to grey using a hex color code
         sideBar.setStroke(Color.web("#b3b3b3"));
-        // Set the width of the Rectangle to the 20% of the width of the BorderPane
         sideBar.widthProperty().bind(calendarPane.widthProperty().multiply(0.20));
-        // Set the height of the Rectangle to 95% of the height of the BorderPane, to account for the header bar
         sideBar.heightProperty().bind(calendarPane.heightProperty().multiply(0.95));
-        // Add the rectangle to the left of the BorderPane
         calendarPane.setLeft(sideBar);
 
-        /**
-         * This is code for the calendar segment.
-         */
         // Calendar Grid
-        TableView<String[]> calendarGrid = new TableView<>();
-        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Ensure columns fill the available width
-
-        LocalDate currentDate = LocalDate.now();
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        calendarGrid = new TableView<>();
+        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Add the "Time" column
         TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
         timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
-        timeColumn.setPrefWidth(70); // Adjust the width as needed
+        timeColumn.setPrefWidth(70);
         calendarGrid.getColumns().add(timeColumn);
 
         // Add columns for each day of the week
         String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-        TableColumn<String[], String>[] columns = new TableColumn[daysOfWeek.length]; // Array to hold columns
+        TableColumn<String[], String>[] columns = new TableColumn[daysOfWeek.length];
 
         for (int i = 0; i < daysOfWeek.length; i++) {
-            final int columnIndex = i; // Store the index in a final variable for lambda expression
+            final int columnIndex = i;
             TableColumn<String[], String> column = new TableColumn<>(daysOfWeek[i]);
-            final int index = i + 1; // Increment by 1 to skip the "Time" column
+            final int index = i + 1;
             column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
             column.setCellFactory(cell -> new TableCell<>() {
                 @Override
@@ -661,57 +683,37 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         setText(null);
                     } else {
                         TableRow<String[]> tableRow = getTableRow();
-                        if (tableRow != null) {
+                        if (tableRow != null && tableRow.getItem() != null) {
                             String time = tableRow.getItem()[0];
                             // Convert the time string to LocalTime
                             LocalTime eventTime = LocalTime.parse(time);
                             // Calculate the date for this day of the week
-                            LocalDate date = startOfWeek.plusDays(columnIndex);
+                            LocalDate date = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)).plusDays(columnIndex);
                             // Check if there's an event for this day and time
                             String eventDetails = checkForEvent(date, eventTime);
                             setText(eventDetails != null ? eventDetails : "");
+                        } else {
+                            setText("");
                         }
                     }
                 }
             });
-            columns[i] = column; // Assign column to array
+            columns[i] = column;
         }
-        calendarGrid.getColumns().addAll(columns); // Add columns to TableView
-
-        // Populate rows for each hour of the day
-        for (int hour = 0; hour < 24; hour++) {
-            String[] row = new String[8]; // +1 for the "Time" column
-            row[0] = String.format("%02d:00", hour);
-            calendarGrid.getItems().add(row);
-        }
+        calendarGrid.getColumns().addAll(columns);
 
         // Populate the calendar grid with events
-        populateCalendarGrid(calendarGrid);
-
-        // Limit the number of rows to 25
-        calendarGrid.setFixedCellSize(25); // Set the height of each row
-        calendarGrid.prefHeightProperty().bind(calendarGrid.fixedCellSizeProperty().multiply(25)); // Set the TableView's height
+        populateCalendarGrid();
 
         // Add calendar grid to center of the BorderPane
         calendarPane.setCenter(calendarGrid);
 
-        /**
-         * This is code for the creation of the window
-         */
         // Create a scene with the BorderPane
         Scene scene = new Scene(calendarPane, 1280, 720);
         // Set the scene on the stage
         primaryStage.setScene(scene);
         // Show the stage
         primaryStage.show();
-
-        String eventName = "Ops & Eng Meeting";
-        String eventDescription = "11am - 12pm";
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-            showNotification("Reminder", eventName + ": " + eventDescription + "\nThis event is scheduled in 15 minutes!");
-        }));
-        timeline.setCycleCount(1);  // Ensures the timeline only runs once
-        timeline.play();
     }
 
     private Node createHamburgerIcon() {
@@ -830,8 +832,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         addEventStage.show();
     }
 
-    private void populateCalendarGrid(TableView<String[]> calendarGrid) {
-        LocalDate currentDate = LocalDate.now();
+    private void populateCalendarGrid() {
         LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
 
         // Clear the existing calendar grid
@@ -856,9 +857,13 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     LocalDate eventDate = calendarDetails.getEventDate();
                     int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
 
-                    // Add the event title to the relevant cell in the row
-                    row[columnIndex] = calendarDetails.getEventName();
+                    // Check if the column index is within the valid range
+                    if (columnIndex >= 1 && columnIndex < 8) {
+                        // Add the event title to the relevant cell in the row
+                        row[columnIndex] = calendarDetails.getEventName();
+                    }
                 }
+                p
             }
 
             // Add the row to the calendarGrid
