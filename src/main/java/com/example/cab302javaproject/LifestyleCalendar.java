@@ -589,7 +589,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showCalendarScreen() {
-        BorderPane calendarPane = new BorderPane();
+        calendarPane = new BorderPane();
 
         // Create a Rectangle for the top partition
         Rectangle topPartition = new Rectangle();
@@ -784,8 +784,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
 
             // Set action to update the selected week in the main calendar
+            LocalDate finalStartDate = startDate;
             dateLabel.setOnMouseClicked(event -> {
-                currentDate = startDate;
+                currentDate = finalStartDate;
                 updateCalendar();
             });
 
@@ -959,6 +960,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         ///buttonsBox.getChildren().set(0, actionButton);
 
+        layout.add(buttonsBox, 1, 6);
         // Create a scene with the layout
         Scene scene = new Scene(layout, 600, 500);
 
