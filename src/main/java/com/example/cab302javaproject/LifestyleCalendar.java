@@ -657,12 +657,21 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Create a GridPane to hold the date labels
         GridPane dateLabelsPane = new GridPane();
-        dateLabelsPane.setHgap(10);
+        dateLabelsPane.setHgap(60);
         dateLabelsPane.setAlignment(Pos.CENTER);
+
+        // Add date labels for each day of the week
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startOfWeek.plusDays(i);
+            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            dateLabelsPane.add(dateLabel, i, 0);
+        }
 
         // Calendar Grid
         calendarGrid = new TableView<>();
         calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        calendarGrid.setFixedCellSize(30); // Adjust the cell size as needed
         VBox.setVgrow(calendarGrid, Priority.ALWAYS);
 
         // Add the "Time" column
@@ -672,10 +681,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         calendarGrid.getColumns().add(timeColumn);
 
         // Add columns for each day of the week
+        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         TableColumn<String[], String>[] columns = new TableColumn[7];
         for (int i = 0; i < 7; i++) {
             final int columnIndex = i;
-            TableColumn<String[], String> column = new TableColumn<>();
+            TableColumn<String[], String> column = new TableColumn<>(dayOfWeek[i]);
             final int index = i + 1;
             column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
             column.setCellFactory(cell -> new TableCell<>() {
@@ -752,6 +762,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Update the calendar
         updateCalendar();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
+            showNotifications();
+        }));
+        timeline.setCycleCount(1);  // Ensures the timeline only runs once
+        timeline.play();
     }
 
     private GridPane createMiniCalendar() {
@@ -768,8 +784,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
 
         // Add date cells
-        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
-        int dayOfWeek = startDate.getDayOfWeek().getValue();
+        LocalDate startDate = currentDate.withDayOfMonth(1);
+        int dayOfWeek = startDate.getDayOfWeek().getValue() % 7;
         int row = 1;
         int col = dayOfWeek;
         while (startDate.getMonthValue() == LocalDate.now().getMonthValue()) {
@@ -814,13 +830,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
         }
 
-        // Update the mini calendar dates
-        GridPane miniCalendar = (GridPane) ((VBox) calendarPane.getLeft()).getChildren().get(1);
-        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
-        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();
-        int daysInMonth = currentDate.lengthOfMonth();
+        // Update the month and year label
+        VBox leftSection = (VBox) calendarPane.getLeft();
+        Label monthYearLabel = new Label(currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        monthYearLabel.setAlignment(Pos.CENTER);
+        leftSection.getChildren().set(0, monthYearLabel);
 
-        // Clear the existing mini calendar dates
+        // Update the mini calendar
+        GridPane miniCalendar = (GridPane) leftSection.getChildren().get(1);
         miniCalendar.getChildren().clear();
 
         // Add the day of the week labels to the mini calendar
@@ -829,6 +846,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             Label dayLabel = new Label(daysOfWeek[i]);
             miniCalendar.add(dayLabel, i, 0);
         }
+
+        // Calculate dayOfWeek and daysInMonth based on currentDate
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();
+        int daysInMonth = currentDate.lengthOfMonth();
 
         // Add the updated mini calendar dates
         int row = 1;
@@ -883,7 +905,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Stage addEventStage = new Stage();
         addEventStage.setTitle(calendarDetail != null ? "Update Event" : "Add Event");
 
-
         addEventStage.getIcons().add(imageAppLogo); // Set the app icon in the top left of the stage
 
         // Create the layout for the pop-up window
@@ -911,9 +932,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Populate time ComboBoxes
         for (int hour = 0; hour < 24; hour++) {
-            String hourString = String.format("%02d:00", hour);
-            timeFromComboBox.getItems().add(hourString);
-            timeToComboBox.getItems().add(hourString);
+            for (int minute = 0; minute < 60; minute += 30) {
+                String timeString = String.format("%02d:%02d", hour, minute);
+                timeFromComboBox.getItems().add(timeString);
+                timeToComboBox.getItems().add(timeString);
+            }
         }
 
         /**
@@ -962,29 +985,44 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             LocalTime timeFrom = LocalTime.parse(selectedFromTime, DateTimeFormatter.ofPattern("HH:mm"));
             LocalTime timeTo = LocalTime.parse(selectedToTime, DateTimeFormatter.ofPattern("HH:mm"));
 
-            final UUID eventId = UUID.randomUUID();
-            CalendarDetails calendarDetails;
-
-            if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
-            } else if (Objects.equals(loggedInUser.accountType, "Manager")) {
-                calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
-            } else {
-                // For employees
-                if (loggedInUser.linkingCode != null && loggedInUser.linkingCode.isPresent()) {
-                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
-                } else {
-                    // If the employee doesn't have a linking code, set the event's linking code to their UUID
-                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
-                }
+            // Validate time order and swap if necessary
+            if (timeTo.isBefore(timeFrom)) {
+                LocalTime temp = timeFrom;
+                timeFrom = timeTo;
+                timeTo = temp;
+            }   else if (timeTo == timeFrom){
+                showAlert("Times are the same.");
+                return;
             }
 
-            calendarDetailsMap.put(eventId, calendarDetails);
-            showAlert("Calendar event created.");
+            final UUID eventId = UUID.randomUUID();
+            CalendarDetails calendarDetails;
+            if (calendarDetail != null) {
+                CalendarDetails updatedCalendarDetails = new CalendarDetails(calendarDetail.uuid, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, calendarDetail.getLinkingCode());
+                calendarDetailsMap.put(calendarDetail.uuid, updatedCalendarDetails);
+                showAlert("Calendar event updated.");
+            } else {
+                if (Objects.equals(loggedInUser.accountType, "Personal")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
+                } else if (Objects.equals(loggedInUser.accountType, "Manager")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
+                } else {
+                    // For employees
+                    if (loggedInUser.linkingCode != null && loggedInUser.linkingCode.isPresent()) {
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
+                    } else {
+                        // If the employee doesn't have a linking code, set the event's linking code to their UUID
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
+                    }
+                }
+
+                calendarDetailsMap.put(eventId, calendarDetails);
+                showAlert("Calendar event created.");
+            }
             addEventStage.close();
             saveCalendarData();
             showCalendarScreen();
-            addEventStage.close();
+            addEventStage.close(); // ??
         });
         // Add a "Cancel" button
         Button cancelButton = new Button("Cancel");
@@ -1010,32 +1048,35 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Clear the existing calendar grid
         calendarGrid.getItems().clear();
 
-        // Populate rows for each hour of the day, including events
+        // Populate rows for each half-hour of the day, including events
         for (int hour = 0; hour < 24; hour++) {
-            String[] row = new String[8]; // +1 for the "Time" column
-            row[0] = String.format("%02d:00", hour);
+            for (int halfHour = 0; halfHour < 2; halfHour++) {
+                String[] row = new String[8]; // +1 for the "Time" column
+                LocalTime time = LocalTime.of(hour, halfHour * 30);
+                row[0] = time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-            // Iterate over the events in the calendarDetailsMap
-            for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
-                CalendarDetails calendarDetails = entry.getValue();
-                // Check if the event spans the current hour and belongs to the logged-in user
-                if (calendarDetails.getEventFrom().isBefore(LocalTime.of(hour, 0)) &&
-                        calendarDetails.getEventTo().isAfter(LocalTime.of(hour, 59)) &&
-                        isEventForLoggedInUser(calendarDetails)) {
-                    // Find the day column index for this event
-                    LocalDate eventDate = calendarDetails.getEventDate();
-                    int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
+                // Iterate over the events in the calendarDetailsMap
+                for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
+                    CalendarDetails calendarDetails = entry.getValue();
+                    // Check if the event spans the current half-hour and belongs to the logged-in user
+                    if (calendarDetails.getEventFrom().isBefore(time) &&
+                            calendarDetails.getEventTo().isAfter(time) &&
+                            isEventForLoggedInUser(calendarDetails)) {
+                        // Find the day column index for this event
+                        LocalDate eventDate = calendarDetails.getEventDate();
+                        int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
 
-                    // Check if the column index is within the valid range
-                    if (columnIndex >= 1 && columnIndex < 8) {
-                        // Add the event title to the relevant cell in the row
-                        row[columnIndex] = calendarDetails.getEventName();
+                        // Check if the column index is within the valid range
+                        if (columnIndex >= 1 && columnIndex < 8) {
+                            // Add the event title to the relevant cell in the row
+                            row[columnIndex] = calendarDetails.getEventName();
+                        }
                     }
                 }
-            }
 
-            // Add the row to the calendarGrid
-            calendarGrid.getItems().add(row);
+                // Add the row to the calendarGrid
+                calendarGrid.getItems().add(row);
+            }
         }
     }
 
@@ -1104,6 +1145,32 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }
         // Return null if no event is found
         return null;
+    }
+
+    // Implement notifications
+    private void showNotifications() {
+        // Iterate through the calendarDetailsMap and check for events occurring at the current time
+        for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
+            LocalDateTime eventDateTime = LocalDateTime.of(calendarDetails.getEventDate(), calendarDetails.getEventFrom());
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+            if (eventDateTime.isEqual(currentDateTime)) {
+                // Check if notifications are enabled in the settings
+                if (loggedInUser.notificationsPreference) {
+                    showNotification("Event Reminder", calendarDetails.getEventName() + " is starting now!");
+                }
+            } else {
+                // Check for upcoming events based on the reminder time
+                String reminderTime = loggedInUser.notificationsReminderTime;
+                LocalDateTime reminderDateTime = eventDateTime.minusMinutes(Long.parseLong(reminderTime.split(" ")[0]));
+
+                if (currentDateTime.isEqual(reminderDateTime)) {
+                    if (loggedInUser.notificationsPreference) {
+                        showNotification("Event Reminder", calendarDetails.getEventName() + " is starting in " + reminderTime + "!");
+                    }
+                }
+            }
+        }
     }
 
     private void showNotification(String eventName, String eventDescription) {
@@ -1315,7 +1382,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private void loadCalendarData() { // Defines a private method to load calendar data from a file
         File file = new File("src/main/resources/calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
 
-        if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
+        //if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
             try {
                 FileInputStream fileIn = new FileInputStream(file); // Creates a new instance of FileInputStream with the file
                 ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Creates a new instance of ObjectInputStream with the FileInputStream
@@ -1326,10 +1393,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             } catch (IOException | ClassNotFoundException e) { // Catches IOException and ClassNotFoundException
                 e.printStackTrace(); // Prints the stack trace in case of an exception
             }
-        } else {
+        //} else {
             //System.out.println("calendarData.dat file is empty or does not exist.");
-            calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
-        }
+         //   calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
+        //}
     }
 
     private void saveCalendarData() { // Defines a private method to save calendar data to a file
