@@ -591,34 +591,66 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private void showCalendarScreen() {
         calendarPane = new BorderPane();
 
-        // Create a VBox to hold the mini calendar and navigation buttons
+        // Create the hamburger menu
+        MenuButton menuButton = new MenuButton();
+        menuButton.setGraphic(createHamburgerIcon());
+        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
+        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
+        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
+        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
+        MenuItem logOutMenuItem = new MenuItem("Log Out");
+        logOutMenuItem.setOnAction(event -> {
+            loggedInUser = null;
+            showAlert("Signed Out");
+            showHomePage();
+        });
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
+
+        // Create the "+" button for adding events
+        Button addEventButton = new Button("+");
+        addEventButton.setOnAction(event -> showAddEvent(null));
+
+        // Create an HBox to hold the addEventButton and menuButton
+        HBox topRightBox = new HBox(10);
+        topRightBox.setAlignment(Pos.CENTER_RIGHT);
+        topRightBox.getChildren().addAll(addEventButton, menuButton);
+        calendarPane.setTop(topRightBox);
+
+        // Create a VBox for the left grey section
         VBox leftSection = new VBox(10);
         leftSection.setAlignment(Pos.TOP_CENTER);
         leftSection.setPadding(new Insets(10));
+
+        // Create an HBox for the day of the week labels
+        HBox dayOfWeekLabels = new HBox(10);
+        dayOfWeekLabels.setAlignment(Pos.CENTER);
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
+        for (String day : daysOfWeek) {
+            Label dayLabel = new Label(day);
+            dayOfWeekLabels.getChildren().add(dayLabel);
+        }
+        leftSection.getChildren().add(dayOfWeekLabels);
 
         // Create a mini calendar
         GridPane miniCalendar = createMiniCalendar();
         leftSection.getChildren().add(miniCalendar);
 
         // Create navigation buttons
-        Button prevWeekButton = new Button("Previous Week");
-        Button nextWeekButton = new Button("Next Week");
-
-        // Set button actions
-        prevWeekButton.setOnAction(event -> {
-            currentDate = currentDate.minusWeeks(1);
+        Button prevMonthButton = new Button("<");
+        Button nextMonthButton = new Button(">");
+        prevMonthButton.setOnAction(event -> {
+            currentDate = currentDate.minusMonths(1);
             updateCalendar();
         });
-        nextWeekButton.setOnAction(event -> {
-            currentDate = currentDate.plusWeeks(1);
+        nextMonthButton.setOnAction(event -> {
+            currentDate = currentDate.plusMonths(1);
             updateCalendar();
         });
 
         // Create an HBox to hold the navigation buttons
         HBox navigationBox = new HBox(10);
         navigationBox.setAlignment(Pos.CENTER);
-        navigationBox.getChildren().addAll(prevWeekButton, nextWeekButton);
-
+        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton);
         leftSection.getChildren().add(navigationBox);
 
         calendarPane.setLeft(leftSection);
@@ -628,17 +660,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         dateLabelsPane.setHgap(10);
         dateLabelsPane.setAlignment(Pos.CENTER);
 
-        // Add date labels to the dateLabelsPane
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = startOfWeek.plusDays(i);
-            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
-            dateLabelsPane.add(dateLabel, i, 0);
-        }
-
         // Calendar Grid
         calendarGrid = new TableView<>();
         calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        VBox.setVgrow(calendarGrid, Priority.ALWAYS);
 
         // Add the "Time" column
         TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
@@ -647,13 +672,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         calendarGrid.getColumns().add(timeColumn);
 
         // Add columns for each day of the week
-        String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-        TableColumn<String[], String>[] columns = new TableColumn[daysOfWeek.length];
-
-        for (int i = 0; i < daysOfWeek.length; i++) {
+        TableColumn<String[], String>[] columns = new TableColumn[7];
+        for (int i = 0; i < 7; i++) {
             final int columnIndex = i;
             TableColumn<String[], String> column = new TableColumn<>();
-            column.setText(daysOfWeek[i]);
             final int index = i + 1;
             column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
             column.setCellFactory(cell -> new TableCell<>() {
@@ -695,9 +717,15 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 };
                 cell.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2 && !cell.isEmpty()) {
-                        String eventDetails = cell.getItem();
-                        if (eventDetails != null && !eventDetails.isEmpty()) {
-                            showAddEvent(eventDetails);
+                        String eventName = cell.getItem();
+                        if (eventName != null && !eventName.isEmpty()) {
+                            // Find the corresponding CalendarDetails object
+                            for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
+                                if (calendarDetails.getEventName().equals(eventName)) {
+                                    showAddEvent(calendarDetails);
+                                    break;
+                                }
+                            }
                         }
                     }
                 });
@@ -710,35 +738,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Create a VBox to hold the date labels and calendar grid
         VBox centerPane = new VBox();
+        VBox.setVgrow(centerPane, Priority.ALWAYS);
         centerPane.getChildren().addAll(dateLabelsPane, calendarGrid);
 
         calendarPane.setCenter(centerPane);
-
-        // Create the hamburger menu
-        MenuButton menuButton = new MenuButton();
-        menuButton.setGraphic(createHamburgerIcon());
-        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
-        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
-        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
-        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
-        MenuItem logOutMenuItem = new MenuItem("Log Out");
-        logOutMenuItem.setOnAction(event -> {
-            loggedInUser = null;
-            showAlert("Signed Out");
-            showHomePage();
-        });
-        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
-
-        // Create the "+" button for adding events
-        Button addEventButton = new Button("+");
-        addEventButton.setOnAction(event -> showAddEvent(null));
-
-        // Create an HBox to hold the addEventButton and menuButton
-        HBox topRightBox = new HBox(10);
-        topRightBox.setAlignment(Pos.CENTER_RIGHT);
-        topRightBox.getChildren().addAll(addEventButton, menuButton);
-
-        calendarPane.setTop(topRightBox);
 
         // Create a scene with the BorderPane
         Scene scene = new Scene(calendarPane, 1280, 720);
@@ -770,6 +773,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         int row = 1;
         int col = dayOfWeek;
         while (startDate.getMonthValue() == LocalDate.now().getMonthValue()) {
+            final LocalDate date = startDate; // Declare date as a final variable
             Label dateLabel = new Label(String.valueOf(startDate.getDayOfMonth()));
             miniCalendar.add(dateLabel, col, row);
 
@@ -779,9 +783,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
 
             // Set action to update the selected week in the main calendar
-            LocalDate finalStartDate = startDate;
             dateLabel.setOnMouseClicked(event -> {
-                currentDate = finalStartDate;
+                currentDate = date;
                 updateCalendar();
             });
 
@@ -801,10 +804,56 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         VBox centerPane = (VBox) calendarPane.getCenter();
         GridPane dateLabelsPane = (GridPane) centerPane.getChildren().get(0);
         LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Check if dateLabelsPane has children before updating the date labels
+        if (dateLabelsPane.getChildren().size() > 0) {
+            for (int i = 0; i < 7; i++) {
+                LocalDate date = startOfWeek.plusDays(i);
+                Label dateLabel = (Label) dateLabelsPane.getChildren().get(i);
+                dateLabel.setText(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            }
+        }
+
+        // Update the mini calendar dates
+        GridPane miniCalendar = (GridPane) ((VBox) calendarPane.getLeft()).getChildren().get(1);
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();
+        int daysInMonth = currentDate.lengthOfMonth();
+
+        // Clear the existing mini calendar dates
+        miniCalendar.getChildren().clear();
+
+        // Add the day of the week labels to the mini calendar
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
         for (int i = 0; i < 7; i++) {
-            LocalDate date = startOfWeek.plusDays(i);
-            Label dateLabel = (Label) dateLabelsPane.getChildren().get(i);
-            dateLabel.setText(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            Label dayLabel = new Label(daysOfWeek[i]);
+            miniCalendar.add(dayLabel, i, 0);
+        }
+
+        // Add the updated mini calendar dates
+        int row = 1;
+        int col = dayOfWeek;
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate date = currentDate.withDayOfMonth(day);
+            Label dateLabel = new Label(String.valueOf(day));
+            miniCalendar.add(dateLabel, col, row);
+
+            // Highlight the current week
+            if (date.isEqual(currentDate) || (date.isAfter(currentDate) && date.isBefore(currentDate.plusWeeks(1)))) {
+                dateLabel.setStyle("-fx-background-color: #a9a9a9;");
+            }
+
+            // Set action to update the selected week in the main calendar
+            dateLabel.setOnMouseClicked(event -> {
+                currentDate = date;
+                updateCalendar();
+            });
+
+            col++;
+            if (col > 6) {
+                col = 0;
+                row++;
+            }
         }
 
         // Clear the existing calendar grid
@@ -829,10 +878,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         return hamburgerIcon;
     }
 
-    private void showAddEvent(String eventDetails) {
+    private void showAddEvent(CalendarDetails calendarDetail) {
         // Create a new stage for the "Add Event" screen
         Stage addEventStage = new Stage();
-        addEventStage.setTitle(eventDetails != null ? "Update Event" : "Add Event");
+        addEventStage.setTitle(calendarDetail != null ? "Update Event" : "Add Event");
 
 
         addEventStage.getIcons().add(imageAppLogo); // Set the app icon in the top left of the stage
@@ -890,27 +939,17 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         layout.add(descriptionArea, 1, 5);
 
         // Populate the form fields if editing an existing event
-        if (eventDetails != null) {
-            String[] eventData = eventDetails.split("\\|");
-            if (eventData.length == 6) {
-                String eventTitle = eventData[0];
-                String eventType = eventData[1];
-                String eventDescription = eventData[2];
-                LocalDate eventDate = LocalDate.parse(eventData[3]);
-                LocalTime eventStartTime = LocalTime.parse(eventData[4]);
-                LocalTime eventEndTime = LocalTime.parse(eventData[5]);
-
-                titleField.setText(eventTitle);
-                typeComboBox.setValue(eventType);
-                descriptionArea.setText(eventDescription);
-                datePicker.setValue(eventDate);
-                timeFromComboBox.setValue(eventStartTime.toString());
-                timeToComboBox.setValue(eventEndTime.toString());
-            }
+        if (calendarDetail != null) {
+            titleField.setText(calendarDetail.getEventName());
+            typeComboBox.setValue(calendarDetail.eventType);
+            descriptionArea.setText(calendarDetail.eventDescription);
+            datePicker.setValue(calendarDetail.getEventDate());
+            timeFromComboBox.setValue(calendarDetail.getEventFrom().toString());
+            timeToComboBox.setValue(calendarDetail.getEventTo().toString());
         }
 
         // Set the action for the "Add" or "Update" button
-        Button actionButton = new Button(eventDetails != null ? "Update" : "Add");
+        Button actionButton = new Button(calendarDetail != null ? "Update" : "Add");
         actionButton.setOnAction(event -> {
             // Validate form fields
             if (titleField.getText().isEmpty() || typeComboBox.getValue() == null || datePicker.getValue() == null ||
@@ -976,15 +1015,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String[] row = new String[8]; // +1 for the "Time" column
             row[0] = String.format("%02d:00", hour);
 
-            // Calculate the time range for this hour
-            LocalTime startTime = LocalTime.of(hour, 0);
-            LocalTime endTime = LocalTime.of(hour, 59);
-
             // Iterate over the events in the calendarDetailsMap
             for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
                 CalendarDetails calendarDetails = entry.getValue();
-                // Check if the event falls within the current hour and belongs to the logged-in user
-                if (calendarDetails.getEventFrom().equals(startTime) &&
+                // Check if the event spans the current hour and belongs to the logged-in user
+                if (calendarDetails.getEventFrom().isBefore(LocalTime.of(hour, 0)) &&
+                        calendarDetails.getEventTo().isAfter(LocalTime.of(hour, 59)) &&
                         isEventForLoggedInUser(calendarDetails)) {
                     // Find the day column index for this event
                     LocalDate eventDate = calendarDetails.getEventDate();
