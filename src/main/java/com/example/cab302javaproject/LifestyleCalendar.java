@@ -4,6 +4,7 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
+import com.google.gson.reflect.TypeToken;
 import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
@@ -58,8 +59,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.ChronoUnit;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
-
-
+import com.google.gson.Gson;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -1248,32 +1248,64 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         return false; // Email not registered
     }
 
-    private void loadUserData() { // This method loads user data from a file named "userData.dat" located in the "src/main/resources" directory
-        File file = new File("src/main/resources/userData.dat"); // Create a File object for the "userData.dat" file
-        if (file.exists() && file.length() > 0) { // Check if the file exists and has a non-zero length
-            try {
-                FileInputStream fileIn = new FileInputStream(file); // Create a FileInputStream to read from the file
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Create an ObjectInputStream to read objects from the FileInputStream
-                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
-                objectIn.close(); // Close the input streams
-                fileIn.close(); // Close the input streams
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace(); // If an exception occurs during reading, print the stack trace
-            }
-        } else {
-            userDetailsMap = new HashMap<>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
+//    private void loadUserData() { // This method loads user data from a file named "userData.dat" located in the "src/main/resources" directory
+//        File file = new File("src/main/resources/userData.dat"); // Create a File object for the "userData.dat" file
+//        if (file.exists() && file.length() > 0) { // Check if the file exists and has a non-zero length
+//            try {
+//                FileInputStream fileIn = new FileInputStream(file); // Create a FileInputStream to read from the file
+//                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Create an ObjectInputStream to read objects from the FileInputStream
+//                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
+//                objectIn.close(); // Close the input streams
+//                fileIn.close(); // Close the input streams
+//            } catch (IOException | ClassNotFoundException e) {
+//                e.printStackTrace(); // If an exception occurs during reading, print the stack trace
+//            }
+//        } else {
+//            userDetailsMap = new HashMap<>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
+//        }
+//    }
+//
+//    private void saveUserData() { // This method saves the userDetailsMap to the "userData.dat" file
+//        try {
+//            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat"); // Create a FileOutputStream to write to the "userData.dat" file
+//            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Create an ObjectOutputStream to write objects to the FileOutputStream
+//            objectOut.writeObject(userDetailsMap); // Write the userDetailsMap object to the file
+//            objectOut.close(); // Close the output streams
+//            fileOut.close(); // Close the output streams
+//        } catch (Exception e) {
+//            e.printStackTrace(); // If an exception occurs during writing, print the stack trace
+//        }
+//    }
+
+    private void saveUserData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            String encryptedData = EncryptionUtils.encrypt(new Gson().toJson(userDetailsMap));
+            objectOut.writeObject(encryptedData);
+            objectOut.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void saveUserData() { // This method saves the userDetailsMap to the "userData.dat" file
-        try {
-            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat"); // Create a FileOutputStream to write to the "userData.dat" file
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Create an ObjectOutputStream to write objects to the FileOutputStream
-            objectOut.writeObject(userDetailsMap); // Write the userDetailsMap object to the file
-            objectOut.close(); // Close the output streams
-            fileOut.close(); // Close the output streams
-        } catch (Exception e) {
-            e.printStackTrace(); // If an exception occurs during writing, print the stack trace
+    private void loadUserData() {
+        File file = new File("src/main/resources/userData.dat");
+        if (file.exists() && file.length() > 0) {
+            try {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+                String encryptedData = (String) objectIn.readObject();
+                String decryptedData = EncryptionUtils.decrypt(encryptedData);
+                userDetailsMap = new Gson().fromJson(decryptedData, new TypeToken<HashMap<UUID, UserDetails>>() {}.getType());
+                objectIn.close();
+                fileIn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            userDetailsMap = new HashMap<>();
         }
     }
 
