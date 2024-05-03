@@ -5,7 +5,6 @@
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
 import com.google.gson.reflect.TypeToken;
-import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
@@ -13,18 +12,15 @@ import javafx.application.Platform;
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
 import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
 import java.io.*; // Imports all classes related to input/output from the Java I/O package
@@ -33,14 +29,11 @@ import java.io.FileInputStream; // Imports the FileInputStream class from the Ja
 import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
 import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
 import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
-import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
-
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
@@ -48,12 +41,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ComboBox;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.ChronoUnit;
@@ -939,14 +930,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             }
         }
 
-        /**
-        // Convert selected time from ComboBox to LocalTime
-        String selectedFromTime = timeFromComboBox.getValue();
-        String selectedToTime = timeToComboBox.getValue();
-
-        LocalDateTime timeFrom = LocalDateTime.parse(selectedFromTime);
-        LocalDateTime timeTo = LocalDateTime.parse(selectedToTime); */
-
         // Add components to the layout
         layout.add(titleLabel, 0, 0);
         layout.add(titleField, 1, 0);
@@ -1078,35 +1061,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 calendarGrid.getItems().add(row);
             }
         }
-    }
-
-    private boolean isEventForLoggedInUser(CalendarDetails event) {
-        if (loggedInUser.getAccountType().equals("Personal") &&
-                event.getLinkingCode() != null &&
-                event.getLinkingCode().isPresent() &&
-                event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
-            return true;
-        } else if (loggedInUser.getAccountType().equals("Manager") &&
-                event.getLinkingCode() != null &&
-                event.getLinkingCode().isPresent() &&
-                event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-            return true;
-        } else if (loggedInUser.getAccountType().equals("Employee")) {
-            if (loggedInUser.getLinkingCode() != null &&
-                    loggedInUser.getLinkingCode().isPresent() &&
-                    event.getLinkingCode() != null &&
-                    event.getLinkingCode().isPresent() &&
-                    event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-                return true;
-            } else if ((loggedInUser.getLinkingCode() == null ||
-                    !loggedInUser.getLinkingCode().isPresent()) &&
-                    event.getLinkingCode() != null &&
-                    event.getLinkingCode().isPresent() &&
-                    event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String checkForEvent(LocalDate date, LocalTime time) {
@@ -1379,6 +1333,35 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
             return linkingCode; // Returns the linkingCode instance variable
         }
+    }
+
+    private boolean isEventForLoggedInUser(CalendarDetails event) {
+        if (loggedInUser.getAccountType().equals("Personal") &&
+                event.getLinkingCode() != null &&
+                event.getLinkingCode().isPresent() &&
+                event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+            return true;
+        } else if (loggedInUser.getAccountType().equals("Manager") &&
+                event.getLinkingCode() != null &&
+                event.getLinkingCode().isPresent() &&
+                event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+            return true;
+        } else if (loggedInUser.getAccountType().equals("Employee")) {
+            if (loggedInUser.getLinkingCode() != null &&
+                    loggedInUser.getLinkingCode().isPresent() &&
+                    event.getLinkingCode() != null &&
+                    event.getLinkingCode().isPresent() &&
+                    event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                return true;
+            } else if ((loggedInUser.getLinkingCode() == null ||
+                    !loggedInUser.getLinkingCode().isPresent()) &&
+                    event.getLinkingCode() != null &&
+                    event.getLinkingCode().isPresent() &&
+                    event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Method to load user data from file
