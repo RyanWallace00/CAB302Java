@@ -61,7 +61,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     public static HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     public static UserData.UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the logo image
-    private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
+    private static Image imageAppLogo; // Declares a private instance variable to hold the application logo image
     private LocalDate currentDate = LocalDate.now(); // Declares current date as variable
     private TableView<String[]> calendarGrid; // Declare the calendarGrid variable at the class level
     private BorderPane calendarPane; // Declare calendarPane as an instance variable
@@ -754,7 +754,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         updateCalendar();
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
-            showNotifications();
+            NotificationEnquiry.showNotifications();
         }));
         timeline.setCycleCount(1);  // Ensures the timeline only runs once
         timeline.play();
@@ -1100,33 +1100,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         return null;
     }
 
-    // Implement notifications
-    private void showNotifications() {
-        // Iterate through the calendarDetailsMap and check for events occurring at the current time
-        for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
-            LocalDateTime eventDateTime = LocalDateTime.of(calendarDetails.getEventDate(), calendarDetails.getEventFrom());
-            LocalDateTime currentDateTime = LocalDateTime.now();
-
-            if (eventDateTime.isEqual(currentDateTime)) {
-                // Check if notifications are enabled in the settings
-                if (loggedInUser.getNotificationsPreference()) {
-                    showNotification("Event Reminder", calendarDetails.getEventName() + " is starting now!");
-                }
-            } else {
-                // Check for upcoming events based on the reminder time
-                String reminderTime = loggedInUser.getNotificationsReminderTime();
-                LocalDateTime reminderDateTime = eventDateTime.minusMinutes(Long.parseLong(reminderTime.split(" ")[0]));
-
-                if (currentDateTime.isEqual(reminderDateTime)) {
-                    if (loggedInUser.getNotificationsPreference()) {
-                        showNotification("Event Reminder", calendarDetails.getEventName() + " is starting in " + reminderTime + "!");
-                    }
-                }
-            }
-        }
-    }
-
-    private void showNotification(String eventName, String eventDescription) {
+    public static void showNotification(String eventName, String eventDescription) {
         Platform.runLater(() -> {
             // Create the Snooze button
             Button snoozeButton = new Button("Snooze");
@@ -1169,7 +1143,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             borderPane.setBottom(snoozeHBox);
 
             // Create the notification and show it
-            Notifications notification = Notifications.create()
+            org.controlsfx.control.Notifications notification = org.controlsfx.control.Notifications.create()
                     .hideAfter(Duration.seconds(10)) // Auto-hide after 5 seconds
                     .position(Pos.BOTTOM_RIGHT)
                     .graphic(borderPane);
