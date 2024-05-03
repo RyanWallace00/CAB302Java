@@ -58,9 +58,9 @@ import com.google.gson.Gson;
 public class LifestyleCalendar extends Application { // Defines the LifestyleCalendar class which extends the Application class from JavaFX
     private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
     private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
-    private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
-    private HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
-    private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
+    public static HashMap<UUID, UserData.UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
+    public HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
+    public static UserData.UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the logo image
     private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
     private LocalDate currentDate = LocalDate.now(); // Declares current date as variable
@@ -75,7 +75,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     public void start(Stage stage) { // Defines the start method which takes a Stage object as a parameter
         primaryStage = stage; // Assigns the passed Stage object to the primaryStage instance variable
         rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
-        userDetailsMap = new HashMap<UUID, UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
+        userDetailsMap = new HashMap<UUID, UserData.UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
         calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
         Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
         stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
@@ -84,7 +84,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
         imageAppLogo= new Image("LifestyleCalendarLogoCalendar.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
         stage.getIcons().add(imageAppLogo); // Adds the loaded image as an icon to the primary stage
-        loadUserData(); // Calls the loadUserData method to load user data from a file
+        UserData.loadUserData(); // Calls the loadUserData method to load user data from a file
         showHomePage(); // Calls the showHomePage method to display the home page
     }
 
@@ -145,7 +145,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         loginButton.setOnAction(event -> { // Sets an event handler for the loginButton
             String email = emailField.getText(); // Gets the text from the emailField and assigns it to the email variable
             String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
-            if (authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
+            if (UserData.authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
                 loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
                 showCalendarScreen(); // Calls the showCalendarScreen method to display the calendar screen
             } else {
@@ -214,7 +214,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 }
             });
             final String selectedAccountType = atomicSelectedAccountType.get(); // Gets the value of the atomicSelectedAccountType and assigns it to the selectedAccountType variable
-            if (isEmailRegistered(email)) { // Calls the isEmailRegistered method with the email, and checks if the email is already registered
+            if (UserData.isEmailRegistered(email)) { // Calls the isEmailRegistered method with the email, and checks if the email is already registered
                 showAlert("Email already exists."); // Displays an alert with the message "Email already exists."
             } else if (selectedAccountType == null) { // Checks if no account type is selected
                 showAlert("Please select an account type."); // Displays an alert with the message "Please select an account type."
@@ -239,11 +239,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     okButton.setOnAction(e -> { // Sets an event handler for the okButton
                         popupStage.close(); // Closes the popupStage
                         //linkingCode = Optional.ofNullable(managerLinkingCode);
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime); //linkingCode);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime); //linkingCode);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                        saveUserData(); // Calls the saveUserData method to save user data to a file
+                        UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
                     popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton); // Adds the popupLabel, linkingCodeLabel, and okButton to the popupVBox
                     Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
@@ -273,7 +273,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                             UUID managerLinkingCode = null; // Declares a variable managerLinkingCode and initializes it with null
                             try {
                                 managerLinkingCode = UUID.fromString(linkingCodeString); // Attempts to create a UUID from the linkingCodeString and assigns it to the managerLinkingCode variable
-                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
+                                boolean isValidLinkingCode = UserData.isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
                                 if (!isValidLinkingCode) { // Checks if the linking code is invalid
                                     showAlert("Invalid linking code."); // Displays an alert with the message "Invalid linking code."
                                     return; // Exit the method if the code is invalid
@@ -283,9 +283,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                                 return;
                             }
                             linkingCodeStage.close(); // Closes the linkingCodeStage
-                            UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                            UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                             userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
-                            saveUserData(); // Calls the saveUserData method to save user data to a file
+                            UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                             popupStage.close(); // Closes the popupStage
                             showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                             showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -299,23 +299,23 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         linkingCodeStage.showAndWait(); // Displays the linkingCodeStage and waits for it to be closed
                     });
                     noButton.setOnAction(event2 -> { // Sets an event handler for the noButton
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         popupStage.close(); // Closes the popupStage
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                        saveUserData(); // Calls the saveUserData method to save user data to a file
+                        UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
                     popupVBox.getChildren().addAll(popupLabel, yesButton, noButton); // Adds the popupLabel, yesButton, and noButton to the popupVBox
                     Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
                     popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
                     popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
                 } else { // If the selected account type is neither "Manager" nor "Employee" (implicitly "Personal")
-                    UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                    UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                     userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                     showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                     showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                    saveUserData(); // Calls the saveUserData method to save user data to a file
+                    UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                 }
             }
         });
@@ -397,18 +397,18 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String name = nameField.getText(); // Get the name from the name field
             String email = emailField.getText(); // Get the email from the email field
             String password = passwordField.getText(); // Get the password from the password field
-            boolean isValidUUID = isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
+            boolean isValidUUID = UserData.isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
             if (!companyCodeField.getText().isEmpty() && !isValidUUID) {
                 showAlert("Invalid linking code"); // Show an alert if the linking code is not a valid UUID
                 return;
-            } else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
+            } else if (UserData.isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
                 showAlert("Email already exists."); // Show an alert if the email is already registered and not the same as the logged-in user's email
                 return;
             }
-            UserDetails updatedUserDetails;
+            UserData.UserDetails updatedUserDetails;
             if (Objects.equals(loggedInUser.getAccountType(), "Employee")) {
                 String companyCode = companyCodeField.getText(); // Get the company code from the text field
-                boolean isValidLinkingCode = isValidLinkingCode(companyCode); // Validate the linking code against manager profiles
+                boolean isValidLinkingCode = UserData.isValidLinkingCode(companyCode); // Validate the linking code against manager profiles
                 if (!isValidLinkingCode) {
                     showAlert("Invalid linking code."); // Show an alert if the linking code is invalid
                     return; // Exit the method if the code is invalid
@@ -426,15 +426,15 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     }
                 }
                 // Create a new UserDetails object with the updated information
-                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.notificationsPreference, loggedInUser.notificationsSnoozeDuration, loggedInUser.notificationsReminderTime);
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
             } else {
                 // For non-employee accounts, create a new UserDetails object without changing the linking code
-                updatedUserDetails = new UserDetails(loggedInUser.uuid, name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.notificationsPreference, loggedInUser.notificationsSnoozeDuration, loggedInUser.notificationsReminderTime);
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
             }
-            userDetailsMap.put(loggedInUser.uuid, updatedUserDetails); // Update the user details in the map
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
             showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
-            saveUserData(); // Save the updated user data
+            UserData.saveUserData(); // Save the updated user data
             profileEditStage.close(); // Close the profile edit stage
         });
         if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
@@ -465,7 +465,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create the enable notifications toggle button
         Label enableNotificationsLabel = new Label("Enable Notifications:");
         ToggleButton enableNotificationsToggle = new ToggleButton();
-        enableNotificationsToggle.setSelected(loggedInUser.notificationsPreference); // Set the value from userDetailsMap
+        enableNotificationsToggle.setSelected(loggedInUser.getNotificationsPreference()); // Set the value from userDetailsMap
 
         // Create a rectangle to represent the toggle button background
         Rectangle toggleBackground = new Rectangle(50, 20);
@@ -478,12 +478,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         toggleThumb.setFill(Color.WHITE);
         toggleThumb.setStroke(Color.LIGHTGRAY);
         toggleThumb.setStrokeWidth(1);
-        toggleThumb.setTranslateX(loggedInUser.notificationsPreference ? 15 : -15); // Set the initial position based on the value from userDetailsMap
+        toggleThumb.setTranslateX(loggedInUser.getNotificationsPreference() ? 15 : -15); // Set the initial position based on the value from userDetailsMap
 
         // Create a stack pane to hold the toggle button components
         StackPane togglePane = new StackPane(toggleBackground, toggleThumb);
 
-        toggleBackground.setFill(loggedInUser.notificationsPreference ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
+        toggleBackground.setFill(loggedInUser.getNotificationsPreference() ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
         // Update the toggle button appearance when its state changes
         enableNotificationsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -508,7 +508,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 "30 minutes",
                 "1 hour"
         );
-        snoozeDurationComboBox.setValue(loggedInUser.notificationsSnoozeDuration); // Set the value from userDetailsMap
+        snoozeDurationComboBox.setValue(loggedInUser.getNotificationsSnoozeDuration()); // Set the value from userDetailsMap
 
         // Create the reminder time dropdown
         Label reminderTimeLabel = new Label("Reminder Time:");
@@ -520,7 +520,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 "30 minutes before",
                 "1 hour before"
         );
-        reminderTimeComboBox.setValue(loggedInUser.notificationsReminderTime); // Set the value from userDetailsMap
+        reminderTimeComboBox.setValue(loggedInUser.getNotificationsReminderTime()); // Set the value from userDetailsMap
 
         // Add the labels, toggle button, and dropdown boxes to the grid
         grid.add(enableNotificationsLabel, 0, 0);
@@ -543,20 +543,20 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String selectedReminderTime = reminderTimeComboBox.getValue();
 
             // Update the userDetailsMap with the selected values
-            UserDetails updatedUserDetails = new UserDetails(
-                    loggedInUser.uuid,
-                    loggedInUser.name,
-                    loggedInUser.email,
-                    loggedInUser.password,
-                    loggedInUser.accountType,
-                    loggedInUser.linkingCode,
+            UserData.UserDetails updatedUserDetails = new UserData.UserDetails(
+                    loggedInUser.getUuid(),
+                    loggedInUser.getName(),
+                    loggedInUser.getEmail(),
+                    loggedInUser.getPassword(),
+                    loggedInUser.getAccountType(),
+                    loggedInUser.getLinkingCode(),
                     enableNotifications,
                     selectedSnoozeDuration,
                     selectedReminderTime
             );
-            userDetailsMap.put(loggedInUser.uuid, updatedUserDetails);
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
             loggedInUser = updatedUserDetails;
-            saveUserData(); // Save the updated user data to file
+            UserData.saveUserData(); // Save the updated user data to file
 
             showAlert("Details updated successfully.");
             alert.close();
@@ -985,17 +985,17 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 calendarDetailsMap.put(calendarDetail.uuid, updatedCalendarDetails);
                 showAlert("Calendar event updated.");
             } else {
-                if (Objects.equals(loggedInUser.accountType, "Personal")) {
-                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
-                } else if (Objects.equals(loggedInUser.accountType, "Manager")) {
-                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
+                if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.getUuid()));
+                } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.getLinkingCode());
                 } else {
                     // For employees
-                    if (loggedInUser.linkingCode != null && loggedInUser.linkingCode.isPresent()) {
-                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.linkingCode);
+                    if (loggedInUser.getLinkingCode() != null && loggedInUser.getLinkingCode().isPresent()) {
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.getLinkingCode());
                     } else {
                         // If the employee doesn't have a linking code, set the event's linking code to their UUID
-                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.uuid));
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.getUuid()));
                     }
                 }
 
@@ -1110,16 +1110,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
             if (eventDateTime.isEqual(currentDateTime)) {
                 // Check if notifications are enabled in the settings
-                if (loggedInUser.notificationsPreference) {
+                if (loggedInUser.getNotificationsPreference()) {
                     showNotification("Event Reminder", calendarDetails.getEventName() + " is starting now!");
                 }
             } else {
                 // Check for upcoming events based on the reminder time
-                String reminderTime = loggedInUser.notificationsReminderTime;
+                String reminderTime = loggedInUser.getNotificationsReminderTime();
                 LocalDateTime reminderDateTime = eventDateTime.minusMinutes(Long.parseLong(reminderTime.split(" ")[0]));
 
                 if (currentDateTime.isEqual(reminderDateTime)) {
-                    if (loggedInUser.notificationsPreference) {
+                    if (loggedInUser.getNotificationsPreference()) {
                         showNotification("Event Reminder", calendarDetails.getEventName() + " is starting in " + reminderTime + "!");
                     }
                 }
@@ -1179,80 +1179,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         });
     }
 
-    private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
-        // Iterate over userDetailsMap to find manager profiles
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (Objects.equals(userDetails.getAccountType(), "Manager")) { // Checks if the current UserDetails object is of type "Manager"
-                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode(); // Gets the linking code of the manager
-                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) { // Checks if the manager's linking code matches the provided linking code
-                    return true; // Valid linking code found
-                }
-            }
-        }
-        return false; // No matching linking code found
-    }
-
-    private boolean isEmailRegistered(String email) { // Defines a private method to check if an email is already registered
-        // Iterate over userDetailsMap to check if email is already registered
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (userDetails.getEmail().equals(email)) { // Checks if the email of the current UserDetails object matches the provided email
-                return true; // Email already registered
-            }
-        }
-        return false; // Email not registered
-    }
-
-    private void saveUserData() {
-        try {
-            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat");
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            String encryptedData = EncryptionUtils.encrypt(new Gson().toJson(userDetailsMap));
-            objectOut.writeObject(encryptedData);
-            objectOut.close();
-            fileOut.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadUserData() {
-        File file = new File("src/main/resources/userData.dat");
-        if (file.exists() && file.length() > 0) {
-            try {
-                FileInputStream fileIn = new FileInputStream(file);
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-                String encryptedData = (String) objectIn.readObject();
-                String decryptedData = EncryptionUtils.decrypt(encryptedData);
-                userDetailsMap = new Gson().fromJson(decryptedData, new TypeToken<HashMap<UUID, UserDetails>>() {}.getType());
-                objectIn.close();
-                fileIn.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            userDetailsMap = new HashMap<>();
-        }
-    }
-
-    private static boolean isValidUUID(String str) { // This method checks if a given string is a valid UUID (Universally Unique Identifier)
-        try {
-            UUID uuid = UUID.fromString(str); // Attempt to create a UUID object from the input string using the correct method
-            return true; // If no exception is thrown, the string is a valid UUID
-        } catch (IllegalArgumentException e) {
-            return false; // If an exception is thrown, the string is not a valid UUID
-        }
-    }
-
-    private boolean authenticateUser(String email, String password) { // Defines a private method to authenticate a user
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (userDetails.getEmail().equalsIgnoreCase(email) && userDetails.getPassword().equals(password)) { // Checks if the email and password match the current UserDetails object, ignoring case sensitivity on email field
-                loggedInUser = userDetails; // Updates the loggedInUser instance variable with the authenticated user's details
-                return true; // User authenticated successfully
-            }
-        }
-        return false; // User authentication failed
-    }
-
     private void showAlert(String message) { // Defines a private method to display an alert
         Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates a new instance of Alert with the type INFORMATION
         alert.setTitle("Information"); // Sets the title of the alert to "Information"
@@ -1262,77 +1188,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         stage.getIcons().add(imageAppLogo);
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
-    }
-
-    private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
-        private final UUID uuid; // Declares a final instance variable uuid of type UUID
-        private final String name; // Declares a final instance variable name of type String
-        private final String email; // Declares a final instance variable email of type String
-        private final String password; // Declares a final instance variable password of type String
-        private final String accountType; // Declares a final instance variable accountType of type String
-        private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
-        private final Boolean notificationsPreference; // Declares a final instance variable notificationsPreference of type Boolean
-        private final String notificationsSnoozeDuration; // Declares a final instance variable notificationsSnoozeDuration of type String
-        private final String notificationsReminderTime; // Declares a final instance variable notificationsReminderTime of type String
-        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
-
-        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode, Boolean notificationsPreference, String notificationsSnoozeDuration, String notificationsReminderTime) { // Defines a constructor that takes parameters for all instance variables
-            this.uuid = uuid; // Initializes the uuid instance variable
-            this.name = name; // Initializes the name instance variable
-            this.email = email; // Initializes the email instance variable
-            this.password = password; // Initializes the password instance variable
-            this.accountType = accountType; // Initializes the accountType instance variable
-            this.linkingCode = linkingCode; // Initializes the linkingCode instance variable
-            this.notificationsPreference = notificationsPreference; // Initializes the notificationsPreference instance variable
-            this.notificationsSnoozeDuration = notificationsSnoozeDuration; // Initializes the notificationsSnoozeDuration instance variable
-            this.notificationsReminderTime = notificationsReminderTime; // Initializes the notificationsReminderTime instance variable
-        }
-
-        private void writeObject(ObjectOutputStream out) throws IOException { // Defines a private method for custom serialization of the linkingCode field
-            out.defaultWriteObject(); // Performs the default serialization for non-transient instance variables
-            out.writeBoolean(linkingCode.isPresent()); // Writes a boolean indicating if linkingCode is present
-            linkingCode.ifPresent(uuid -> { // Executes the lambda expression if linkingCode is present
-                try {
-                    out.writeObject(uuid); // Writes the UUID object if present
-                } catch (IOException e) {
-                    e.printStackTrace(); // Prints the stack trace in case of an IOException
-                }
-            });
-        }
-
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException { // Defines a private method for custom deserialization of the linkingCode field
-            in.defaultReadObject(); // Performs the default deserialization for non-transient instance variables
-            boolean isPresent = in.readBoolean(); // Reads a boolean indicating if linkingCode is present
-            if (isPresent) {
-                linkingCode = Optional.of((UUID) in.readObject()); // Sets linkingCode to the deserialized UUID object if present
-            } else {
-                linkingCode = Optional.empty(); // Sets linkingCode to an empty Optional if not present
-            }
-        }
-
-        public UUID getUuid() { // Defines a public method to get the uuid
-            return uuid; // Returns the uuid instance variable
-        }
-
-        public String getName() { // Defines a public method to get the name
-            return name; // Returns the name instance variable
-        }
-
-        public String getEmail() { // Defines a public method to get the email
-            return email; // Returns the email instance variable
-        }
-
-        public String getPassword() { // Defines a public method to get the password
-            return password; // Returns the password instance variable
-        }
-
-        public String getAccountType() { // Defines a public method to get the accountType
-            return accountType; // Returns the accountType instance variable
-        }
-
-        public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
-            return linkingCode; // Returns the linkingCode instance variable
-        }
     }
 
     private boolean isEventForLoggedInUser(CalendarDetails event) {
