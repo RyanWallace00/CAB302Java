@@ -4,7 +4,6 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
-import com.google.gson.reflect.TypeToken;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
@@ -50,7 +49,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.ChronoUnit;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
-import com.google.gson.Gson;
+import static com.example.cab302javaproject.CalendarData.*;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -59,7 +58,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
     private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
     public static HashMap<UUID, UserData.UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
-    public HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
+    public static HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
     public static UserData.UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
     private Image image; // Declares a private instance variable to hold the logo image
     private Image imageAppLogo; // Declares a private instance variable to hold the application logo image
@@ -146,7 +145,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             String email = emailField.getText(); // Gets the text from the emailField and assigns it to the email variable
             String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
             if (UserData.authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
-                loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
+                CalendarData.loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
                 showCalendarScreen(); // Calls the showCalendarScreen method to display the calendar screen
             } else {
                 showAlert("Invalid email or password."); // Displays an alert with the message "Invalid email or password."
@@ -947,8 +946,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Populate the form fields if editing an existing event
         if (calendarDetail != null) {
             titleField.setText(calendarDetail.getEventName());
-            typeComboBox.setValue(calendarDetail.eventType);
-            descriptionArea.setText(calendarDetail.eventDescription);
+            typeComboBox.setValue(calendarDetail.getEventType());
+            descriptionArea.setText(calendarDetail.getEventDescription());
             datePicker.setValue(calendarDetail.getEventDate());
             timeFromComboBox.setValue(calendarDetail.getEventFrom().toString());
             timeToComboBox.setValue(calendarDetail.getEventTo().toString());
@@ -981,8 +980,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             final UUID eventId = UUID.randomUUID();
             CalendarDetails calendarDetails;
             if (calendarDetail != null) {
-                CalendarDetails updatedCalendarDetails = new CalendarDetails(calendarDetail.uuid, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, calendarDetail.getLinkingCode());
-                calendarDetailsMap.put(calendarDetail.uuid, updatedCalendarDetails);
+                CalendarDetails updatedCalendarDetails = new CalendarDetails(calendarDetail.getUuid(), titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, calendarDetail.getLinkingCode());
+                calendarDetailsMap.put(calendarDetail.getUuid(), updatedCalendarDetails);
                 showAlert("Calendar event updated.");
             } else {
                 if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
@@ -1003,7 +1002,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 showAlert("Calendar event created.");
             }
             addEventStage.close();
-            saveCalendarData();
+            CalendarData.saveCalendarData();
             showCalendarScreen();
             addEventStage.close(); // ??
         });
@@ -1044,7 +1043,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     // Check if the event spans the current half-hour and belongs to the logged-in user
                     if (calendarDetails.getEventFrom().isBefore(time) &&
                             calendarDetails.getEventTo().isAfter(time) &&
-                            isEventForLoggedInUser(calendarDetails)) {
+                            CalendarData.isEventForLoggedInUser(calendarDetails)) {
                         // Find the day column index for this event
                         LocalDate eventDate = calendarDetails.getEventDate();
                         int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
@@ -1066,33 +1065,33 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     private String checkForEvent(LocalDate date, LocalTime time) {
         // Iterate through your calendarDetailsMap to find events that match the given date and time
         for (CalendarDetails event : calendarDetailsMap.values()) {
-            if (event.eventDate.equals(date) &&
+            if (event.getEventDate().equals(date) &&
                     event.getEventFrom().equals(time)) {
                 // Check if the event belongs to the logged-in user
                 if (loggedInUser.getAccountType().equals("Personal") &&
                         event.getLinkingCode() != null &&
                         event.getLinkingCode().isPresent() &&
                         event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
-                    return event.getEventName() + " (" + event.eventType + ")";
+                    return event.getEventName() + " (" + event.getEventType() + ")";
                 } else if (loggedInUser.getAccountType().equals("Manager") &&
                         event.getLinkingCode() != null &&
                         event.getLinkingCode().isPresent() &&
                         event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-                    return event.getEventName() + " (" + event.eventType + ")";
+                    return event.getEventName() + " (" + event.getEventType() + ")";
                 } else if (loggedInUser.getAccountType().equals("Employee")) {
                     if (loggedInUser.getLinkingCode() != null &&
                             loggedInUser.getLinkingCode().isPresent() &&
                             event.getLinkingCode() != null &&
                             event.getLinkingCode().isPresent() &&
                             event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-                        return event.getEventName() + " (" + event.eventType + ")";
+                        return event.getEventName() + " (" + event.getEventType() + ")";
                     } else if ((loggedInUser.getLinkingCode() == null ||
                             !loggedInUser.getLinkingCode().isPresent()) &&
                             event.getLinkingCode() != null &&
                             event.getLinkingCode().isPresent() &&
                             event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
                         // If the employee doesn't have a linking code and the event's linking code matches their UUID
-                        return event.getEventName() + " (" + event.eventType + ")";
+                        return event.getEventName() + " (" + event.getEventType() + ")";
                     }
                 }
             }
@@ -1188,121 +1187,6 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         stage.getIcons().add(imageAppLogo);
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
-    }
-
-    private boolean isEventForLoggedInUser(CalendarDetails event) {
-        if (loggedInUser.getAccountType().equals("Personal") &&
-                event.getLinkingCode() != null &&
-                event.getLinkingCode().isPresent() &&
-                event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
-            return true;
-        } else if (loggedInUser.getAccountType().equals("Manager") &&
-                event.getLinkingCode() != null &&
-                event.getLinkingCode().isPresent() &&
-                event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-            return true;
-        } else if (loggedInUser.getAccountType().equals("Employee")) {
-            if (loggedInUser.getLinkingCode() != null &&
-                    loggedInUser.getLinkingCode().isPresent() &&
-                    event.getLinkingCode() != null &&
-                    event.getLinkingCode().isPresent() &&
-                    event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
-                return true;
-            } else if ((loggedInUser.getLinkingCode() == null ||
-                    !loggedInUser.getLinkingCode().isPresent()) &&
-                    event.getLinkingCode() != null &&
-                    event.getLinkingCode().isPresent() &&
-                    event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Method to load user data from file
-    private void loadCalendarData() { // Defines a private method to load calendar data from a file
-        File file = new File("src/main/resources/calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
-
-        //if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
-            try {
-                FileInputStream fileIn = new FileInputStream(file); // Creates a new instance of FileInputStream with the file
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Creates a new instance of ObjectInputStream with the FileInputStream
-                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject(); // Reads the calendarDetailsMap object from the ObjectInputStream
-                objectIn.close(); // Closes the ObjectInputStream
-                fileIn.close(); // Closes the FileInputStream
-
-            } catch (IOException | ClassNotFoundException e) { // Catches IOException and ClassNotFoundException
-                e.printStackTrace(); // Prints the stack trace in case of an exception
-            }
-        //} else {
-            //System.out.println("calendarData.dat file is empty or does not exist.");
-         //   calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
-        //}
-    }
-
-    private void saveCalendarData() { // Defines a private method to save calendar data to a file
-        try {
-            FileOutputStream fileOut = new FileOutputStream("src/main/resources/calendarData.dat"); // Creates a new instance of FileOutputStream with the filename "calendarData.dat"
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Creates a new instance of ObjectOutputStream with the FileOutputStream
-
-            objectOut.writeObject(calendarDetailsMap); // Writes the calendarDetailsMap object to the ObjectOutputStream
-            objectOut.close(); // Closes the ObjectOutputStream
-            fileOut.close(); // Closes the FileOutputStream
-        } catch (Exception e) { // Catches any Exception
-            e.printStackTrace(); // Prints the stack trace in case of an exception
-        }
-    }
-
-    private static class CalendarDetails implements Serializable { // Defines a private static nested class CalendarDetails that implements the Serializable interface
-        private final UUID uuid; // Declares a final instance variable uuid of type UUID
-        private final String eventName; // Declares a final instance variable eventName of type String
-        private final String eventDescription; // Declares a final instance variable eventDescription of type String
-        private final String eventType; // Declares a final instance variable eventType of type String
-        private final LocalTime eventTimeFrom; // Declares a final instance variable eventTimeFrom of type DateFormat
-        private final LocalTime eventTimeTo; // Declares a final instance variable eventTimeTo of type DateFormat
-        private final LocalDate eventDate; // Declares a final instance variable eventTo of type ZonedDateTime
-        private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
-        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
-
-        public CalendarDetails(UUID uuid, String eventName, String eventType, String eventDescription, LocalDate eventDate, LocalTime eventTimeFrom, LocalTime eventTimeTo, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
-            this.uuid = uuid; // Initializes the uuid instance variable
-            this.eventName = eventName; // Initializes the eventName instance variable
-            this.eventType = eventType; // Initializes the eventType instance variable
-            this.eventDescription = eventDescription; // Initializes the eventDescription instance variable
-            this.eventDate = eventDate;
-            this.eventTimeFrom = eventTimeFrom; // Initializes the eventFrom instance variable
-            this.eventTimeTo = eventTimeTo; // Initializes the eventTo instance variable
-            this.linkingCode = linkingCode; // Initializes the linkingUsers instance variable
-        }
-
-        public UUID getUuid() { // Defines a public method to get the uuid
-            return uuid; // Returns the uuid instance variable
-        }
-
-        public String getEventName() { // Defines a public method to get the eventName
-            return eventName; // Returns the eventName instance variable
-        }
-
-        public String getEventDescrption() { // Defines a public method to get the eventDescription
-            return eventDescription; // Returns the eventDescription instance variable
-        }
-
-        public LocalTime getEventFrom() { // Defines a public method to get the eventFrom
-            return eventTimeFrom; // Returns the eventTimeFrom instance variable
-        }
-
-        public LocalTime getEventTo() { // Defines a public method to get the eventTo
-            return eventTimeTo; // Returns the eventTimeTo instance variable
-        }
-
-        public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
-            return linkingCode; // Returns the linkingCode instance variable
-        }
-
-        public LocalDate getEventDate() {
-            LocalDate selectedDate = eventDate;
-            return selectedDate;
-        }
     }
 
     public static void main(String[] args) {
