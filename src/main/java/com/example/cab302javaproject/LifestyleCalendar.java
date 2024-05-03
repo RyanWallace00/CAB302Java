@@ -22,12 +22,6 @@ import javafx.stage.Stage; // Imports the Stage class from the JavaFX library fo
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
-import java.io.*; // Imports all classes related to input/output from the Java I/O package
-import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
-import java.io.FileInputStream; // Imports the FileInputStream class from the Java I/O package for reading from files
-import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
-import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
-import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -42,13 +36,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ComboBox;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.ChronoUnit;
 import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
 import static com.example.cab302javaproject.CalendarData.*;
 
 /**

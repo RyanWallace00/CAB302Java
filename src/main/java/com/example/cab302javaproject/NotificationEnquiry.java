@@ -1,20 +1,6 @@
 package com.example.cab302javaproject;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-
 import java.time.LocalDateTime;
-
 import static com.example.cab302javaproject.LifestyleCalendar.*;
 import static com.example.cab302javaproject.LifestyleCalendar.loggedInUser;
 

@@ -6,9 +6,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-
 import static com.example.cab302javaproject.LifestyleCalendar.*;
-import static com.example.cab302javaproject.UserData.*;
 
 public class CalendarData {
     public static boolean isEventForLoggedInUser(CalendarDetails event) {
