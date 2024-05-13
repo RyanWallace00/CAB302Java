@@ -124,7 +124,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Label emailLabel = new Label("Email"); // Creates a new instance of Label with the text "Email" and assigns it to the emailLabel variable
         TextField emailField = new TextField(); // Creates a new instance of TextField and assigns it to the emailField variable
         Label passwordLabel = new Label("Password"); // Creates a new instance of Label with the text "Password" and assigns it to the passwordLabel variable
-        TextField passwordField = new TextField(); // Creates a new instance of TextField and assigns it to the passwordField variable
+        PasswordField passwordField = new PasswordField(); // Creates a new instance of TextField and assigns it to the passwordField variable
         formBox.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField); // Adds the emailLabel, emailField, passwordLabel, and passwordField to the formBox
         formBox.setAlignment(Pos.CENTER_LEFT); // Aligns the contents of the formBox to the center-left
         HBox buttonsBox = new HBox(10); // Creates a new instance of HBox with a spacing of 10 and assigns it to the buttonsBox variable
@@ -181,7 +181,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         Label emailLabel = new Label("Email"); // Creates a new instance of Label with the text "Email" and assigns it to the emailLabel variable
         TextField emailField = new TextField(); // Creates a new instance of TextField and assigns it to the emailField variable
         Label passwordLabel = new Label("Password"); // Creates a new instance of Label with the text "Password" and assigns it to the passwordLabel variable
-        TextField passwordField = new TextField(); // Creates a new instance of TextField and assigns it to the passwordField variable
+        PasswordField passwordField = new PasswordField(); // Creates a new instance of TextField and assigns it to the passwordField variable
         formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField); // Adds the nameLabel, nameField, emailLabel, emailField, passwordLabel, and passwordField to the formBox
         formBox.setAlignment(Pos.CENTER_LEFT); // Aligns the contents of the formBox to the center-left
         HBox buttonsBox = new HBox(10); // Creates a new instance of HBox with a spacing of 10 and assigns it to the buttonsBox variable
@@ -372,7 +372,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         TextField emailField = new TextField(); // Create a text field for the email
         emailField.setText(loggedInUser.getEmail()); // Set the text in the email field with the logged-in user's email
         Label passwordLabel = new Label("Password"); // Create a label for the password field
-        TextField passwordField = new TextField(); // Create a text field for the password
+        PasswordField passwordField = new PasswordField(); // Creates a new instance of TextField and assigns it to the passwordField variable
         passwordField.setText(loggedInUser.getPassword()); // Set the text in the password field with the logged-in user's password
         // Add the form fields to the formBox
         formBox.getChildren().addAll(nameLabel, nameField, emailLabel, emailField, passwordLabel, passwordField);
