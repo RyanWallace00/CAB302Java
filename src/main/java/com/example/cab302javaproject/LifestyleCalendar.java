@@ -262,7 +262,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         Button cancelPopUpButton = new Button("Cancel"); // Creates a new instance of Button with the text "Cancel" and assigns it to the cancelPopUpButton variable
                         submitButton.setOnAction(event3 -> { // Sets an event handler for the submitButton
                             String linkingCodeString = linkingCodeField.getText(); // Gets the text from the linkingCodeField and assigns it to the linkingCodeString variable
-                            UUID managerLinkingCode = null; // Declares a variable managerLinkingCode and initializes it with null
+                            UUID managerLinkingCode; // Declares a variable managerLinkingCode and initializes it with null
                             try {
                                 managerLinkingCode = UUID.fromString(linkingCodeString); // Attempts to create a UUID from the linkingCodeString and assigns it to the managerLinkingCode variable
                                 boolean isValidLinkingCode = UserData.isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
@@ -337,7 +337,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         accountSettingsLabel.setFont(new Font(30)); // Set the font size for the label
         Label companyCodeDescriptionLabel = new Label(); // Create a label to display the company code description
         // Set the description label text based on the user's account type and linking code
-        if (loggedInUser.getLinkingCode() == null || loggedInUser.getLinkingCode().isEmpty()) {
+        if (loggedInUser.getLinkingCode().isEmpty() || loggedInUser.getLinkingCode().isEmpty()) {
             companyCodeDescriptionLabel.setText("Add company code below:");
         } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
             companyCodeDescriptionLabel.setText("Company code below:");
@@ -606,47 +606,47 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showCalendarScreen() {
-        calendarPane = new BorderPane();
+        calendarPane = new BorderPane(); // Create a new BorderPane for the calendar layout
 
         // Create the hamburger menu
-        MenuButton menuButton = new MenuButton();
-        menuButton.setGraphic(createHamburgerIcon());
-        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
-        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
-        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
-        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
-        MenuItem logOutMenuItem = new MenuItem("Log Out");
+        MenuButton menuButton = new MenuButton(); // Create a new MenuButton
+        menuButton.setGraphic(createHamburgerIcon()); // Set hamburger icon as a graphic
+        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings"); // Create a menu item for Account Settings
+        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen()); // Set action for menu item Account Settings
+            MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings"); // Create a menu item for Notification Settings
+        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup()); // Set action for menu item Notification Settings
+        MenuItem logOutMenuItem = new MenuItem("Log Out"); // Create a menu item for Log Out
         logOutMenuItem.setOnAction(event -> {
-            loggedInUser = null;
-            showAlert("Signed Out");
-            Platform.exit();
+            loggedInUser = null; // Reset logged in user
+            showAlert("Signed Out"); // Show a signed out alert
+            Platform.exit(); // Exit the application
         });
-        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem); // Add menu items to the menu button
 
         // Create the "+" button for adding events
-        Button addEventButton = new Button("+");
-        addEventButton.setOnAction(event -> showAddEvent(null));
+        Button addEventButton = new Button("+"); // Button created for "+" label
+        addEventButton.setOnAction(event -> showAddEvent(null)); // Set action for the Add Event button
 
         // Create an HBox to hold the addEventButton and menuButton
-        HBox topRightBox = new HBox(10);
-        topRightBox.setAlignment(Pos.CENTER_RIGHT);
-        topRightBox.getChildren().addAll(addEventButton, menuButton);
-        calendarPane.setTop(topRightBox);
+        HBox topRightBox = new HBox(10); // Create a new HBox with spacing
+        topRightBox.setAlignment(Pos.CENTER_RIGHT); // Align contents to centre right
+        topRightBox.getChildren().addAll(addEventButton, menuButton); // Add buttons to the Hbox
+        calendarPane.setTop(topRightBox); // Set the HBox to the top of the layout
 
         // Create a VBox for the left grey section
-        VBox leftSection = new VBox(10);
-        leftSection.setAlignment(Pos.TOP_CENTER);
-        leftSection.setPadding(new Insets(10));
+        VBox leftSection = new VBox(10); // Create a new VBox with spacing
+        leftSection.setAlignment(Pos.TOP_CENTER); // Align contents to the top center
+        leftSection.setPadding(new Insets(10)); // Set padding around the VBox
 
         // Create an HBox for the day of the week labels
-        HBox dayOfWeekLabels = new HBox(10);
-        dayOfWeekLabels.setAlignment(Pos.CENTER);
-        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
+        HBox dayOfWeekLabels = new HBox(10); // Create a new HBox for the day of the week labels
+        dayOfWeekLabels.setAlignment(Pos.CENTER); // Align contents to the centre
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"}; // Array of days name
         for (String day : daysOfWeek) {
-            Label dayLabel = new Label(day);
-            dayOfWeekLabels.getChildren().add(dayLabel);
+            Label dayLabel = new Label(day); // Create label for each day
+            dayOfWeekLabels.getChildren().add(dayLabel); // Add labels to the HBox
         }
-        leftSection.getChildren().add(dayOfWeekLabels);
+        leftSection.getChildren().add(dayOfWeekLabels); // Add the HBox to the VBox
 
         // Create a mini calendar
         GridPane miniCalendar = createMiniCalendar();
