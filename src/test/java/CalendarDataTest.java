@@ -33,25 +33,26 @@ class CalendarDataTest {
         boolean notificationsPreference = true;
         String notificationsSnoozeDuration = "10 minutes";
         String notificationsReminderTime = "15 minutes before";
-        loggedInUser = new UserData.UserDetails(userUuid, name, email, password, accountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+        Boolean eyeStrainPreference = true;
+        loggedInUser = new UserData.UserDetails(userUuid, name, email, password, accountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference);
     }
 
     @Test
     void testIsEventForLoggedInUser() {
         // Test case for Personal account type
-        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Personal", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Personal", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
         assertTrue(CalendarData.isEventForLoggedInUser(calendarDetails));
 
         // Test case for Manager account type
-        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Manager", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Manager", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
         assertTrue(CalendarData.isEventForLoggedInUser(calendarDetails));
 
         // Test case for Employee account type with matching linking code
-        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Employee", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Employee", loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
         assertTrue(CalendarData.isEventForLoggedInUser(calendarDetails));
 
         // Test case for Employee account type without linking code
-        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Employee", Optional.empty(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+        loggedInUser = new UserData.UserDetails(loggedInUser.getUuid(), loggedInUser.getName(), loggedInUser.getEmail(), loggedInUser.getPassword(), "Employee", Optional.empty(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
         calendarDetails = new CalendarData.CalendarDetails(calendarDetails.getUuid(), calendarDetails.getEventName(), calendarDetails.getEventType(), calendarDetails.getEventDescription(), calendarDetails.getEventDate(), calendarDetails.getEventFrom(), calendarDetails.getEventTo(), Optional.of(loggedInUser.getUuid()));
         assertTrue(CalendarData.isEventForLoggedInUser(calendarDetails));
     }

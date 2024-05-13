@@ -22,7 +22,8 @@ class UserDataTest {
         boolean notificationsPreference = true;
         String notificationsSnoozeDuration = "10 minutes";
         String notificationsReminderTime = "15 minutes before";
-        userDetails = new UserData.UserDetails(uuid, name, email, password, accountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+        boolean eyeStrainPreference = true;
+        userDetails = new UserData.UserDetails(uuid, name, email, password, accountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference);
 
         // Initialize userDetailsMap before each test
         LifestyleCalendar.userDetailsMap = new HashMap<>();
@@ -32,7 +33,7 @@ class UserDataTest {
     void testIsValidLinkingCode() {
         // Test case for a valid linking code
         UUID managerUuid = UUID.randomUUID();
-        UserData.UserDetails managerUserDetails = new UserData.UserDetails(managerUuid, "Manager User", "manager@example.com", "password", "Manager", Optional.of(managerUuid), true, "10 minutes", "15 minutes before");
+        UserData.UserDetails managerUserDetails = new UserData.UserDetails(managerUuid, "Manager User", "manager@example.com", "password", "Manager", Optional.of(managerUuid), true, "10 minutes", "15 minutes before", true);
         LifestyleCalendar.userDetailsMap.put(managerUuid, managerUserDetails);
         assertTrue(UserData.isValidLinkingCode(managerUuid.toString()));
 
@@ -112,5 +113,10 @@ class UserDataTest {
     @Test
     void testGetNotificationsReminderTime() {
         assertEquals("15 minutes before", userDetails.getNotificationsReminderTime());
+    }
+
+    @Test
+    void testGetEyeStrainPreference() {
+        assertTrue(userDetails.getEyeStrainPreference());
     }
 }

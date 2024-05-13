@@ -213,6 +213,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 final UUID userId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the userId variable
                 Optional<UUID> linkingCode = Optional.empty(); // Creates an empty Optional<UUID> and assigns it to the linkingCode variable
                 final boolean notificationsPreference = true;
+                final boolean eyeStrainPreference = true;
                 final String notificationsSnoozeDuration = "10 minutes";
                 final String notificationsReminderTime = "15 minutes before";
                 if (selectedAccountType.equals("Manager")) { // Checks if the selected account type is "Manager"
@@ -230,7 +231,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     okButton.setOnAction(e -> { // Sets an event handler for the okButton
                         popupStage.close(); // Closes the popupStage
                         //linkingCode = Optional.ofNullable(managerLinkingCode);
-                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime); //linkingCode);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference); //linkingCode);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -274,7 +275,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                                 return;
                             }
                             linkingCodeStage.close(); // Closes the linkingCodeStage
-                            UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                            UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference);
                             userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                             UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                             popupStage.close(); // Closes the popupStage
@@ -290,7 +291,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         linkingCodeStage.showAndWait(); // Displays the linkingCodeStage and waits for it to be closed
                     });
                     noButton.setOnAction(event2 -> { // Sets an event handler for the noButton
-                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         popupStage.close(); // Closes the popupStage
@@ -302,7 +303,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
                     popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
                 } else { // If the selected account type is neither "Manager" nor "Employee" (implicitly "Personal")
-                    UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
+                    UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime, eyeStrainPreference);
                     userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                     showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                     showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -417,10 +418,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     }
                 }
                 // Create a new UserDetails object with the updated information
-                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
             } else {
                 // For non-employee accounts, create a new UserDetails object without changing the linking code
-                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime(), loggedInUser.getEyeStrainPreference());
             }
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
@@ -443,7 +444,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showNotificationSettingsPopup() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Notification Settings");
         alert.setHeaderText(null);
 
@@ -513,6 +514,42 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         );
         reminderTimeComboBox.setValue(loggedInUser.getNotificationsReminderTime()); // Set the value from userDetailsMap
 
+        // Create the enable notifications toggle button
+        Label enableEyeStrainLabel = new Label("Enable Eye Strain Notifications:");
+        ToggleButton enableEyeStrainToggle = new ToggleButton();
+        enableEyeStrainToggle.setSelected(loggedInUser.getEyeStrainPreference()); // Set the value from userDetailsMap
+
+        // Create a rectangle to represent the toggle button background
+        Rectangle toggleRectangle = new Rectangle(50, 20);
+        toggleRectangle.setArcWidth(20);
+        toggleRectangle.setArcHeight(20);
+        toggleRectangle.setFill(Color.LIGHTGRAY);
+
+        // Create a circle to represent the toggle button thumb
+        Circle toggleSwitch = new Circle(10);
+        toggleSwitch.setFill(Color.WHITE);
+        toggleSwitch.setStroke(Color.LIGHTGRAY);
+        toggleSwitch.setStrokeWidth(1);
+        toggleSwitch.setTranslateX(loggedInUser.getEyeStrainPreference() ? 15 : -15); // Set the initial position based on the value from userDetailsMap
+
+        // Create a stack pane to hold the toggle button components
+        StackPane togglePaneGroup = new StackPane(toggleRectangle, toggleSwitch);
+
+        toggleRectangle.setFill(loggedInUser.getEyeStrainPreference() ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
+        // Update the toggle button appearance when its state changes
+        enableEyeStrainToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                toggleRectangle.setFill(Color.LIMEGREEN);
+                toggleSwitch.setTranslateX(15);
+            } else {
+                toggleRectangle.setFill(Color.LIGHTGRAY);
+                toggleSwitch.setTranslateX(-15);
+            }
+        });
+
+        // Set the toggle button graphic to the custom toggle pane
+        enableEyeStrainToggle.setGraphic(togglePaneGroup);
+
         // Add the labels, toggle button, and dropdown boxes to the grid
         grid.add(enableNotificationsLabel, 0, 0);
         grid.add(enableNotificationsToggle, 1, 0);
@@ -520,19 +557,29 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         grid.add(snoozeDurationComboBox, 1, 1);
         grid.add(reminderTimeLabel, 0, 2);
         grid.add(reminderTimeComboBox, 1, 2);
+        grid.add(enableEyeStrainLabel, 0, 3);
+        grid.add(enableEyeStrainToggle, 1, 3);
 
         // Set the content of the alert to the grid
         alert.getDialogPane().setContent(grid);
 
-        // Create "Update" and "Cancel" buttons
-        Button updateButton = new Button("Update");
+        // Create "Cancel" buttons
         Button cancelButton = new Button("Cancel");
 
-        updateButton.setOnAction(event -> {
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
+
+        // Show the alert and wait for user response
+        Optional<ButtonType> result = alert.showAndWait();
+        ButtonType button = result.orElse(ButtonType.CANCEL);
+
+        // Set button actions
+        if (button == ButtonType.OK) {
             boolean enableNotifications = enableNotificationsToggle.isSelected();
             String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
             String selectedReminderTime = reminderTimeComboBox.getValue();
-
+            boolean enableEyeStrain = enableEyeStrainToggle.isSelected();
             // Update the userDetailsMap with the selected values
             UserData.UserDetails updatedUserDetails = new UserData.UserDetails(
                     loggedInUser.getUuid(),
@@ -543,7 +590,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     loggedInUser.getLinkingCode(),
                     enableNotifications,
                     selectedSnoozeDuration,
-                    selectedReminderTime
+                    selectedReminderTime,
+                    enableEyeStrain
             );
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
             loggedInUser = updatedUserDetails;
@@ -551,23 +599,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
             showAlert("Details updated successfully.");
             alert.close();
-        });
 
-        cancelButton.setOnAction(event -> alert.close());
-
-        // Add the "Update" and "Cancel" buttons to the grid
-        grid.add(updateButton, 1, 3);
-        grid.add(cancelButton, 1, 4);
-
-        // Set the icon for the alert popup window
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(imageAppLogo);
-
-        // Show the alert and wait for user response
-        alert.showAndWait();
-
-        // Show the success alert after the notification settings popup is closed
-        //showAlert("Details updated successfully.");
+        } else {
+            alert.close();
+        }
     }
 
     private void showCalendarScreen() {
@@ -750,6 +785,12 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         }));
         timeline.setCycleCount(1);  // Ensures the timeline only runs once
         timeline.play();
+
+        Timeline eyetime = new Timeline(new KeyFrame(Duration.hours(2), event -> {
+            showNotification("Eye Strain Break", " Rest your eyes for 15 minutes!");
+        }));
+        eyetime.setCycleCount(1);  // Ensures the timeline only runs once
+        eyetime.play();
     }
 
     private GridPane createMiniCalendar() {
@@ -1094,14 +1135,25 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
     public static void showNotification(String eventName, String eventDescription) {
         Platform.runLater(() -> {
-            // Create the Snooze button
-            Button snoozeButton = new Button("Snooze");
-            snoozeButton.setOnAction(e -> {
-                // Schedule the notification to show again after x minutes
-                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> showNotification(eventName, eventDescription)));
-                snoozeTimeline.setCycleCount(1); // Only run once
-                snoozeTimeline.play();
-            });
+            // Create a BorderPane to hold all components
+            BorderPane borderPane = new BorderPane();
+
+            if (!Objects.equals(eventName, "Eye Strain Break")) {
+                // Create the Snooze button
+                Button snoozeButton = new Button("Snooze");
+                snoozeButton.setOnAction(e -> {
+                    // Schedule the notification to show again after x minutes
+                    Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> showNotification(eventName, eventDescription)));
+                    snoozeTimeline.setCycleCount(1); // Only run once
+                    snoozeTimeline.play();
+                });
+                // Create an HBox for the snooze button
+                HBox snoozeHBox = new HBox();
+                snoozeHBox.getChildren().add(snoozeButton);
+                snoozeHBox.setAlignment(Pos.BOTTOM_RIGHT);
+                snoozeHBox.setPadding(new Insets(0, 10, 10, 0));
+                borderPane.setBottom(snoozeHBox);
+            }
 
             // Create the notification image
             ImageView imageView = new ImageView(imageAppLogo); // Update the path to your actual image file
@@ -1122,17 +1174,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             eventInfoVBox.setAlignment(Pos.TOP_RIGHT);
             eventInfoVBox.setSpacing(5);
 
-            // Create an HBox for the snooze button
-            HBox snoozeHBox = new HBox();
-            snoozeHBox.getChildren().add(snoozeButton);
-            snoozeHBox.setAlignment(Pos.BOTTOM_RIGHT);
-            snoozeHBox.setPadding(new Insets(0, 10, 10, 0));
-
-            // Create a BorderPane to hold all components
-            BorderPane borderPane = new BorderPane();
+            // Modify the BorderPane to hold additional components
             borderPane.setLeft(imageView);
             borderPane.setRight(eventInfoVBox);
-            borderPane.setBottom(snoozeHBox);
 
             // Create the notification and show it
             org.controlsfx.control.Notifications notification = org.controlsfx.control.Notifications.create()

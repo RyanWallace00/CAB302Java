@@ -93,9 +93,10 @@ public class UserData {
         private final Boolean notificationsPreference; // Declares a final instance variable notificationsPreference of type Boolean
         private final String notificationsSnoozeDuration; // Declares a final instance variable notificationsSnoozeDuration of type String
         private final String notificationsReminderTime; // Declares a final instance variable notificationsReminderTime of type String
+        private final Boolean eyeStrainPreference; // Declares a final instance variable eyeStrainPreference of type Boolean
         private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
 
-        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode, Boolean notificationsPreference, String notificationsSnoozeDuration, String notificationsReminderTime) { // Defines a constructor that takes parameters for all instance variables
+        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode, Boolean notificationsPreference, String notificationsSnoozeDuration, String notificationsReminderTime, Boolean eyeStrainPreference) { // Defines a constructor that takes parameters for all instance variables
             this.uuid = uuid; // Initializes the uuid instance variable
             this.name = name; // Initializes the name instance variable
             this.email = email; // Initializes the email instance variable
@@ -105,6 +106,7 @@ public class UserData {
             this.notificationsPreference = notificationsPreference; // Initializes the notificationsPreference instance variable
             this.notificationsSnoozeDuration = notificationsSnoozeDuration; // Initializes the notificationsSnoozeDuration instance variable
             this.notificationsReminderTime = notificationsReminderTime; // Initializes the notificationsReminderTime instance variable
+            this.eyeStrainPreference = eyeStrainPreference; // Initializes the eyeStrainPreference instance variable
         }
 
         public void writeObject(ObjectOutputStream out) throws IOException { // Defines a public method for custom serialization of the linkingCode field
@@ -163,6 +165,10 @@ public class UserData {
 
         public String getNotificationsReminderTime() { // Defines a public method to get the notificationsReminderTime
             return notificationsReminderTime; // Returns the notificationsReminderTime instance variable
+        }
+
+        public Boolean getEyeStrainPreference() { // Defines a public method to get the eyeStrainPreference
+            return eyeStrainPreference; // Returns the eyeStrainPreference instance variable
         }
     }
 }

@@ -24,7 +24,8 @@ class NotificationEnquiryTest {
                 Optional.empty(),
                 true,
                 "10 minutes",
-                "15 minutes before"
+                "15 minutes before",
+                true
         );
 
         // Add a sample calendar event
