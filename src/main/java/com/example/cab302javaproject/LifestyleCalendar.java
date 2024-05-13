@@ -619,7 +619,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         logOutMenuItem.setOnAction(event -> {
             loggedInUser = null;
             showAlert("Signed Out");
-            showHomePage();
+            Platform.exit();
         });
         menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
 
