@@ -4,35 +4,44 @@
  */
 package com.example.cab302javaproject; // Declares the package name for the Java class
 
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.application.Application; // Imports the Application class from the JavaFX library
+import javafx.application.Platform;
 import javafx.geometry.Insets; // Imports the Insets class from the JavaFX library for creating padding around UI elements
 import javafx.geometry.Pos; // Imports the Pos class from the JavaFX library for positioning UI elements
+import javafx.scene.Node;
 import javafx.scene.Scene; // Imports the Scene class from the JavaFX library for creating the main window
 import javafx.scene.control.*; // Imports all classes related to UI controls from the JavaFX library
 import javafx.scene.image.ImageView; // Imports the ImageView class from the JavaFX library for displaying images
 import javafx.scene.layout.*; // Imports all classes related to UI layout from the JavaFX library
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font; // Imports the Font class from the JavaFX library for setting text styles
 import javafx.scene.text.TextAlignment; // Imports the TextAlignment class from the JavaFX library for setting text alignment
 import javafx.stage.Stage; // Imports the Stage class from the JavaFX library for creating the main window
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
-import java.util.HashMap; // Imports the HashMap class from the Java Collections Framework
-import java.util.Objects; // Imports the Objects class from the Java utility package for null-safe operations
-import java.util.Optional; // Imports the Optional class from the Java utility package for handling nullable values
-import java.util.UUID; // Imports the UUID class from the Java utility package for generating unique identifiers
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
-import java.io.*; // Imports all classes related to input/output from the Java I/O package
-import java.io.Serializable; // Imports the Serializable interface from the Java I/O package for serializing objects
-import java.io.FileInputStream; // Imports the FileInputStream class from the Java I/O package for reading from files
-import java.io.FileOutputStream; // Imports the FileOutputStream class from the Java I/O package for writing to files
-import java.io.ObjectInputStream; // Imports the ObjectInputStream class from the Java I/O package for deserializing objects
-import java.io.ObjectOutputStream; // Imports the ObjectOutputStream class from the Java I/O package for serializing objects
-import java.time.ZonedDateTime; // Imports the ZonedDateTime class from the Java time package for representing dates and times
-import java.util.List; // Imports the List interface from the Java Collections Framework
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.ComboBox;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.ChronoUnit;
+import javafx.util.Duration;
+import static com.example.cab302javaproject.CalendarData.*;
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
@@ -40,10 +49,14 @@ import javafx.scene.shape.Rectangle;
 public class LifestyleCalendar extends Application { // Defines the LifestyleCalendar class which extends the Application class from JavaFX
     private Stage primaryStage; // Declares a private instance variable to hold the primary stage (main window)
     private StackPane rootPane; // Declares a private instance variable to hold the root pane (main container)
-    private HashMap<UUID, UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
-    private HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
-    private UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
-    private Image image; // Declares a private instance variable to hold the application logo image
+    public static HashMap<UUID, UserData.UserDetails> userDetailsMap; // Declares a private instance variable to hold a map of user details keyed by UUID
+    public static HashMap<UUID, CalendarDetails> calendarDetailsMap; // Declares a private instance variable to hold a map of calendar details keyed by UUID
+    public static UserData.UserDetails loggedInUser; // Declares a private instance variable to hold the currently logged-in user's details
+    private Image image; // Declares a private instance variable to hold the logo image
+    private static Image imageAppLogo; // Declares a private instance variable to hold the application logo image
+    private LocalDate currentDate = LocalDate.now(); // Declares current date as variable
+    private TableView<String[]> calendarGrid; // Declare the calendarGrid variable at the class level
+    private BorderPane calendarPane; // Declare calendarPane as an instance variable
 
     /**
      * The start method initializes the primary stage and displays the home page.
@@ -53,15 +66,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     public void start(Stage stage) { // Defines the start method which takes a Stage object as a parameter
         primaryStage = stage; // Assigns the passed Stage object to the primaryStage instance variable
         rootPane = new StackPane(); // Creates a new instance of StackPane and assigns it to the rootPane instance variable
-        userDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
-        calendarDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
+        userDetailsMap = new HashMap<UUID, UserData.UserDetails>(); // Creates a new instance of HashMap and assigns it to the userDetailsMap instance variable
+        calendarDetailsMap = new HashMap<UUID, CalendarDetails>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap instance variable
         Scene scene = new Scene(rootPane, 600, 400); // Creates a new Scene object with the rootPane as the root node and dimensions of 600x400
         stage.setTitle("Lifestyle Calendar!"); // Sets the title of the primary stage
         stage.setScene(scene); // Sets the scene of the primary stage
         stage.show(); // Displays the primary stage
         image = new Image("LifestyleCalendarLogo.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
-        stage.getIcons().add(image); // Adds the loaded image as an icon to the primary stage
-        loadUserData(); // Calls the loadUserData method to load user data from a file
+        imageAppLogo= new Image("LifestyleCalendarLogoCalendar.png"); // Creates a new Image object by loading the "LifestyleCalendarLogo.png" file
+        stage.getIcons().add(imageAppLogo); // Adds the loaded image as an icon to the primary stage
+        UserData.loadUserData(); // Calls the loadUserData method to load user data from a file
         showHomePage(); // Calls the showHomePage method to display the home page
     }
 
@@ -122,8 +136,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         loginButton.setOnAction(event -> { // Sets an event handler for the loginButton
             String email = emailField.getText(); // Gets the text from the emailField and assigns it to the email variable
             String password = passwordField.getText(); // Gets the text from the passwordField and assigns it to the password variable
-            if (authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
-                loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
+            if (UserData.authenticateUser(email, password)) { // Calls the authenticateUser method with the email and password, and checks if the user is authenticated
+                CalendarData.loadCalendarData(); // Calls the loadCalendarData method to load calendar data from a file
                 showCalendarScreen(); // Calls the showCalendarScreen method to display the calendar screen
             } else {
                 showAlert("Invalid email or password."); // Displays an alert with the message "Invalid email or password."
@@ -191,13 +205,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 }
             });
             final String selectedAccountType = atomicSelectedAccountType.get(); // Gets the value of the atomicSelectedAccountType and assigns it to the selectedAccountType variable
-            if (isEmailRegistered(email)) { // Calls the isEmailRegistered method with the email, and checks if the email is already registered
+            if (UserData.isEmailRegistered(email)) { // Calls the isEmailRegistered method with the email, and checks if the email is already registered
                 showAlert("Email already exists."); // Displays an alert with the message "Email already exists."
             } else if (selectedAccountType == null) { // Checks if no account type is selected
                 showAlert("Please select an account type."); // Displays an alert with the message "Please select an account type."
             } else {
                 final UUID userId = UUID.randomUUID(); // Generates a new random UUID and assigns it to the userId variable
                 Optional<UUID> linkingCode = Optional.empty(); // Creates an empty Optional<UUID> and assigns it to the linkingCode variable
+                final boolean notificationsPreference = true;
+                final String notificationsSnoozeDuration = "10 minutes";
+                final String notificationsReminderTime = "15 minutes before";
                 if (selectedAccountType.equals("Manager")) { // Checks if the selected account type is "Manager"
                     // Create a popup for Manager account type
                     Stage popupStage = new Stage(); // Creates a new instance of Stage and assigns it to the popupStage variable
@@ -213,11 +230,11 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     okButton.setOnAction(e -> { // Sets an event handler for the okButton
                         popupStage.close(); // Closes the popupStage
                         //linkingCode = Optional.ofNullable(managerLinkingCode);
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode)); //linkingCode);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime); //linkingCode);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                        saveUserData(); // Calls the saveUserData method to save user data to a file
+                        UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
                     popupVBox.getChildren().addAll(popupLabel, linkingCodeLabel, okButton); // Adds the popupLabel, linkingCodeLabel, and okButton to the popupVBox
                     Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
@@ -247,7 +264,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                             UUID managerLinkingCode = null; // Declares a variable managerLinkingCode and initializes it with null
                             try {
                                 managerLinkingCode = UUID.fromString(linkingCodeString); // Attempts to create a UUID from the linkingCodeString and assigns it to the managerLinkingCode variable
-                                boolean isValidLinkingCode = isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
+                                boolean isValidLinkingCode = UserData.isValidLinkingCode(linkingCodeString); // Calls the isValidLinkingCode method with the linkingCodeString and assigns the result to the isValidLinkingCode variable
                                 if (!isValidLinkingCode) { // Checks if the linking code is invalid
                                     showAlert("Invalid linking code."); // Displays an alert with the message "Invalid linking code."
                                     return; // Exit the method if the code is invalid
@@ -257,9 +274,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                                 return;
                             }
                             linkingCodeStage.close(); // Closes the linkingCodeStage
-                            UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode));
+                            UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, Optional.ofNullable(managerLinkingCode), notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                             userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
-                            saveUserData(); // Calls the saveUserData method to save user data to a file
+                            UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                             popupStage.close(); // Closes the popupStage
                             showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                             showLoginScreen(); // Calls the showLoginScreen method to display the login screen
@@ -273,23 +290,23 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                         linkingCodeStage.showAndWait(); // Displays the linkingCodeStage and waits for it to be closed
                     });
                     noButton.setOnAction(event2 -> { // Sets an event handler for the noButton
-                        UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                        UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                         userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                         showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                         popupStage.close(); // Closes the popupStage
                         showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                        saveUserData(); // Calls the saveUserData method to save user data to a file
+                        UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                     });
                     popupVBox.getChildren().addAll(popupLabel, yesButton, noButton); // Adds the popupLabel, yesButton, and noButton to the popupVBox
                     Scene popupScene = new Scene(popupVBox); // Creates a new instance of Scene with the popupVBox as the root node and assigns it to the popupScene variable
                     popupStage.setScene(popupScene); // Sets the scene of the popupStage to the popupScene
                     popupStage.showAndWait(); // Displays the popupStage and waits for it to be closed
                 } else { // If the selected account type is neither "Manager" nor "Employee" (implicitly "Personal")
-                    UserDetails userDetails = new UserDetails(userId, name, email, password, selectedAccountType, linkingCode);
+                    UserData.UserDetails userDetails = new UserData.UserDetails(userId, name, email, password, selectedAccountType, linkingCode, notificationsPreference, notificationsSnoozeDuration, notificationsReminderTime);
                     userDetailsMap.put(userId, userDetails); // Adds the newly created UserDetails object to the userDetailsMap with the userId as the key
                     showAlert("Sign up successful."); // Displays an alert with the message "Sign up successful."
                     showLoginScreen(); // Calls the showLoginScreen method to display the login screen
-                    saveUserData(); // Calls the saveUserData method to save user data to a file
+                    UserData.saveUserData(); // Calls the saveUserData method to save user data to a file
                 }
             }
         });
@@ -299,6 +316,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showProfileEditScreen() { // This method shows the profile edit screen
+        // Create a new stage for the profile edit screen
+        Stage profileEditStage = new Stage();
+        profileEditStage.setTitle("Profile Edit");
         BorderPane updatePane = new BorderPane(); // Create a new BorderPane to hold the UI elements
         ImageView imageView = new ImageView(); // Create an ImageView for displaying the user's profile picture
         imageView.setFitWidth(200); // Set the width of the image to 200 pixels
@@ -362,24 +382,24 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         buttonsBox.setAlignment(Pos.CENTER); // Center the contents of the buttonsBox
         Button updateButton = new Button("UPDATE"); // Create an update button
         Button cancelButton = new Button("CANCEL"); // Create a cancel button
-        cancelButton.setOnAction(event -> showHomePage()); // Set the action for the cancel button to show the home page
+        cancelButton.setOnAction(event -> profileEditStage.close()); // Set the action for the cancel button to show the home page
         buttonsBox.getChildren().addAll(updateButton, cancelButton); // Add the buttons to the buttonsBox
         updateButton.setOnAction(event -> {
             String name = nameField.getText(); // Get the name from the name field
             String email = emailField.getText(); // Get the email from the email field
             String password = passwordField.getText(); // Get the password from the password field
-            boolean isValidUUID = isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
+            boolean isValidUUID = UserData.isValidUUID(companyCodeField.getText()); // Check if the company code is a valid UUID
             if (!companyCodeField.getText().isEmpty() && !isValidUUID) {
-                showAlert("Not valid linking code"); // Show an alert if the linking code is not a valid UUID
+                showAlert("Invalid linking code"); // Show an alert if the linking code is not a valid UUID
                 return;
-            } else if (isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
+            } else if (UserData.isEmailRegistered(email) && !Objects.equals(email, loggedInUser.getEmail())) {
                 showAlert("Email already exists."); // Show an alert if the email is already registered and not the same as the logged-in user's email
                 return;
             }
-            UserDetails updatedUserDetails;
+            UserData.UserDetails updatedUserDetails;
             if (Objects.equals(loggedInUser.getAccountType(), "Employee")) {
                 String companyCode = companyCodeField.getText(); // Get the company code from the text field
-                boolean isValidLinkingCode = isValidLinkingCode(companyCode); // Validate the linking code against manager profiles
+                boolean isValidLinkingCode = UserData.isValidLinkingCode(companyCode); // Validate the linking code against manager profiles
                 if (!isValidLinkingCode) {
                     showAlert("Invalid linking code."); // Show an alert if the linking code is invalid
                     return; // Exit the method if the code is invalid
@@ -397,15 +417,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     }
                 }
                 // Create a new UserDetails object with the updated information
-                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional);
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), linkingCodeOptional, loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
             } else {
                 // For non-employee accounts, create a new UserDetails object without changing the linking code
-                updatedUserDetails = new UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode());
+                updatedUserDetails = new UserData.UserDetails(loggedInUser.getUuid(), name, email, password, loggedInUser.getAccountType(), loggedInUser.getLinkingCode(), loggedInUser.getNotificationsPreference(), loggedInUser.getNotificationsSnoozeDuration(), loggedInUser.getNotificationsReminderTime());
             }
             userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map
             loggedInUser = updatedUserDetails; // Update the logged-in user with the new user details
             showAlert("Details updated successfully."); // Show an alert indicating that the details were updated successfully
-            saveUserData(); // Save the updated user data
+            UserData.saveUserData(); // Save the updated user data
+            profileEditStage.close(); // Close the profile edit stage
         });
         if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
             // If the user is a personal account, only show the account settings, update details, form, and buttons
@@ -415,281 +436,723 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
             updateBox.getChildren().addAll(accountSettingsLabel, companyCodeDescriptionLabel, companyBox, updateDetailsLabel, formBox, buttonsBox);
         }
         updatePane.setCenter(updateBox); // Set the updateBox in the center of the BorderPane
-        rootPane.getChildren().setAll(updatePane); // Set the updatePane as the content of the rootPane
+        Scene scene = new Scene(updatePane, 400, 500); // Create a scene with the updatePane
+        // Set the scene on the profile edit stage and show the stage
+        profileEditStage.setScene(scene);
+        profileEditStage.show();
+    }
+
+    private void showNotificationSettingsPopup() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notification Settings");
+        alert.setHeaderText(null);
+
+        // Create the layout for the popup
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Create the enable notifications toggle button
+        Label enableNotificationsLabel = new Label("Enable Notifications:");
+        ToggleButton enableNotificationsToggle = new ToggleButton();
+        enableNotificationsToggle.setSelected(loggedInUser.getNotificationsPreference()); // Set the value from userDetailsMap
+
+        // Create a rectangle to represent the toggle button background
+        Rectangle toggleBackground = new Rectangle(50, 20);
+        toggleBackground.setArcWidth(20);
+        toggleBackground.setArcHeight(20);
+        toggleBackground.setFill(Color.LIGHTGRAY);
+
+        // Create a circle to represent the toggle button thumb
+        Circle toggleThumb = new Circle(10);
+        toggleThumb.setFill(Color.WHITE);
+        toggleThumb.setStroke(Color.LIGHTGRAY);
+        toggleThumb.setStrokeWidth(1);
+        toggleThumb.setTranslateX(loggedInUser.getNotificationsPreference() ? 15 : -15); // Set the initial position based on the value from userDetailsMap
+
+        // Create a stack pane to hold the toggle button components
+        StackPane togglePane = new StackPane(toggleBackground, toggleThumb);
+
+        toggleBackground.setFill(loggedInUser.getNotificationsPreference() ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
+        // Update the toggle button appearance when its state changes
+        enableNotificationsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                toggleBackground.setFill(Color.LIMEGREEN);
+                toggleThumb.setTranslateX(15);
+            } else {
+                toggleBackground.setFill(Color.LIGHTGRAY);
+                toggleThumb.setTranslateX(-15);
+            }
+        });
+
+        // Set the toggle button graphic to the custom toggle pane
+        enableNotificationsToggle.setGraphic(togglePane);
+
+        // Create the snooze duration dropdown
+        Label snoozeDurationLabel = new Label("Snooze Duration:");
+        ComboBox<String> snoozeDurationComboBox = new ComboBox<>();
+        snoozeDurationComboBox.getItems().addAll(
+                "5 minutes",
+                "10 minutes",
+                "15 minutes",
+                "30 minutes",
+                "1 hour"
+        );
+        snoozeDurationComboBox.setValue(loggedInUser.getNotificationsSnoozeDuration()); // Set the value from userDetailsMap
+
+        // Create the reminder time dropdown
+        Label reminderTimeLabel = new Label("Reminder Time:");
+        ComboBox<String> reminderTimeComboBox = new ComboBox<>();
+        reminderTimeComboBox.getItems().addAll(
+                "5 minutes before",
+                "10 minutes before",
+                "15 minutes before",
+                "30 minutes before",
+                "1 hour before"
+        );
+        reminderTimeComboBox.setValue(loggedInUser.getNotificationsReminderTime()); // Set the value from userDetailsMap
+
+        // Add the labels, toggle button, and dropdown boxes to the grid
+        grid.add(enableNotificationsLabel, 0, 0);
+        grid.add(enableNotificationsToggle, 1, 0);
+        grid.add(snoozeDurationLabel, 0, 1);
+        grid.add(snoozeDurationComboBox, 1, 1);
+        grid.add(reminderTimeLabel, 0, 2);
+        grid.add(reminderTimeComboBox, 1, 2);
+
+        // Set the content of the alert to the grid
+        alert.getDialogPane().setContent(grid);
+
+        // Create "Update" and "Cancel" buttons
+        Button updateButton = new Button("Update");
+        Button cancelButton = new Button("Cancel");
+
+        updateButton.setOnAction(event -> {
+            boolean enableNotifications = enableNotificationsToggle.isSelected();
+            String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
+            String selectedReminderTime = reminderTimeComboBox.getValue();
+
+            // Update the userDetailsMap with the selected values
+            UserData.UserDetails updatedUserDetails = new UserData.UserDetails(
+                    loggedInUser.getUuid(),
+                    loggedInUser.getName(),
+                    loggedInUser.getEmail(),
+                    loggedInUser.getPassword(),
+                    loggedInUser.getAccountType(),
+                    loggedInUser.getLinkingCode(),
+                    enableNotifications,
+                    selectedSnoozeDuration,
+                    selectedReminderTime
+            );
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
+            loggedInUser = updatedUserDetails;
+            UserData.saveUserData(); // Save the updated user data to file
+
+            showAlert("Details updated successfully.");
+            alert.close();
+        });
+
+        cancelButton.setOnAction(event -> alert.close());
+
+        // Add the "Update" and "Cancel" buttons to the grid
+        grid.add(updateButton, 1, 3);
+        grid.add(cancelButton, 1, 4);
+
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
+
+        // Show the alert and wait for user response
+        alert.showAndWait();
+
+        // Show the success alert after the notification settings popup is closed
+        //showAlert("Details updated successfully.");
     }
 
     private void showCalendarScreen() {
-        BorderPane calendarPane = new BorderPane();
+        calendarPane = new BorderPane();
 
-        // Create a VBox for the button
-        VBox buttonBox = new VBox(10);
-        buttonBox.setAlignment(Pos.CENTER);
+        // Create the hamburger menu
+        MenuButton menuButton = new MenuButton();
+        menuButton.setGraphic(createHamburgerIcon());
+        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
+        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
+        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
+        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
+        MenuItem logOutMenuItem = new MenuItem("Log Out");
+        logOutMenuItem.setOnAction(event -> {
+            loggedInUser = null;
+            showAlert("Signed Out");
+            showHomePage();
+        });
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
 
-        // Create the "Back" button
-        Button backButton = new Button("Back");
-        backButton.setOnAction(event -> showHomePage());
+        // Create the "+" button for adding events
+        Button addEventButton = new Button("+");
+        addEventButton.setOnAction(event -> showAddEvent(null));
 
-        // Add the button to the VBox
-        buttonBox.getChildren().add(backButton);
+        // Create an HBox to hold the addEventButton and menuButton
+        HBox topRightBox = new HBox(10);
+        topRightBox.setAlignment(Pos.CENTER_RIGHT);
+        topRightBox.getChildren().addAll(addEventButton, menuButton);
+        calendarPane.setTop(topRightBox);
 
-        // Add the VBox to the center of the BorderPane
-        calendarPane.setCenter(buttonBox);
+        // Create a VBox for the left grey section
+        VBox leftSection = new VBox(10);
+        leftSection.setAlignment(Pos.TOP_CENTER);
+        leftSection.setPadding(new Insets(10));
 
-        // Create a Rectangle for the top partition
-        Rectangle topPartition = new Rectangle();
-        topPartition.setFill(Color.LIGHTGRAY); // Set the color of the partition
+        // Create an HBox for the day of the week labels
+        HBox dayOfWeekLabels = new HBox(10);
+        dayOfWeekLabels.setAlignment(Pos.CENTER);
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
+        for (String day : daysOfWeek) {
+            Label dayLabel = new Label(day);
+            dayOfWeekLabels.getChildren().add(dayLabel);
+        }
+        leftSection.getChildren().add(dayOfWeekLabels);
 
-        // Set the width of the Rectangle to the width of the BorderPane
-        topPartition.widthProperty().bind(calendarPane.widthProperty());
+        // Create a mini calendar
+        GridPane miniCalendar = createMiniCalendar();
+        leftSection.getChildren().add(miniCalendar);
 
-        // Set the height of the Rectangle to 5% of the height of the BorderPane
-        topPartition.heightProperty().bind(calendarPane.heightProperty().multiply(0.05));
+        // Create navigation buttons
+        Button prevMonthButton = new Button("<");
+        Button nextMonthButton = new Button(">");
+        prevMonthButton.setOnAction(event -> {
+            currentDate = currentDate.minusMonths(1);
+            updateCalendar();
+        });
+        nextMonthButton.setOnAction(event -> {
+            currentDate = currentDate.plusMonths(1);
+            updateCalendar();
+        });
 
-        // Add the Rectangle to the top of the BorderPane
-        calendarPane.setTop(topPartition);
+        // Create an HBox to hold the navigation buttons
+        HBox navigationBox = new HBox(10);
+        navigationBox.setAlignment(Pos.CENTER);
+        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton);
+        leftSection.getChildren().add(navigationBox);
 
-        // Create a Button with the ImageView
-        image = new Image("userProfilePicture.png");
-        Button profileButton = new Button();
-        //profileButton.setGraphic(userProfilePicture);
-        // Set the button size to be a 1:1 square and the height of the partition
-        profileButton.prefWidthProperty().bind(topPartition.heightProperty());
-        profileButton.prefHeightProperty().bind(topPartition.heightProperty());
-        // Create an HBox to hold the partition and the button
-        HBox header = new HBox(topPartition, profileButton);
-        header.setAlignment(Pos.CENTER_RIGHT);
+        calendarPane.setLeft(leftSection);
 
-        // Add the HBox to the top of the BorderPane
-        calendarPane.setTop(header);
+        // Create a GridPane to hold the date labels
+        GridPane dateLabelsPane = new GridPane();
+        dateLabelsPane.setHgap(60);
+        dateLabelsPane.setAlignment(Pos.CENTER);
+
+        // Add date labels for each day of the week
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startOfWeek.plusDays(i);
+            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            dateLabelsPane.add(dateLabel, i, 0);
+        }
+
+        // Calendar Grid
+        calendarGrid = new TableView<>();
+        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        calendarGrid.setFixedCellSize(30); // Adjust the cell size as needed
+        VBox.setVgrow(calendarGrid, Priority.ALWAYS);
+
+        // Add the "Time" column
+        TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
+        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
+        timeColumn.setPrefWidth(60);
+        calendarGrid.getColumns().add(timeColumn);
+
+        // Add columns for each day of the week
+        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        TableColumn<String[], String>[] columns = new TableColumn[7];
+        for (int i = 0; i < 7; i++) {
+            final int columnIndex = i;
+            TableColumn<String[], String> column = new TableColumn<>(dayOfWeek[i]);
+            final int index = i + 1;
+            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
+            column.setCellFactory(cell -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                    } else {
+                        TableRow<String[]> tableRow = getTableRow();
+                        if (tableRow != null && tableRow.getItem() != null) {
+                            String time = tableRow.getItem()[0];
+                            // Convert the time string to LocalTime
+                            LocalTime eventTime = LocalTime.parse(time);
+                            // Calculate the date for this day of the week
+                            LocalDate date = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)).plusDays(columnIndex);
+                            // Check if there's an event for this day and time
+                            String eventDetails = checkForEvent(date, eventTime);
+                            setText(eventDetails != null ? eventDetails : "");
+                        } else {
+                            setText("");
+                        }
+                    }
+                }
+            });
+
+            // Set double-click event handler for editing events
+            column.setCellFactory(column1 -> {
+                TableCell<String[], String> cell = new TableCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(item);
+                        }
+                    }
+                };
+                cell.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2 && !cell.isEmpty()) {
+                        String eventName = cell.getItem();
+                        if (eventName != null && !eventName.isEmpty()) {
+                            // Find the corresponding CalendarDetails object
+                            for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
+                                if (calendarDetails.getEventName().equals(eventName)) {
+                                    showAddEvent(calendarDetails);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                });
+                return cell;
+            });
+
+            columns[i] = column;
+        }
+        calendarGrid.getColumns().addAll(columns);
+
+        // Create a VBox to hold the date labels and calendar grid
+        VBox centerPane = new VBox();
+        VBox.setVgrow(centerPane, Priority.ALWAYS);
+        centerPane.getChildren().addAll(dateLabelsPane, calendarGrid);
+
+        calendarPane.setCenter(centerPane);
+
         // Create a scene with the BorderPane
         Scene scene = new Scene(calendarPane, 1280, 720);
-
         // Set the scene on the stage
         primaryStage.setScene(scene);
-
         // Show the stage
         primaryStage.show();
+
+        // Update the calendar
+        updateCalendar();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
+            NotificationEnquiry.showNotifications();
+        }));
+        timeline.setCycleCount(1);  // Ensures the timeline only runs once
+        timeline.play();
     }
 
-    private boolean isValidLinkingCode(String linkingCode) { // Defines a private method to check if a linking code is valid
-        // Iterate over userDetailsMap to find manager profiles
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (Objects.equals(userDetails.getAccountType(), "Manager")) { // Checks if the current UserDetails object is of type "Manager"
-                Optional<UUID> managerLinkingCode = userDetails.getLinkingCode(); // Gets the linking code of the manager
-                if (managerLinkingCode.isPresent() && managerLinkingCode.get().toString().equals(linkingCode)) { // Checks if the manager's linking code matches the provided linking code
-                    return true; // Valid linking code found
+    private GridPane createMiniCalendar() {
+        GridPane miniCalendar = new GridPane();
+        miniCalendar.setHgap(5);
+        miniCalendar.setVgap(5);
+        miniCalendar.setAlignment(Pos.CENTER);
+
+        // Add labels for days of the week
+        String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            Label dayLabel = new Label(daysOfWeek[i]);
+            miniCalendar.add(dayLabel, i, 0);
+        }
+
+        // Add date cells
+        LocalDate startDate = currentDate.withDayOfMonth(1);
+        int dayOfWeek = startDate.getDayOfWeek().getValue() % 7;
+        int row = 1;
+        int col = dayOfWeek;
+        while (startDate.getMonthValue() == LocalDate.now().getMonthValue()) {
+            final LocalDate date = startDate; // Declare date as a final variable
+            Label dateLabel = new Label(String.valueOf(startDate.getDayOfMonth()));
+            miniCalendar.add(dateLabel, col, row);
+
+            // Highlight the current week
+            if (startDate.isEqual(currentDate) || (startDate.isAfter(currentDate) && startDate.isBefore(currentDate.plusWeeks(1)))) {
+                dateLabel.setStyle("-fx-background-color: #a9a9a9;");
+            }
+
+            // Set action to update the selected week in the main calendar
+            dateLabel.setOnMouseClicked(event -> {
+                currentDate = date;
+                updateCalendar();
+            });
+
+            startDate = startDate.plusDays(1);
+            col++;
+            if (col > 6) {
+                col = 0;
+                row++;
+            }
+        }
+
+        return miniCalendar;
+    }
+
+    private void updateCalendar() {
+        // Update the date labels
+        VBox centerPane = (VBox) calendarPane.getCenter();
+        GridPane dateLabelsPane = (GridPane) centerPane.getChildren().get(0);
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Check if dateLabelsPane has children before updating the date labels
+        if (dateLabelsPane.getChildren().size() > 0) {
+            for (int i = 0; i < 7; i++) {
+                LocalDate date = startOfWeek.plusDays(i);
+                Label dateLabel = (Label) dateLabelsPane.getChildren().get(i);
+                dateLabel.setText(date.format(DateTimeFormatter.ofPattern("MMM d")));
+            }
+        }
+
+        // Update the month and year label
+        VBox leftSection = (VBox) calendarPane.getLeft();
+        Label monthYearLabel = new Label(currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        monthYearLabel.setAlignment(Pos.CENTER);
+        leftSection.getChildren().set(0, monthYearLabel);
+
+        // Update the mini calendar
+        GridPane miniCalendar = (GridPane) leftSection.getChildren().get(1);
+        miniCalendar.getChildren().clear();
+
+        // Add the day of the week labels to the mini calendar
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
+        for (int i = 0; i < 7; i++) {
+            Label dayLabel = new Label(daysOfWeek[i]);
+            miniCalendar.add(dayLabel, i, 0);
+        }
+
+        // Calculate dayOfWeek and daysInMonth based on currentDate
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        int dayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();
+        int daysInMonth = currentDate.lengthOfMonth();
+
+        // Add the updated mini calendar dates
+        int row = 1;
+        int col = dayOfWeek;
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate date = currentDate.withDayOfMonth(day);
+            Label dateLabel = new Label(String.valueOf(day));
+            miniCalendar.add(dateLabel, col, row);
+
+            // Highlight the current week
+            if (date.isEqual(currentDate) || (date.isAfter(currentDate) && date.isBefore(currentDate.plusWeeks(1)))) {
+                dateLabel.setStyle("-fx-background-color: #a9a9a9;");
+            }
+
+            // Set action to update the selected week in the main calendar
+            dateLabel.setOnMouseClicked(event -> {
+                currentDate = date;
+                updateCalendar();
+            });
+
+            col++;
+            if (col > 6) {
+                col = 0;
+                row++;
+            }
+        }
+
+        // Clear the existing calendar grid
+        calendarGrid.getItems().clear();
+
+        // Populate the calendar grid with events
+        populateCalendarGrid();
+    }
+
+    private Node createHamburgerIcon() {
+        VBox hamburgerIcon = new VBox();
+        hamburgerIcon.setSpacing(3);
+        hamburgerIcon.setAlignment(Pos.CENTER);
+        hamburgerIcon.setPadding(new Insets(5));
+
+        for (int i = 0; i < 3; i++) {
+            Rectangle line = new Rectangle(20, 2);
+            line.setFill(Color.BLACK);
+            hamburgerIcon.getChildren().add(line);
+        }
+
+        return hamburgerIcon;
+    }
+
+    private void showAddEvent(CalendarDetails calendarDetail) {
+        // Create a new stage for the "Add Event" screen
+        Stage addEventStage = new Stage();
+        addEventStage.setTitle(calendarDetail != null ? "Update Event" : "Add Event");
+
+        addEventStage.getIcons().add(imageAppLogo); // Set the app icon in the top left of the stage
+
+        // Create the layout for the pop-up window
+        GridPane layout = new GridPane();
+        layout.setAlignment(Pos.CENTER);
+        layout.setHgap(10);
+        layout.setVgap(10);
+
+        // Labels for the fields
+        Label titleLabel = new Label("Title:");
+        Label typeLabel = new Label("Type:");
+        Label dateLabel = new Label("Date:");
+        Label timeFromLabel = new Label("Time From:");
+        Label timeToLabel = new Label("Time To:");
+        Label descriptionLabel = new Label("Description:");
+
+        // TextFields and ComboBox for user input
+        TextField titleField = new TextField();
+        ComboBox<String> typeComboBox = new ComboBox<>();
+        typeComboBox.getItems().addAll("Meeting", "Reminder");
+        DatePicker datePicker = new DatePicker();
+        TextArea descriptionArea = new TextArea();
+        ComboBox<String> timeFromComboBox = new ComboBox<>();
+        ComboBox<String> timeToComboBox = new ComboBox<>();
+
+        // Populate time ComboBoxes
+        for (int hour = 0; hour < 24; hour++) {
+            for (int minute = 0; minute < 60; minute += 30) {
+                String timeString = String.format("%02d:%02d", hour, minute);
+                timeFromComboBox.getItems().add(timeString);
+                timeToComboBox.getItems().add(timeString);
+            }
+        }
+
+        // Add components to the layout
+        layout.add(titleLabel, 0, 0);
+        layout.add(titleField, 1, 0);
+        layout.add(typeLabel, 0, 1);
+        layout.add(typeComboBox, 1, 1);
+        layout.add(dateLabel, 0, 2);
+        layout.add(datePicker, 1, 2);
+        layout.add(timeFromLabel, 0, 3);
+        layout.add(timeFromComboBox, 1, 3);
+        layout.add(timeToLabel, 0, 4);
+        layout.add(timeToComboBox, 1, 4);
+        layout.add(descriptionLabel, 0, 5);
+        layout.add(descriptionArea, 1, 5);
+
+        // Populate the form fields if editing an existing event
+        if (calendarDetail != null) {
+            titleField.setText(calendarDetail.getEventName());
+            typeComboBox.setValue(calendarDetail.getEventType());
+            descriptionArea.setText(calendarDetail.getEventDescription());
+            datePicker.setValue(calendarDetail.getEventDate());
+            timeFromComboBox.setValue(calendarDetail.getEventFrom().toString());
+            timeToComboBox.setValue(calendarDetail.getEventTo().toString());
+        }
+
+        // Set the action for the "Add" or "Update" button
+        Button actionButton = new Button(calendarDetail != null ? "Update" : "Add");
+        actionButton.setOnAction(event -> {
+            // Validate form fields
+            if (titleField.getText().isEmpty() || typeComboBox.getValue() == null || datePicker.getValue() == null ||
+                    timeFromComboBox.getValue() == null || timeToComboBox.getValue() == null || descriptionArea.getText().isEmpty()) {
+                showAlert("Please fill in all fields.");
+                return;
+            }
+            String selectedFromTime = timeFromComboBox.getValue();
+            String selectedToTime = timeToComboBox.getValue();
+            LocalTime timeFrom = LocalTime.parse(selectedFromTime, DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime timeTo = LocalTime.parse(selectedToTime, DateTimeFormatter.ofPattern("HH:mm"));
+
+            // Validate time order and swap if necessary
+            if (timeTo.isBefore(timeFrom)) {
+                LocalTime temp = timeFrom;
+                timeFrom = timeTo;
+                timeTo = temp;
+            }   else if (timeTo == timeFrom){
+                showAlert("Times are the same.");
+                return;
+            }
+
+            final UUID eventId = UUID.randomUUID();
+            CalendarDetails calendarDetails;
+            if (calendarDetail != null) {
+                CalendarDetails updatedCalendarDetails = new CalendarDetails(calendarDetail.getUuid(), titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, calendarDetail.getLinkingCode());
+                calendarDetailsMap.put(calendarDetail.getUuid(), updatedCalendarDetails);
+                showAlert("Calendar event updated.");
+            } else {
+                if (Objects.equals(loggedInUser.getAccountType(), "Personal")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.getUuid()));
+                } else if (Objects.equals(loggedInUser.getAccountType(), "Manager")) {
+                    calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.getLinkingCode());
+                } else {
+                    // For employees
+                    if (loggedInUser.getLinkingCode() != null && loggedInUser.getLinkingCode().isPresent()) {
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, loggedInUser.getLinkingCode());
+                    } else {
+                        // If the employee doesn't have a linking code, set the event's linking code to their UUID
+                        calendarDetails = new CalendarDetails(eventId, titleField.getText(), typeComboBox.getValue(), descriptionArea.getText(), datePicker.getValue(), timeFrom, timeTo, Optional.of(loggedInUser.getUuid()));
+                    }
+                }
+
+                calendarDetailsMap.put(eventId, calendarDetails);
+                showAlert("Calendar event created.");
+            }
+            addEventStage.close();
+            CalendarData.saveCalendarData();
+            showCalendarScreen();
+            addEventStage.close(); // ??
+        });
+        // Add a "Cancel" button
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(event -> addEventStage.close());
+        HBox buttonsBox = new HBox(10);
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(actionButton, cancelButton);
+
+        ///buttonsBox.getChildren().set(0, actionButton);
+
+        layout.add(buttonsBox, 1, 6);
+        // Create a scene with the layout
+        Scene scene = new Scene(layout, 600, 500);
+
+        // Set the scene on the stage and show the stage
+        addEventStage.setScene(scene);
+        addEventStage.show();
+    }
+
+    private void populateCalendarGrid() {
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+
+        // Clear the existing calendar grid
+        calendarGrid.getItems().clear();
+
+        // Populate rows for each half-hour of the day, including events
+        for (int hour = 0; hour < 24; hour++) {
+            for (int halfHour = 0; halfHour < 2; halfHour++) {
+                String[] row = new String[8]; // +1 for the "Time" column
+                LocalTime time = LocalTime.of(hour, halfHour * 30);
+                row[0] = time.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+                // Iterate over the events in the calendarDetailsMap
+                for (Map.Entry<UUID, CalendarDetails> entry : calendarDetailsMap.entrySet()) {
+                    CalendarDetails calendarDetails = entry.getValue();
+                    // Check if the event spans the current half-hour and belongs to the logged-in user
+                    if (calendarDetails.getEventFrom().isBefore(time) &&
+                            calendarDetails.getEventTo().isAfter(time) &&
+                            CalendarData.isEventForLoggedInUser(calendarDetails)) {
+                        // Find the day column index for this event
+                        LocalDate eventDate = calendarDetails.getEventDate();
+                        int columnIndex = (int) ChronoUnit.DAYS.between(startOfWeek, eventDate) + 1; // Adjust for array index
+
+                        // Check if the column index is within the valid range
+                        if (columnIndex >= 1 && columnIndex < 8) {
+                            // Add the event title to the relevant cell in the row
+                            row[columnIndex] = calendarDetails.getEventName();
+                        }
+                    }
+                }
+
+                // Add the row to the calendarGrid
+                calendarGrid.getItems().add(row);
+            }
+        }
+    }
+
+    private String checkForEvent(LocalDate date, LocalTime time) {
+        // Iterate through your calendarDetailsMap to find events that match the given date and time
+        for (CalendarDetails event : calendarDetailsMap.values()) {
+            if (event.getEventDate().equals(date) &&
+                    event.getEventFrom().equals(time)) {
+                // Check if the event belongs to the logged-in user
+                if (loggedInUser.getAccountType().equals("Personal") &&
+                        event.getLinkingCode() != null &&
+                        event.getLinkingCode().isPresent() &&
+                        event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                    return event.getEventName() + " (" + event.getEventType() + ")";
+                } else if (loggedInUser.getAccountType().equals("Manager") &&
+                        event.getLinkingCode() != null &&
+                        event.getLinkingCode().isPresent() &&
+                        event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                    return event.getEventName() + " (" + event.getEventType() + ")";
+                } else if (loggedInUser.getAccountType().equals("Employee")) {
+                    if (loggedInUser.getLinkingCode() != null &&
+                            loggedInUser.getLinkingCode().isPresent() &&
+                            event.getLinkingCode() != null &&
+                            event.getLinkingCode().isPresent() &&
+                            event.getLinkingCode().get().equals(loggedInUser.getLinkingCode().get())) {
+                        return event.getEventName() + " (" + event.getEventType() + ")";
+                    } else if ((loggedInUser.getLinkingCode() == null ||
+                            !loggedInUser.getLinkingCode().isPresent()) &&
+                            event.getLinkingCode() != null &&
+                            event.getLinkingCode().isPresent() &&
+                            event.getLinkingCode().get().equals(loggedInUser.getUuid())) {
+                        // If the employee doesn't have a linking code and the event's linking code matches their UUID
+                        return event.getEventName() + " (" + event.getEventType() + ")";
+                    }
                 }
             }
         }
-        return false; // No matching linking code found
+        // Return null if no event is found
+        return null;
     }
 
-    private boolean isEmailRegistered(String email) { // Defines a private method to check if an email is already registered
-        // Iterate over userDetailsMap to check if email is already registered
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (userDetails.getEmail().equals(email)) { // Checks if the email of the current UserDetails object matches the provided email
-                return true; // Email already registered
-            }
-        }
-        return false; // Email not registered
-    }
+    public static void showNotification(String eventName, String eventDescription) {
+        Platform.runLater(() -> {
+            // Create the Snooze button
+            Button snoozeButton = new Button("Snooze");
+            snoozeButton.setOnAction(e -> {
+                // Schedule the notification to show again after x minutes
+                Timeline snoozeTimeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> showNotification(eventName, eventDescription)));
+                snoozeTimeline.setCycleCount(1); // Only run once
+                snoozeTimeline.play();
+            });
 
-    private void loadUserData() { // This method loads user data from a file named "userData.dat" located in the "src/main/resources" directory
-        File file = new File("src/main/resources/userData.dat"); // Create a File object for the "userData.dat" file
-        if (file.exists() && file.length() > 0) { // Check if the file exists and has a non-zero length
-            try {
-                FileInputStream fileIn = new FileInputStream(file); // Create a FileInputStream to read from the file
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Create an ObjectInputStream to read objects from the FileInputStream
-                userDetailsMap = (HashMap<UUID, UserDetails>) objectIn.readObject(); // Read the userDetailsMap object from the file and cast it to a HashMap<UUID, UserDetails>
-                objectIn.close(); // Close the input streams
-                fileIn.close(); // Close the input streams
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace(); // If an exception occurs during reading, print the stack trace
-            }
-        } else {
-            userDetailsMap = new HashMap<>(); // If the file does not exist or is empty, create a new empty HashMap for userDetailsMap
-        }
-    }
+            // Create the notification image
+            ImageView imageView = new ImageView(imageAppLogo); // Update the path to your actual image file
+            imageView.setFitHeight(100); // Adjust the height of the image as needed
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
 
-    private void saveUserData() { // This method saves the userDetailsMap to the "userData.dat" file
-        try {
-            FileOutputStream fileOut = new FileOutputStream("src/main/resources/userData.dat"); // Create a FileOutputStream to write to the "userData.dat" file
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Create an ObjectOutputStream to write objects to the FileOutputStream
-            objectOut.writeObject(userDetailsMap); // Write the userDetailsMap object to the file
-            objectOut.close(); // Close the output streams
-            fileOut.close(); // Close the output streams
-        } catch (Exception e) {
-            e.printStackTrace(); // If an exception occurs during writing, print the stack trace
-        }
-    }
+            // Create a Label for the event name
+            Label eventNameLabel = new Label(eventName);
+            eventNameLabel.setAlignment(Pos.TOP_RIGHT);
 
-    private static boolean isValidUUID(String str) { // This method checks if a given string is a valid UUID (Universally Unique Identifier)
-        try {
-            UUID uuid = UUID.fromString(str); // Attempt to create a UUID object from the input string using the correct method
-            return true; // If no exception is thrown, the string is a valid UUID
-        } catch (IllegalArgumentException e) {
-            return false; // If an exception is thrown, the string is not a valid UUID
-        }
-    }
+            // Create a Label for the event description
+            Label eventDescriptionLabel = new Label(eventDescription);
+            eventDescriptionLabel.setAlignment(Pos.TOP_RIGHT);
 
-    private boolean authenticateUser(String email, String password) { // Defines a private method to authenticate a user
-        for (UserDetails userDetails : userDetailsMap.values()) { // Iterates over the values in the userDetailsMap
-            if (userDetails.getEmail().equalsIgnoreCase(email) && userDetails.getPassword().equals(password)) { // Checks if the email and password match the current UserDetails object, ignoring case sensitivity on email field
-                loggedInUser = userDetails; // Updates the loggedInUser instance variable with the authenticated user's details
-                return true; // User authenticated successfully
-            }
-        }
-        return false; // User authentication failed
+            // Create an HBox for the event info (name and description)
+            VBox eventInfoVBox = new VBox(eventNameLabel, eventDescriptionLabel);
+            eventInfoVBox.setAlignment(Pos.TOP_RIGHT);
+            eventInfoVBox.setSpacing(5);
+
+            // Create an HBox for the snooze button
+            HBox snoozeHBox = new HBox();
+            snoozeHBox.getChildren().add(snoozeButton);
+            snoozeHBox.setAlignment(Pos.BOTTOM_RIGHT);
+            snoozeHBox.setPadding(new Insets(0, 10, 10, 0));
+
+            // Create a BorderPane to hold all components
+            BorderPane borderPane = new BorderPane();
+            borderPane.setLeft(imageView);
+            borderPane.setRight(eventInfoVBox);
+            borderPane.setBottom(snoozeHBox);
+
+            // Create the notification and show it
+            org.controlsfx.control.Notifications notification = org.controlsfx.control.Notifications.create()
+                    .hideAfter(Duration.seconds(10)) // Auto-hide after 5 seconds
+                    .position(Pos.BOTTOM_RIGHT)
+                    .graphic(borderPane);
+
+            notification.show();
+        });
     }
 
     private void showAlert(String message) { // Defines a private method to display an alert
         Alert alert = new Alert(Alert.AlertType.INFORMATION); // Creates a new instance of Alert with the type INFORMATION
         alert.setTitle("Information"); // Sets the title of the alert to "Information"
         alert.setHeaderText(null); // Sets the header text of the alert to null (no header text)
+        // Set the icon for the alert popup window
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(imageAppLogo);
         alert.setContentText(message); // Sets the content text of the alert to the provided message
         alert.showAndWait(); // Displays the alert and waits for it to be closed
-    }
-
-    private static class UserDetails implements Serializable { // Defines a private static nested class UserDetails that implements the Serializable interface
-        private final UUID uuid; // Declares a final instance variable uuid of type UUID
-        private final String name; // Declares a final instance variable name of type String
-        private final String email; // Declares a final instance variable email of type String
-        private final String password; // Declares a final instance variable password of type String
-        private final String accountType; // Declares a final instance variable accountType of type String
-        private transient Optional<UUID> linkingCode; // Declares a transient instance variable linkingCode of type Optional<UUID>
-        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
-
-        public UserDetails (UUID uuid, String name, String email, String password, String accountType, Optional<UUID> linkingCode) { // Defines a constructor that takes parameters for all instance variables
-            this.uuid = uuid; // Initializes the uuid instance variable
-            this.name = name; // Initializes the name instance variable
-            this.email = email; // Initializes the email instance variable
-            this.password = password; // Initializes the password instance variable
-            this.accountType = accountType; // Initializes the accountType instance variable
-            this.linkingCode = linkingCode; // Initializes the linkingCode instance variable
-        }
-
-        private void writeObject(ObjectOutputStream out) throws IOException { // Defines a private method for custom serialization of the linkingCode field
-            out.defaultWriteObject(); // Performs the default serialization for non-transient instance variables
-            out.writeBoolean(linkingCode.isPresent()); // Writes a boolean indicating if linkingCode is present
-            linkingCode.ifPresent(uuid -> { // Executes the lambda expression if linkingCode is present
-                try {
-                    out.writeObject(uuid); // Writes the UUID object if present
-                } catch (IOException e) {
-                    e.printStackTrace(); // Prints the stack trace in case of an IOException
-                }
-            });
-        }
-
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException { // Defines a private method for custom deserialization of the linkingCode field
-            in.defaultReadObject(); // Performs the default deserialization for non-transient instance variables
-            boolean isPresent = in.readBoolean(); // Reads a boolean indicating if linkingCode is present
-            if (isPresent) {
-                linkingCode = Optional.of((UUID) in.readObject()); // Sets linkingCode to the deserialized UUID object if present
-            } else {
-                linkingCode = Optional.empty(); // Sets linkingCode to an empty Optional if not present
-            }
-        }
-
-        public UUID getUuid() { // Defines a public method to get the uuid
-            return uuid; // Returns the uuid instance variable
-        }
-
-        public String getName() { // Defines a public method to get the name
-            return name; // Returns the name instance variable
-        }
-
-        public String getEmail() { // Defines a public method to get the email
-            return email; // Returns the email instance variable
-        }
-
-        public String getPassword() { // Defines a public method to get the password
-            return password; // Returns the password instance variable
-        }
-
-        public String getAccountType() { // Defines a public method to get the accountType
-            return accountType; // Returns the accountType instance variable
-        }
-
-        public Optional<UUID> getLinkingCode() { // Defines a public method to get the linkingCode
-            return linkingCode; // Returns the linkingCode instance variable
-        }
-    }
-
-    // Method to load user data from file
-    private void loadCalendarData() { // Defines a private method to load calendar data from a file
-        File file = new File("calendarData.dat"); // Creates a new instance of File with the filename "calendarData.dat"
-
-        if (file.exists() && file.length() > 0) { // Checks if the file exists and has a non-zero length
-            try {
-                FileInputStream fileIn = new FileInputStream(file); // Creates a new instance of FileInputStream with the file
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn); // Creates a new instance of ObjectInputStream with the FileInputStream
-                calendarDetailsMap = (HashMap<UUID, CalendarDetails>) objectIn.readObject(); // Reads the calendarDetailsMap object from the ObjectInputStream
-                objectIn.close(); // Closes the ObjectInputStream
-                fileIn.close(); // Closes the FileInputStream
-
-            } catch (IOException | ClassNotFoundException e) { // Catches IOException and ClassNotFoundException
-                e.printStackTrace(); // Prints the stack trace in case of an exception
-            }
-        } else {
-            //System.out.println("calendarData.dat file is empty or does not exist.");
-            calendarDetailsMap = new HashMap<>(); // Creates a new instance of HashMap and assigns it to the calendarDetailsMap
-        }
-    }
-
-    private void saveCalendarData() { // Defines a private method to save calendar data to a file
-        try {
-            FileOutputStream fileOut = new FileOutputStream("calendarData.dat"); // Creates a new instance of FileOutputStream with the filename "calendarData.dat"
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut); // Creates a new instance of ObjectOutputStream with the FileOutputStream
-
-            objectOut.writeObject(calendarDetailsMap); // Writes the calendarDetailsMap object to the ObjectOutputStream
-            objectOut.close(); // Closes the ObjectOutputStream
-            fileOut.close(); // Closes the FileOutputStream
-        } catch (Exception e) { // Catches any Exception
-            e.printStackTrace(); // Prints the stack trace in case of an exception
-        }
-    }
-
-    private static class CalendarDetails implements Serializable { // Defines a private static nested class CalendarDetails that implements the Serializable interface
-        private final UUID uuid; // Declares a final instance variable uuid of type UUID
-        private final String eventName; // Declares a final instance variable eventName of type String
-        private final String eventDescription; // Declares a final instance variable eventDescription of type String
-        private final ZonedDateTime eventFrom; // Declares a final instance variable eventFrom of type ZonedDateTime
-        private final ZonedDateTime eventTo; // Declares a final instance variable eventTo of type ZonedDateTime
-        private final List<UUID> linkingUsers; // Declares a final instance variable linkingUsers of type List<UUID>
-        private static final long serialVersionUID = 1L; // Declares a static final serialVersionUID field required for Serializable classes
-
-        public CalendarDetails(UUID uuid, String eventName, String eventDescription, ZonedDateTime eventFrom, ZonedDateTime eventTo, List<UUID> linkingUsers) { // Defines a constructor that takes parameters for all instance variables
-            this.uuid = uuid; // Initializes the uuid instance variable
-            this.eventName = eventName; // Initializes the eventName instance variable
-            this.eventDescription = eventDescription; // Initializes the eventDescription instance variable
-            this.eventFrom = eventFrom; // Initializes the eventFrom instance variable
-            this.eventTo = eventTo; // Initializes the eventTo instance variable
-            this.linkingUsers = linkingUsers; // Initializes the linkingUsers instance variable
-        }
-
-        public UUID getUuid() { // Defines a public method to get the uuid
-            return uuid; // Returns the uuid instance variable
-        }
-
-        public String getEventName() { // Defines a public method to get the eventName
-            return eventName; // Returns the eventName instance variable
-        }
-
-        public String getEventDescrption() { // Defines a public method to get the eventDescription
-            return eventDescription; // Returns the eventDescription instance variable
-        }
-
-        public ZonedDateTime getEventFrom() { // Defines a public method to get the eventFrom
-            return eventFrom; // Returns the eventFrom instance variable
-        }
-
-        public ZonedDateTime getEventTo() { // Defines a public method to get the eventTo
-            return eventTo; // Returns the eventTo instance variable
-        }
-
-        public List<UUID> getLinkingUsers() { // Defines a public method to get the linkingUsers list
-            return linkingUsers; // Returns the linkingUsers instance variable list
-        }
     }
 
     public static void main(String[] args) {
