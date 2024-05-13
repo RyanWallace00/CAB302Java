@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="exits application after logged out">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="calendar update">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -233,7 +232,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715604589844</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="calendar update">
+      <option name="closed" value="true" />
+      <created>1715639011367</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715639011367</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -259,17 +266,7 @@
     <MESSAGE value="CalendarData Class Complete" />
     <MESSAGE value="All JUnit Tests Complete" />
     <MESSAGE value="exits application after logged out" />
-    <option name="LAST_COMMIT_MESSAGE" value="exits application after logged out" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java</url>
-          <line>642</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="calendar update" />
+    <option name="LAST_COMMIT_MESSAGE" value="calendar update" />
   </component>
 </project>

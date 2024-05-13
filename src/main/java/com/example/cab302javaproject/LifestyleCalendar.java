@@ -649,53 +649,53 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         leftSection.getChildren().add(dayOfWeekLabels); // Add the HBox to the VBox
 
         // Create a mini calendar
-        GridPane miniCalendar = createMiniCalendar();
-        leftSection.getChildren().add(miniCalendar);
+        GridPane miniCalendar = createMiniCalendar(); // Create a mini calendar using a helper method
+        leftSection.getChildren().add(miniCalendar); // Add the mini calendar to the VBox
 
         // Create navigation buttons
-        Button prevMonthButton = new Button("<");
-        Button nextMonthButton = new Button(">");
+        Button prevMonthButton = new Button("<"); // Button created to navigate to the previous month
+        Button nextMonthButton = new Button(">"); // Button created to navigate to the next month
         prevMonthButton.setOnAction(event -> {
-            currentDate = currentDate.minusMonths(1);
-            updateCalendar();
+            currentDate = currentDate.minusMonths(1); // Move to the previous month
+            updateCalendar(); // Update the calendar display
         });
         nextMonthButton.setOnAction(event -> {
-            currentDate = currentDate.plusMonths(1);
-            updateCalendar();
+            currentDate = currentDate.plusMonths(1); // Move to the next month
+            updateCalendar(); // Update the calendar display
         });
 
         // Create an HBox to hold the navigation buttons
-        HBox navigationBox = new HBox(10);
-        navigationBox.setAlignment(Pos.CENTER);
-        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton);
-        leftSection.getChildren().add(navigationBox);
+        HBox navigationBox = new HBox(10); // Create a new HBox with spacing
+        navigationBox.setAlignment(Pos.CENTER); // Align contents to the center
+        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton); // Add buttons to the HBox
+        leftSection.getChildren().add(navigationBox); // Add the HBox to the VBox
 
-        calendarPane.setLeft(leftSection);
+        calendarPane.setLeft(leftSection); // Set the VBox to the left of the layout
 
         // Create a GridPane to hold the date labels
-        GridPane dateLabelsPane = new GridPane();
-        dateLabelsPane.setHgap(60);
-        dateLabelsPane.setAlignment(Pos.CENTER);
+        GridPane dateLabelsPane = new GridPane(); // Create a newGridPane for date labels
+        dateLabelsPane.setHgap(60); // Set a horizontal gap between labels
+        dateLabelsPane.setAlignment(Pos.CENTER); // Align contents to the centre
 
         // Add date labels for each day of the week
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)); // Get the start of the week
         for (int i = 0; i < 7; i++) {
-            LocalDate date = startOfWeek.plusDays(i);
-            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
-            dateLabelsPane.add(dateLabel, i, 0);
+            LocalDate date = startOfWeek.plusDays(i); // Get each day of the week
+            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d"))); // Format date label
+            dateLabelsPane.add(dateLabel, i, 0); // Add label to the GridPane
         }
 
         // Calendar Grid
-        calendarGrid = new TableView<>();
-        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        calendarGrid = new TableView<>(); // Create a new TableView for the calendar
+        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Set column resize policy
         calendarGrid.setFixedCellSize(30); // Adjust the cell size as needed
-        VBox.setVgrow(calendarGrid, Priority.ALWAYS);
+        VBox.setVgrow(calendarGrid, Priority.ALWAYS); // Allow vertical growth
 
         // Add the "Time" column
-        TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
-        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
-        timeColumn.setPrefWidth(60);
-        calendarGrid.getColumns().add(timeColumn);
+        TableColumn<String[], String> timeColumn = new TableColumn<>("Time"); // Create a column for time
+        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0]))); // Set cell value factory
+        timeColumn.setPrefWidth(60); // Set preferred width
+        calendarGrid.getColumns().add(timeColumn); // Add column to the grid
 
         // Add columns for each day of the week
         String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
