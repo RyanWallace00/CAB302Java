@@ -698,32 +698,32 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         calendarGrid.getColumns().add(timeColumn); // Add column to the grid
 
         // Add columns for each day of the week
-        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        TableColumn<String[], String>[] columns = new TableColumn[7];
+        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Array of day names
+        TableColumn<String[], String>[] columns = new TableColumn[7]; // Array for columns
         for (int i = 0; i < 7; i++) {
             final int columnIndex = i;
-            TableColumn<String[], String> column = new TableColumn<>(dayOfWeek[i]);
+            TableColumn<String[], String> column = new TableColumn<>(dayOfWeek[i]); // Create a column for each day
             final int index = i + 1;
-            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
+            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index])); // Set cell value factory
             column.setCellFactory(cell -> new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
+                    super.updateItem(item, empty); // Call superclass
                     if (empty) {
-                        setText(null);
+                        setText(null); // Clear cell text
                     } else {
-                        TableRow<String[]> tableRow = getTableRow();
+                        TableRow<String[]> tableRow = getTableRow(); // Get table row
                         if (tableRow != null && tableRow.getItem() != null) {
-                            String time = tableRow.getItem()[0];
+                            String time = tableRow.getItem()[0]; // Get time from row
                             // Convert the time string to LocalTime
                             LocalTime eventTime = LocalTime.parse(time);
                             // Calculate the date for this day of the week
                             LocalDate date = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)).plusDays(columnIndex);
                             // Check if there's an event for this day and time
                             String eventDetails = checkForEvent(date, eventTime);
-                            setText(eventDetails != null ? eventDetails : "");
+                            setText(eventDetails != null ? eventDetails : ""); // Set cell text to event details if not null
                         } else {
-                            setText("");
+                            setText(""); // Set cell text to empty
                         }
                     }
                 }
@@ -734,22 +734,22 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 TableCell<String[], String> cell = new TableCell<>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
+                        super.updateItem(item, empty); // Call superclass method
                         if (empty) {
-                            setText(null);
+                            setText(null); // Clear cell text
                         } else {
-                            setText(item);
+                            setText(item); // Set call text
                         }
                     }
                 };
                 cell.setOnMouseClicked(event -> {
-                    if (event.getClickCount() == 2 && !cell.isEmpty()) {
-                        String eventName = cell.getItem();
+                    if (event.getClickCount() == 2 && !cell.isEmpty()) { // Check for double-click
+                        String eventName = cell.getItem(); // Get event name from cell
                         if (eventName != null && !eventName.isEmpty()) {
                             // Find the corresponding CalendarDetails object
                             for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
-                                if (calendarDetails.getEventName().equals(eventName)) {
-                                    showAddEvent(calendarDetails);
+                                if (calendarDetails.getEventName().equals(eventName)) { // Check if event name matches
+                                    showAddEvent(calendarDetails); // Show add event screen
                                     break;
                                 }
                             }
@@ -759,38 +759,35 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 return cell;
             });
 
-            columns[i] = column;
+            columns[i] = column; // Store the column in the array
         }
-        calendarGrid.getColumns().addAll(columns);
+        calendarGrid.getColumns().addAll(columns); // Add columns to the calendar grid
 
         // Create a VBox to hold the date labels and calendar grid
-        VBox centerPane = new VBox();
-        VBox.setVgrow(centerPane, Priority.ALWAYS);
-        centerPane.getChildren().addAll(dateLabelsPane, calendarGrid);
+        VBox centerPane = new VBox(); // Create a new VBox
+        VBox.setVgrow(centerPane, Priority.ALWAYS); // Allow vertical growth
+        centerPane.getChildren().addAll(dateLabelsPane, calendarGrid); // Add date labels and calendars
 
-        calendarPane.setCenter(centerPane);
+        calendarPane.setCenter(centerPane); // Set VBox to the centre
 
         // Create a scene with the BorderPane
-        Scene scene = new Scene(calendarPane, 1280, 720);
-        // Set the scene on the stage
-        primaryStage.setScene(scene);
-        // Show the stage
-        primaryStage.show();
+        Scene scene = new Scene(calendarPane, 1280, 720); // Create a new scene with the BorderPane
+        primaryStage.setScene(scene); // Set the scene to the primary stage
+        primaryStage.show(); // Display the primary stage
 
-        // Update the calendar
-        updateCalendar();
+        updateCalendar(); // call method to update the calendar
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
-            NotificationEnquiry.showNotifications();
+            NotificationEnquiry.showNotifications(); // Show notifications
         }));
         timeline.setCycleCount(1);  // Ensures the timeline only runs once
-        timeline.play();
+        timeline.play(); // Start timeline
 
         Timeline eyetime = new Timeline(new KeyFrame(Duration.hours(2), event -> {
-            showNotification("Eye Strain Break", " Rest your eyes for 15 minutes!");
+            showNotification("Eye Strain Break", " Rest your eyes for 15 minutes!"); // Show eye strain break notification
         }));
         eyetime.setCycleCount(1);  // Ensures the timeline only runs once
-        eyetime.play();
+        eyetime.play(); // Start the timeline
     }
 
     private GridPane createMiniCalendar() {
