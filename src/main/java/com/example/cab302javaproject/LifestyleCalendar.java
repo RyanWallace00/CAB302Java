@@ -617,9 +617,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
         MenuItem logOutMenuItem = new MenuItem("Log Out");
         logOutMenuItem.setOnAction(event -> {
-            loggedInUser = null;
-            showAlert("Signed Out");
-            showHomePage();
+                    loggedInUser = null;
+                    showAlert("Signed Out");
+                    showLoginScreen();
         });
         menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
 
@@ -674,16 +674,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Create a GridPane to hold the date labels
         GridPane dateLabelsPane = new GridPane();
-        dateLabelsPane.setHgap(60);
+        dateLabelsPane.setHgap(100);
         dateLabelsPane.setAlignment(Pos.CENTER);
-
-        // Add date labels for each day of the week
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = startOfWeek.plusDays(i);
-            Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM d")));
-            dateLabelsPane.add(dateLabel, i, 0);
-        }
 
         // Calendar Grid
         calendarGrid = new TableView<>();
@@ -697,12 +689,24 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         timeColumn.setPrefWidth(60);
         calendarGrid.getColumns().add(timeColumn);
 
+
+        // Create an array to hold the date labels
+        Label[] dateLabels = new Label[7];
+
+        // Add date labels for each day of the week
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startOfWeek.plusDays(i);
+            dateLabels[i] = new Label(date.format(DateTimeFormatter.ofPattern("MMM d"))); // Add the label to the array
+        }
+
         // Add columns for each day of the week
         String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         TableColumn<String[], String>[] columns = new TableColumn[7];
         for (int i = 0; i < 7; i++) {
             final int columnIndex = i;
-            TableColumn<String[], String> column = new TableColumn<>(dayOfWeek[i]);
+            String columnHeader = dateLabels[i].getText() + "\n" + dayOfWeek[i];
+            TableColumn<String[], String> column = new TableColumn<>(columnHeader);
             final int index = i + 1;
             column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
             column.setCellFactory(cell -> new TableCell<>() {
@@ -758,6 +762,8 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 });
                 return cell;
             });
+            // Set alignment of column header
+            column.setStyle("-fx-alignment: center;");
 
             columns[i] = column;
         }
@@ -1042,9 +1048,27 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Add a "Cancel" button
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(event -> addEventStage.close());
+        // Add "Delete" button if editing an existing event
+        Button deleteButton = null;
+        if (calendarDetail != null) {
+            deleteButton = new Button("Delete");
+            deleteButton.setOnAction(event -> {
+                calendarDetailsMap.remove(calendarDetail.getUuid()); // Gets current Calendar data and removes it
+                CalendarData.saveCalendarData();
+                showAlert("Event deleted.");
+                showCalendarScreen();
+                addEventStage.close();
+            });
+        }
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(actionButton, cancelButton);
+        // Add delete button if not null
+        if (deleteButton != null) {
+            buttonsBox.getChildren().add(deleteButton);
+        }
+
+
 
         ///buttonsBox.getChildren().set(0, actionButton);
 
