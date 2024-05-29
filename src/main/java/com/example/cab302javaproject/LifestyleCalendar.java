@@ -615,22 +615,25 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
         MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
         notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
-        MenuItem logOutMenuItem = new MenuItem("Log Out");
-        logOutMenuItem.setOnAction(event -> {
-                    loggedInUser = null;
-                    showAlert("Signed Out");
-                    showLoginScreen();
-        });
-        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem, logOutMenuItem);
+
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem);
 
         // Create the "+" button for adding events
         Button addEventButton = new Button("+");
         addEventButton.setOnAction(event -> showAddEvent(null));
 
-        // Create an HBox to hold the addEventButton and menuButton
+        // Create a logout button to logout of your account
+        Button logOutButton = new Button("Log Out");
+        logOutButton.setOnAction(event -> {
+            loggedInUser = null;
+            showAlert("Signed Out");
+            showLoginScreen();
+        });
+
+        // Create an HBox to hold the addEventButton, menuButton and logOutButton
         HBox topRightBox = new HBox(10);
         topRightBox.setAlignment(Pos.CENTER_RIGHT);
-        topRightBox.getChildren().addAll(addEventButton, menuButton);
+        topRightBox.getChildren().addAll(addEventButton, menuButton, logOutButton);
         calendarPane.setTop(topRightBox);
 
         // Create a VBox for the left grey section
