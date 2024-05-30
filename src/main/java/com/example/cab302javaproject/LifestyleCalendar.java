@@ -606,131 +606,131 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void showCalendarScreen() {
-        calendarPane = new BorderPane();
+        calendarPane = new BorderPane(); // Create a new BorderPane for the calendar layout
 
         // Create the hamburger menu
-        MenuButton menuButton = new MenuButton();
-        menuButton.setGraphic(createHamburgerIcon());
-        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings");
-        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen());
-        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings");
-        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup());
+        MenuButton menuButton = new MenuButton(); // Create a new MenuButton
+        menuButton.setGraphic(createHamburgerIcon()); // Set hamburger icon as a graphic
+        MenuItem accountSettingsMenuItem = new MenuItem("Account Settings"); // Create a menu item for Account Settings
+        accountSettingsMenuItem.setOnAction(event -> showProfileEditScreen()); // Set action for menu item Account Settings
+        MenuItem notificationSettingsMenuItem = new MenuItem("Notification Settings"); // Create a menu item for Notification Settings
+        notificationSettingsMenuItem.setOnAction(event -> showNotificationSettingsPopup()); // Set action for menu item Notification Settings
 
-        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem);
+        menuButton.getItems().addAll(accountSettingsMenuItem, notificationSettingsMenuItem); // Add menu items to the menu button
 
         // Create the "+" button for adding events
-        Button addEventButton = new Button("+");
-        addEventButton.setOnAction(event -> showAddEvent(null));
+        Button addEventButton = new Button("+"); // Button created for "+" label
+        addEventButton.setOnAction(event -> showAddEvent(null)); // Set action for the Add Event button
 
-        // Create a logout button to logout of your account
-        Button logOutButton = new Button("Log Out");
+        // Create a logout button to log out of your account
+        Button logOutButton = new Button("Log Out"); // Button created for "Log Out" label
         logOutButton.setOnAction(event -> {
-            loggedInUser = null;
-            showAlert("Signed Out");
-            showLoginScreen();
+            loggedInUser = null; // Reset logged in user
+            showAlert("Signed Out"); // Show a signed out alert
+            showLoginScreen(); // Show login screen
         });
 
         // Create an HBox to hold the addEventButton, menuButton and logOutButton
-        HBox topRightBox = new HBox(10);
-        topRightBox.setAlignment(Pos.CENTER_RIGHT);
-        topRightBox.getChildren().addAll(addEventButton, menuButton, logOutButton);
-        calendarPane.setTop(topRightBox);
+        HBox topRightBox = new HBox(10); // Create a new HBox with spacing
+        topRightBox.setAlignment(Pos.CENTER_RIGHT); // Align contents to centre right
+        topRightBox.getChildren().addAll(addEventButton, menuButton, logOutButton); // Add buttons to the Hbox
+        calendarPane.setTop(topRightBox); // Set the HBox to the top of the layout
 
         // Create a VBox for the left grey section
-        VBox leftSection = new VBox(10);
-        leftSection.setAlignment(Pos.TOP_CENTER);
-        leftSection.setPadding(new Insets(10));
+        VBox leftSection = new VBox(10); // Create a new VBox with spacing
+        leftSection.setAlignment(Pos.TOP_CENTER); // Align contents to the top center
+        leftSection.setPadding(new Insets(10)); // Set padding around the VBox
 
         // Create an HBox for the day of the week labels
-        HBox dayOfWeekLabels = new HBox(10);
-        dayOfWeekLabels.setAlignment(Pos.CENTER);
-        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"};
+        HBox dayOfWeekLabels = new HBox(10); // Create a new HBox for the day of the week labels
+        dayOfWeekLabels.setAlignment(Pos.CENTER); // Align contents to the centre
+        String[] daysOfWeek = {"S", "M", "T", "W", "T", "F", "S"}; // Array of days name
         for (String day : daysOfWeek) {
-            Label dayLabel = new Label(day);
-            dayOfWeekLabels.getChildren().add(dayLabel);
+            Label dayLabel = new Label(day); // Create label for each day
+            dayOfWeekLabels.getChildren().add(dayLabel); // Add labels to the HBox
         }
-        leftSection.getChildren().add(dayOfWeekLabels);
+        leftSection.getChildren().add(dayOfWeekLabels); // Add the HBox to the VBox
 
         // Create a mini calendar
-        GridPane miniCalendar = createMiniCalendar();
-        leftSection.getChildren().add(miniCalendar);
+        GridPane miniCalendar = createMiniCalendar(); // Create a mini calendar using a helper method
+        leftSection.getChildren().add(miniCalendar); // Add the mini calendar to the VBox
 
         // Create navigation buttons
-        Button prevMonthButton = new Button("<");
-        Button nextMonthButton = new Button(">");
+        Button prevMonthButton = new Button("<"); // Button created to navigate to the previous month
+        Button nextMonthButton = new Button(">"); // Button created to navigate to the next month
         prevMonthButton.setOnAction(event -> {
-            currentDate = currentDate.minusMonths(1);
-            updateCalendar();
+            currentDate = currentDate.minusMonths(1); // Move to the previous month
+            updateCalendar(); // Update the calendar display
         });
         nextMonthButton.setOnAction(event -> {
-            currentDate = currentDate.plusMonths(1);
-            updateCalendar();
+            currentDate = currentDate.plusMonths(1); // Move to the next month
+            updateCalendar(); // Update the calendar display
         });
 
         // Create an HBox to hold the navigation buttons
-        HBox navigationBox = new HBox(10);
-        navigationBox.setAlignment(Pos.CENTER);
-        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton);
-        leftSection.getChildren().add(navigationBox);
+        HBox navigationBox = new HBox(10); // Create a new HBox with spacing
+        navigationBox.setAlignment(Pos.CENTER); // Align contents to the center
+        navigationBox.getChildren().addAll(prevMonthButton, nextMonthButton); // Add buttons to the HBox
+        leftSection.getChildren().add(navigationBox); // Add the HBox to the VBox
 
-        calendarPane.setLeft(leftSection);
+        calendarPane.setLeft(leftSection); // Set the VBox to the left of the layout
 
         // Create a GridPane to hold the date labels
-        GridPane dateLabelsPane = new GridPane();
-        dateLabelsPane.setHgap(100);
-        dateLabelsPane.setAlignment(Pos.CENTER);
+        GridPane dateLabelsPane = new GridPane(); // Create a newGridPane for date labels
+        dateLabelsPane.setHgap(100); // Set a horizontal gap between labels
+        dateLabelsPane.setAlignment(Pos.CENTER); // Align contents to the centre
 
         // Calendar Grid
-        calendarGrid = new TableView<>();
-        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        calendarGrid = new TableView<>(); // Create a new TableView for the calendar
+        calendarGrid.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Set column resize policy
         calendarGrid.setFixedCellSize(30); // Adjust the cell size as needed
-        VBox.setVgrow(calendarGrid, Priority.ALWAYS);
+        VBox.setVgrow(calendarGrid, Priority.ALWAYS); // Allow vertical growth
 
         // Add the "Time" column
-        TableColumn<String[], String> timeColumn = new TableColumn<>("Time");
-        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0])));
-        timeColumn.setPrefWidth(60);
-        calendarGrid.getColumns().add(timeColumn);
+        TableColumn<String[], String> timeColumn = new TableColumn<>("Time"); // Create a column for time
+        timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue()[0]))); // Set cell value factory
+        timeColumn.setPrefWidth(60); // Set preferred width
+        calendarGrid.getColumns().add(timeColumn); // Add column to the grid
 
 
         // Create an array to hold the date labels
         Label[] dateLabels = new Label[7];
 
         // Add date labels for each day of the week
-        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+        LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)); // Get the start of the week
         for (int i = 0; i < 7; i++) {
-            LocalDate date = startOfWeek.plusDays(i);
+            LocalDate date = startOfWeek.plusDays(i); // Get each day of the week
             dateLabels[i] = new Label(date.format(DateTimeFormatter.ofPattern("MMM d"))); // Add the label to the array
         }
 
         // Add columns for each day of the week
-        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        TableColumn<String[], String>[] columns = new TableColumn[7];
+        String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Array of day names
+        TableColumn<String[], String>[] columns = new TableColumn[7]; // Array for columns
         for (int i = 0; i < 7; i++) {
             final int columnIndex = i;
             String columnHeader = dateLabels[i].getText() + "\n" + dayOfWeek[i];
-            TableColumn<String[], String> column = new TableColumn<>(columnHeader);
+            TableColumn<String[], String> column = new TableColumn<>(columnHeader); // Create a column for each day
             final int index = i + 1;
-            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index]));
+            column.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()[index])); // Set cell value factory
             column.setCellFactory(cell -> new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
+                    super.updateItem(item, empty); // Call superclass
                     if (empty) {
-                        setText(null);
+                        setText(null); // Clear cell text
                     } else {
-                        TableRow<String[]> tableRow = getTableRow();
+                        TableRow<String[]> tableRow = getTableRow(); // Get table row
                         if (tableRow != null && tableRow.getItem() != null) {
-                            String time = tableRow.getItem()[0];
+                            String time = tableRow.getItem()[0]; // Get time from row
                             // Convert the time string to LocalTime
                             LocalTime eventTime = LocalTime.parse(time);
                             // Calculate the date for this day of the week
                             LocalDate date = currentDate.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY)).plusDays(columnIndex);
                             // Check if there's an event for this day and time
                             String eventDetails = checkForEvent(date, eventTime);
-                            setText(eventDetails != null ? eventDetails : "");
+                            setText(eventDetails != null ? eventDetails : ""); // Set cell text to event details if not null
                         } else {
-                            setText("");
+                            setText(""); // Set cell text to empty
                         }
                     }
                 }
@@ -741,22 +741,22 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 TableCell<String[], String> cell = new TableCell<>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
+                        super.updateItem(item, empty); // Call superclass method
                         if (empty) {
-                            setText(null);
+                            setText(null); // Clear cell text
                         } else {
-                            setText(item);
+                            setText(item); // Set call text
                         }
                     }
                 };
                 cell.setOnMouseClicked(event -> {
-                    if (event.getClickCount() == 2 && !cell.isEmpty()) {
-                        String eventName = cell.getItem();
+                    if (event.getClickCount() == 2 && !cell.isEmpty()) { // Check for double-click
+                        String eventName = cell.getItem(); // Get event name from cell
                         if (eventName != null && !eventName.isEmpty()) {
                             // Find the corresponding CalendarDetails object
                             for (CalendarDetails calendarDetails : calendarDetailsMap.values()) {
-                                if (calendarDetails.getEventName().equals(eventName)) {
-                                    showAddEvent(calendarDetails);
+                                if (calendarDetails.getEventName().equals(eventName)) { // Check if event name matches
+                                    showAddEvent(calendarDetails); // Show add event screen
                                     break;
                                 }
                             }
@@ -765,41 +765,37 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 });
                 return cell;
             });
-            // Set alignment of column header
-            column.setStyle("-fx-alignment: center;");
+            column.setStyle("-fx-alignment: center;"); // Set alignment of column header
 
-            columns[i] = column;
+            columns[i] = column; // Store the column in the array
         }
-        calendarGrid.getColumns().addAll(columns);
+        calendarGrid.getColumns().addAll(columns); // Add columns to the calendar grid
 
         // Create a VBox to hold the date labels and calendar grid
-        VBox centerPane = new VBox();
-        VBox.setVgrow(centerPane, Priority.ALWAYS);
-        centerPane.getChildren().addAll(dateLabelsPane, calendarGrid);
+        VBox centerPane = new VBox(); // Create a new VBox
+        VBox.setVgrow(centerPane, Priority.ALWAYS); // Allow vertical growth
+        centerPane.getChildren().addAll(dateLabelsPane, calendarGrid); // Add date labels and calendars
 
-        calendarPane.setCenter(centerPane);
+        calendarPane.setCenter(centerPane); // Set VBox to the centre
 
         // Create a scene with the BorderPane
-        Scene scene = new Scene(calendarPane, 1280, 720);
-        // Set the scene on the stage
-        primaryStage.setScene(scene);
-        // Show the stage
-        primaryStage.show();
+        Scene scene = new Scene(calendarPane, 1280, 720); // Create a new scene with the BorderPane
+        primaryStage.setScene(scene); // Set the scene on the stage
+        primaryStage.show(); // Show the stage
 
-        // Update the calendar
-        updateCalendar();
+        updateCalendar(); // Call the method to update the calendar
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
-            NotificationEnquiry.showNotifications();
+            NotificationEnquiry.showNotifications(); // Show notifications
         }));
         timeline.setCycleCount(1);  // Ensures the timeline only runs once
-        timeline.play();
+        timeline.play(); // Start timeline
 
         Timeline eyetime = new Timeline(new KeyFrame(Duration.hours(2), event -> {
             showNotification("Eye Strain Break", " Rest your eyes for 15 minutes!");
         }));
         eyetime.setCycleCount(1);  // Ensures the timeline only runs once
-        eyetime.play();
+        eyetime.play(); // Start timeline
     }
 
     private GridPane createMiniCalendar() {
