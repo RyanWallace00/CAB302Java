@@ -443,45 +443,47 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         profileEditStage.show();
     }
 
-    private void showNotificationSettingsPopup() {
+    private void showNotificationSettingsPopup() { // Method to display the notification settings popup
+        // Create a confirmation alert dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Notification Settings");
         alert.setHeaderText(null);
 
         // Create the layout for the popup
         GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setHgap(10); // Set horizontal gap between grid cells
+        grid.setVgap(10); // Set vertical gap between grid cells
+        grid.setPadding(new Insets(20, 150, 10, 10)); // Set padding around the grid
 
         // Create the enable notifications toggle button
         Label enableNotificationsLabel = new Label("Enable Notifications:");
-        ToggleButton enableNotificationsToggle = new ToggleButton();
+        ToggleButton enableNotificationsToggle = new ToggleButton(); // Create the enable notifications toggle button
         enableNotificationsToggle.setSelected(loggedInUser.getNotificationsPreference()); // Set the value from userDetailsMap
 
         // Create a rectangle to represent the toggle button background
         Rectangle toggleBackground = new Rectangle(50, 20);
-        toggleBackground.setArcWidth(20);
-        toggleBackground.setArcHeight(20);
-        toggleBackground.setFill(Color.LIGHTGRAY);
+        toggleBackground.setArcWidth(20);  // Set the corner radius width of the background
+        toggleBackground.setArcHeight(20); // Set the corner radius height of the background
+        toggleBackground.setFill(Color.LIGHTGRAY); // Set the initial background color of the toggle button
 
         // Create a circle to represent the toggle button thumb
         Circle toggleThumb = new Circle(10);
-        toggleThumb.setFill(Color.WHITE);
-        toggleThumb.setStroke(Color.LIGHTGRAY);
-        toggleThumb.setStrokeWidth(1);
+        toggleThumb.setFill(Color.WHITE); // Set the fill color of the thumb
+        toggleThumb.setStroke(Color.LIGHTGRAY); // Set the stroke color of the thumb
+        toggleThumb.setStrokeWidth(1); // Set the stroke width of the thumb
         toggleThumb.setTranslateX(loggedInUser.getNotificationsPreference() ? 15 : -15); // Set the initial position based on the value from userDetailsMap
 
         // Create a stack pane to hold the toggle button components
         StackPane togglePane = new StackPane(toggleBackground, toggleThumb);
 
         toggleBackground.setFill(loggedInUser.getNotificationsPreference() ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
+
         // Update the toggle button appearance when its state changes
         enableNotificationsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+            if (newValue) { // If the new value is true, set the background to green and move the thumb to the right
                 toggleBackground.setFill(Color.LIMEGREEN);
                 toggleThumb.setTranslateX(15);
-            } else {
+            } else { // Otherwise, set the background to gray and move the thumb to the left
                 toggleBackground.setFill(Color.LIGHTGRAY);
                 toggleThumb.setTranslateX(-15);
             }
@@ -491,9 +493,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         enableNotificationsToggle.setGraphic(togglePane);
 
         // Create the snooze duration dropdown
-        Label snoozeDurationLabel = new Label("Snooze Duration:");
-        ComboBox<String> snoozeDurationComboBox = new ComboBox<>();
-        snoozeDurationComboBox.getItems().addAll(
+        Label snoozeDurationLabel = new Label("Snooze Duration:"); // Create a label for the snooze duration dropdown
+        ComboBox<String> snoozeDurationComboBox = new ComboBox<>(); // Create a dropdown for selecting snooze duration
+        snoozeDurationComboBox.getItems().addAll( // Add options to the snooze duration dropdown
                 "5 minutes",
                 "10 minutes",
                 "15 minutes",
@@ -503,9 +505,9 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         snoozeDurationComboBox.setValue(loggedInUser.getNotificationsSnoozeDuration()); // Set the value from userDetailsMap
 
         // Create the reminder time dropdown
-        Label reminderTimeLabel = new Label("Reminder Time:");
-        ComboBox<String> reminderTimeComboBox = new ComboBox<>();
-        reminderTimeComboBox.getItems().addAll(
+        Label reminderTimeLabel = new Label("Reminder Time:"); // Create a label for the reminder time dropdown
+        ComboBox<String> reminderTimeComboBox = new ComboBox<>(); // Create a dropdown for selecting reminder time
+        reminderTimeComboBox.getItems().addAll( // Add options to the reminder time dropdown
                 "5 minutes before",
                 "10 minutes before",
                 "15 minutes before",
@@ -515,33 +517,34 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         reminderTimeComboBox.setValue(loggedInUser.getNotificationsReminderTime()); // Set the value from userDetailsMap
 
         // Create the enable notifications toggle button
-        Label enableEyeStrainLabel = new Label("Enable Eye Strain Notifications:");
+        Label enableEyeStrainLabel = new Label("Enable Eye Strain Notifications:"); // Create a label for Eye Strains
         ToggleButton enableEyeStrainToggle = new ToggleButton();
         enableEyeStrainToggle.setSelected(loggedInUser.getEyeStrainPreference()); // Set the value from userDetailsMap
 
         // Create a rectangle to represent the toggle button background
         Rectangle toggleRectangle = new Rectangle(50, 20);
-        toggleRectangle.setArcWidth(20);
-        toggleRectangle.setArcHeight(20);
-        toggleRectangle.setFill(Color.LIGHTGRAY);
+        toggleRectangle.setArcWidth(20); // Set the corner radius width of the background
+        toggleRectangle.setArcHeight(20); // Set the corner radius height of the background
+        toggleRectangle.setFill(Color.LIGHTGRAY); // Set the initial background color of the toggle button
 
         // Create a circle to represent the toggle button thumb
         Circle toggleSwitch = new Circle(10);
-        toggleSwitch.setFill(Color.WHITE);
-        toggleSwitch.setStroke(Color.LIGHTGRAY);
-        toggleSwitch.setStrokeWidth(1);
+        toggleSwitch.setFill(Color.WHITE); // Set the fill colour of the thumb white
+        toggleSwitch.setStroke(Color.LIGHTGRAY); // Set the stroke colour of the thumb lightgray
+        toggleSwitch.setStrokeWidth(1); // Set the stroke width of the thumb
         toggleSwitch.setTranslateX(loggedInUser.getEyeStrainPreference() ? 15 : -15); // Set the initial position based on the value from userDetailsMap
 
         // Create a stack pane to hold the toggle button components
         StackPane togglePaneGroup = new StackPane(toggleRectangle, toggleSwitch);
 
         toggleRectangle.setFill(loggedInUser.getEyeStrainPreference() ? Color.LIMEGREEN : Color.LIGHTGRAY); // Set the initial color based on the value from userDetailsMap
+
         // Update the toggle button appearance when its state changes
         enableEyeStrainToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+            if (newValue) { // If the new value is true, set the background to green and move the thumb to the right
                 toggleRectangle.setFill(Color.LIMEGREEN);
                 toggleSwitch.setTranslateX(15);
-            } else {
+            } else { // Otherwise, set the background to gray and move the thumb to the left
                 toggleRectangle.setFill(Color.LIGHTGRAY);
                 toggleSwitch.setTranslateX(-15);
             }
@@ -551,14 +554,14 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         enableEyeStrainToggle.setGraphic(togglePaneGroup);
 
         // Add the labels, toggle button, and dropdown boxes to the grid
-        grid.add(enableNotificationsLabel, 0, 0);
-        grid.add(enableNotificationsToggle, 1, 0);
-        grid.add(snoozeDurationLabel, 0, 1);
-        grid.add(snoozeDurationComboBox, 1, 1);
-        grid.add(reminderTimeLabel, 0, 2);
-        grid.add(reminderTimeComboBox, 1, 2);
-        grid.add(enableEyeStrainLabel, 0, 3);
-        grid.add(enableEyeStrainToggle, 1, 3);
+        grid.add(enableNotificationsLabel, 0, 0); // Add the enable notifications label and toggle button to the grid
+        grid.add(enableNotificationsToggle, 1, 0); // Add the enable notifications toggle button to the grid
+        grid.add(snoozeDurationLabel, 0, 1); // Add the snooze duration label to the grid
+        grid.add(snoozeDurationComboBox, 1, 1); // Add the snooze duration dropdown to the grid
+        grid.add(reminderTimeLabel, 0, 2); // Add the reminder time label to the grid
+        grid.add(reminderTimeComboBox, 1, 2); // Add the reminder time dropdown to the grid
+        grid.add(enableEyeStrainLabel, 0, 3); // Add the enable eye strain label to the grid
+        grid.add(enableEyeStrainToggle, 1, 3); // Add the enable eye strain toggle button to the grid
 
         // Set the content of the alert to the grid
         alert.getDialogPane().setContent(grid);
@@ -568,7 +571,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Set the icon for the alert popup window
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(imageAppLogo);
+        stage.getIcons().add(imageAppLogo); // Add the application logo to the window
 
         // Show the alert and wait for user response
         Optional<ButtonType> result = alert.showAndWait();
@@ -576,10 +579,10 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
 
         // Set button actions
         if (button == ButtonType.OK) {
-            boolean enableNotifications = enableNotificationsToggle.isSelected();
-            String selectedSnoozeDuration = snoozeDurationComboBox.getValue();
-            String selectedReminderTime = reminderTimeComboBox.getValue();
-            boolean enableEyeStrain = enableEyeStrainToggle.isSelected();
+            boolean enableNotifications = enableNotificationsToggle.isSelected(); // Get the state of the enable notifications toggle button
+            String selectedSnoozeDuration = snoozeDurationComboBox.getValue(); // Get the selected snooze duration from the dropdown
+            String selectedReminderTime = reminderTimeComboBox.getValue(); // Get the selected reminder time from the dropdown
+            boolean enableEyeStrain = enableEyeStrainToggle.isSelected(); // Get the state of the enable eye strain toggle button
             // Update the userDetailsMap with the selected values
             UserData.UserDetails updatedUserDetails = new UserData.UserDetails(
                     loggedInUser.getUuid(),
@@ -593,7 +596,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                     selectedReminderTime,
                     enableEyeStrain
             );
-            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails);
+            userDetailsMap.put(loggedInUser.getUuid(), updatedUserDetails); // Update the user details in the map with the new object
             loggedInUser = updatedUserDetails;
             UserData.saveUserData(); // Save the updated user data to file
 

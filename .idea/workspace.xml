@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="logout works now !">
+    <list default="true" id="b2fabfdf-be6a-4a7f-853d-3d1d14a7d2d9" name="Changes" comment="import from jacob's branch">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/cab302javaproject/LifestyleCalendar.java" afterDir="false" />
     </list>
@@ -206,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716982721905</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="import from jacob's branch">
+      <option name="closed" value="true" />
+      <created>1717033226893</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1717033226893</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -232,7 +240,8 @@
     <MESSAGE value="CalendarData Class Complete" />
     <MESSAGE value="All JUnit Tests Complete" />
     <MESSAGE value="logout works now !" />
-    <option name="LAST_COMMIT_MESSAGE" value="logout works now !" />
+    <MESSAGE value="import from jacob's branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="import from jacob's branch" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
