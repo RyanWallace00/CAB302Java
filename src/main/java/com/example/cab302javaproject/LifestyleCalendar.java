@@ -22,26 +22,26 @@ import javafx.stage.Stage; // Imports the Stage class from the JavaFX library fo
 import javafx.scene.image.Image; // Imports the Image class from the JavaFX library for loading images
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference; // Imports the AtomicReference class from the Java concurrent package for thread-safe reference handling
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.ComboBox;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.UUID;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.ChronoUnit;
-import javafx.util.Duration;
-import static com.example.cab302javaproject.CalendarData.*;
+import javafx.scene.control.Button; // Imports the Button class from the JavaFX library for creating button UI elements
+import javafx.scene.control.Label; // Imports the Label class from the JavaFX library for creating text labels in the UI
+import javafx.scene.control.TextField; // Imports the TextField class from the JavaFX library for creating text input fields in the UI
+import javafx.scene.paint.Color; // Imports the Color class from the JavaFX library for defining colors for UI elements
+import javafx.scene.shape.Rectangle; // Imports the Rectangle class from the JavaFX library for creating rectangular shapes in the UI
+import javafx.scene.control.TableColumn; // Imports the TableColumn class from the JavaFX library for creating columns in a table view
+import javafx.scene.control.TableView; // Imports the TableView class from the JavaFX library for creating tables to display data
+import javafx.scene.layout.BorderPane; // Imports the BorderPane class from the JavaFX library for creating a border pane layout
+import javafx.scene.layout.HBox; // Imports the HBox class from the JavaFX library for creating horizontal box layouts
+import javafx.scene.layout.VBox; // Imports Importing the VBox class from the JavaFX library for creating vertical box layouts
+import javafx.beans.property.SimpleStringProperty; // Imports the SimpleStringProperty class from the JavaFX library for creating observable string properties
+import javafx.scene.control.ComboBox; // Imports the ComboBox class from the JavaFX library for creating dropdown boxes
+import java.time.LocalDate; // Imports the LocalDate class from the java.time package for working with dates
+import java.time.LocalTime; // Imports the LocalTime class from the java.time package for working with times
+import java.util.UUID; // Imports the UUID class from the java.util package for generating unique identifiers
+import java.time.format.DateTimeFormatter; // Imports the DateTimeFormatter class from the java.time.format package for formatting date and time objects
+import java.time.temporal.TemporalAdjusters; // Imports the TemporalAdjusters class from the java.time.temporal package for adjusting temporal objects
+import java.time.temporal.ChronoUnit; // Imports the ChronoUnit class from the java.time.temporal package for working with units of time
+import javafx.util.Duration; // Imports the Duration class from the javafx.util package for defining durations
+import static com.example.cab302javaproject.CalendarData.*; // Imports all static members from the CalendarData class in the com.example.cab302javaproject package
 
 /**
  * The LifestyleCalendar class extends the Application class and serves as the main entry point for the application.
