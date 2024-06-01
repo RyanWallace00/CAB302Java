@@ -635,7 +635,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
                 try {
                     new LifestyleCalendar().start(new Stage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    primaryStage.close();
                 }
             });
         });
