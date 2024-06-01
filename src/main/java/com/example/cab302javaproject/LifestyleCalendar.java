@@ -628,9 +628,16 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
         // Create a logout button to log out of your account
         Button logOutButton = new Button("Log Out"); // Button created for "Log Out" label
         logOutButton.setOnAction(event -> {
-            loggedInUser = null; // Reset logged in user
             showAlert("Signed Out"); // Show a signed out alert
-            showLoginScreen(); // Show login screen
+            primaryStage.close(); //reset the application
+
+            Platform.runLater(() -> {
+                try {
+                    new LifestyleCalendar().start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         // Create an HBox to hold the addEventButton, menuButton and logOutButton
@@ -847,6 +854,7 @@ public class LifestyleCalendar extends Application { // Defines the LifestyleCal
     }
 
     private void updateCalendar() {
+
         // Update the date labels
         VBox centerPane = (VBox) calendarPane.getCenter();
         GridPane dateLabelsPane = (GridPane) centerPane.getChildren().get(0);
